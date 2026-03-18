@@ -319,8 +319,7 @@ async function loadFAQ() {
         const fixedUrl = FLOW_URL.replace('api-version=1&', 'api-version=2016-06-01&');
         const res = await fetch(fixedUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
+            headers: { 'Content-Type': 'application/json' }
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
