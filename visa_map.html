@@ -292,48 +292,63 @@ svg.append('path').datum(d3.geoGraticule()())
   .attr('d',path).attr('fill','none')
   .attr('stroke','rgba(74,184,255,0.04)').attr('stroke-width','0.3');
 
-d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function(world){
-  document.getElementById('loading').style.display='none';
-  var countries=topojson.feature(world,world.objects.countries);
+// unpkg로 지도 데이터 로드 (jsdelivr 차단 우회)
+var MAP_URLS = [
+  'https://unpkg.com/world-atlas@2/countries-110m.json',
+  'https://cdn.skypack.dev/world-atlas@2/countries-110m.json'
+];
 
-  svg.selectAll('.cp')
-    .data(countries.features)
-    .enter().append('path')
-    .attr('class','cp')
-    .attr('d',path)
-    .attr('fill',function(d){
-      var id=+d.id;
-      if(id===410) return '#003087';
-      return regionColors[id]||'#112438';
-    })
-    .attr('stroke',function(d){
-      var id=+d.id;
-      if(id===410) return '#4ab8ff';
-      if(regionColors[id]) return 'rgba(100,180,255,0.2)';
-      return 'rgba(30,70,120,0.35)';
-    })
-    .attr('stroke-width',function(d){return +d.id===410?1.5:0.5;})
-    .on('click',function(event,d){
-      var name=idToName[+d.id];
-      if(name) fly(name);
-    })
-    .append('title').text(function(d){
-      var name=idToName[+d.id];
-      return name?name+' (클릭하여 비자 안내 보기)':'';
-    });
+function loadMap(urls, idx) {
+  if(idx >= urls.length) {
+    // 모든 URL 실패 → 기본 구 배경만 표시
+    document.getElementById('loading').style.display='none';
+    placeICN();
+    setTimeout(placeICN, 200);
+    return;
+  }
+  d3.json(urls[idx]).then(function(world){
+    document.getElementById('loading').style.display='none';
+    var countries=topojson.feature(world,world.objects.countries);
 
-  svg.append('path')
-    .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
-    .attr('d',path).attr('fill','none')
-    .attr('stroke','rgba(74,184,255,0.08)').attr('stroke-width','0.4');
+    svg.selectAll('.cp')
+      .data(countries.features)
+      .enter().append('path')
+      .attr('class','cp')
+      .attr('d',path)
+      .attr('fill',function(d){
+        var id=+d.id;
+        if(id===410) return '#003087';
+        return regionColors[id]||'#112438';
+      })
+      .attr('stroke',function(d){
+        var id=+d.id;
+        if(id===410) return '#4ab8ff';
+        if(regionColors[id]) return 'rgba(100,180,255,0.2)';
+        return 'rgba(30,70,120,0.35)';
+      })
+      .attr('stroke-width',function(d){return +d.id===410?1.5:0.5;})
+      .on('click',function(event,d){
+        var name=idToName[+d.id];
+        if(name) fly(name);
+      })
+      .append('title').text(function(d){
+        var name=idToName[+d.id];
+        return name?name+' (클릭하여 비자 안내 보기)':'';
+      });
 
-  placeICN();
-  setTimeout(placeICN, 200);
-}).catch(function(){
-  document.getElementById('loading').style.display='none';
-  placeICN();
-  setTimeout(placeICN, 200);
-});
+    svg.append('path')
+      .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
+      .attr('d',path).attr('fill','none')
+      .attr('stroke','rgba(74,184,255,0.08)').attr('stroke-width','0.4');
+
+    placeICN();
+    setTimeout(placeICN, 200);
+  }).catch(function(){
+    loadMap(urls, idx+1);
+  });
+}
+
+loadMap(MAP_URLS, 0);
 
 // 지도 로드 후 VISA 데이터 기반으로 색상 업데이트
 function updateMapColors(){
