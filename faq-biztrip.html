@@ -1,481 +1,407 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizTrip Hub - FAQ</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --primary:    #1B4E7D;
-            --secondary:  #2B7DAE;
-            --accent:     #4A90C7;
-            --light-bg:   #F5F7FA;
-            --border:     #DCE0E5;
-            --text-dark:  #1F2937;
-            --text-light: #6B7280;
-            --white:      #FFFFFF;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-            background: var(--light-bg);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        /* ── 헤더 ── */
-        .header {
-            background: var(--primary);
-            color: var(--white);
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-container {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .header-title {
-            font-size: 1.6rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .sync-status {
-            font-size: 0.82rem;
-            color: #C7E9C0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .sync-indicator {
-            width: 8px; height: 8px;
-            background: #C7E9C0;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        .sync-indicator.loading { background: #F9CA6A; animation: pulse .6s infinite; }
-        .sync-indicator.error   { background: #E74C3C; animation: none; }
-        @keyframes pulse {
-            0%,100% { opacity: 1; }
-            50%      { opacity: 0.4; }
-        }
-
-        /* ── 컨테이너 ── */
-        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-
-        /* ── 검색 ── */
-        .search-section { margin-bottom: 1.5rem; }
-        .search-box { position: relative; }
-        .search-box input {
-            width: 100%;
-            padding: 0.9rem 1rem 0.9rem 2.8rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color .25s;
-            background: var(--white);
-        }
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(43,125,174,0.1);
-        }
-        .search-icon {
-            position: absolute;
-            left: 0.9rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            font-size: 1.1rem;
-            pointer-events: none;
-        }
-
-        /* ── 필터 ── */
-        .filter-section { margin-bottom: 2rem; }
-        .filter-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-bottom: 0.7rem;
-            display: block;
-        }
-        .filter-buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-        .filter-btn {
-            background: var(--white);
-            color: var(--text-dark);
-            border: 2px solid var(--border);
-            padding: 0.5rem 1.1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.88rem;
-            font-weight: 500;
-            font-family: inherit;
-            transition: all .2s;
-        }
-        .filter-btn:hover { border-color: var(--secondary); color: var(--secondary); }
-        .filter-btn.active {
-            background: var(--secondary);
-            color: var(--white);
-            border-color: var(--secondary);
-        }
-        .filter-btn.all.active { background: var(--primary); border-color: var(--primary); }
-
-        /* ── FAQ 목록 ── */
-        .faq-list { display: flex; flex-direction: column; gap: 0.8rem; }
-
-        .faq-item {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: box-shadow .25s, border-color .25s;
-        }
-        .faq-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--accent); }
-
-        .faq-header {
-            padding: 1.1rem 1.25rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            background: var(--white);
-            transition: background .2s;
-            user-select: none;
-        }
-        .faq-header:hover,
-        .faq-item.open .faq-header { background: var(--light-bg); }
-
-        .faq-question-wrapper {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            flex-wrap: wrap;
-        }
-
-        .cat-badge {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--white);
-            padding: 0.25rem 0.65rem;
-            border-radius: 4px;
-            font-size: 0.73rem;
-            font-weight: 600;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .region-badge {
-            display: inline-block;
-            padding: 0.25rem 0.65rem;
-            border-radius: 4px;
-            font-size: 0.73rem;
-            font-weight: 600;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .badge-domestic { background: #E8F5E9; color: #2E7D32; }
-        .badge-overseas { background: #E3F2FD; color: #1565C0; }
-
-        .faq-question {
-            font-size: 0.97rem;
-            font-weight: 500;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .faq-toggle {
-            color: var(--text-light);
-            font-size: 0.8rem;
-            transition: transform .3s;
-            flex-shrink: 0;
-        }
-        .faq-item.open .faq-toggle { transform: rotate(180deg); }
-
-        /* ── 답변 영역 ── */
-        .faq-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height .35s ease;
-        }
-        .faq-answer {
-            padding: 1rem 1.25rem;
-            font-size: 0.93rem;
-            line-height: 1.8;
-            color: #374151;
-            border-top: 1px solid var(--border);
-            white-space: pre-wrap;
-        }
-        .faq-meta {
-            padding: 0.6rem 1.25rem 1rem;
-            font-size: 0.78rem;
-            color: #9CA3AF;
-            text-align: right;
-        }
-
-        /* ── 로딩 / 에러 / 빈 결과 ── */
-        .state-box {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-light);
-        }
-        .spinner {
-            width: 36px; height: 36px;
-            border: 3px solid var(--border);
-            border-top-color: var(--secondary);
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
-            margin: 0 auto 16px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .empty-state { text-align: center; padding: 40px; color: var(--text-light); }
-        .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-
-        /* ── 결과 카운트 ── */
-        .result-count {
-            font-size: 0.83rem;
-            color: var(--text-light);
-            margin-bottom: 1rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국가별 비자 안내</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;background:#060e1f}
+.star{position:fixed;border-radius:50%;pointer-events:none;animation:tw var(--d,3s) infinite alternate}
+@keyframes tw{0%{opacity:.04}100%{opacity:.9}}
+.aurora{position:fixed;border-radius:50%;pointer-events:none;filter:blur(90px);mix-blend-mode:screen;animation:drift var(--d,8s) infinite alternate}
+@keyframes drift{0%{transform:translate(0,0)}100%{transform:translate(25px,-18px)}}
+.hd{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:13px 32px;background:rgba(6,14,31,0.92);border-bottom:1px solid rgba(74,184,255,0.1);backdrop-filter:blur(20px)}
+.hd-left{display:flex;align-items:center;gap:14px}
+.hd-badge{background:linear-gradient(135deg,#003087,#0051c3);padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.hd-div{width:1px;height:22px;background:rgba(74,184,255,0.15)}
+.hd-title{font-size:15px;font-weight:700;color:#e8f4ff}
+.hd-title em{color:#4ab8ff;font-style:normal}
+.hd-info{font-size:11px;color:#6a93c4;text-align:right;line-height:1.7}
+.sw{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:50;width:100%;max-width:520px;padding:14px 20px}
+.sb{position:relative}
+.sb input{width:100%;padding:14px 50px 14px 20px;background:rgba(255,255,255,.06);border:1.5px solid rgba(74,184,255,0.18);border-radius:13px;color:#fff;font-family:inherit;font-size:14px;outline:none;transition:all .25s;backdrop-filter:blur(16px);box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06)}
+.sb input:focus{border-color:rgba(74,184,255,.6);background:rgba(255,255,255,.1);box-shadow:0 0 0 4px rgba(74,184,255,.12),0 4px 20px rgba(0,0,0,.4)}
+.sb input::placeholder{color:rgba(106,147,196,.6)}
+.si-icon{position:absolute;right:17px;top:50%;transform:translateY(-50%);color:rgba(106,147,196,.6);font-size:15px;pointer-events:none}
+.dd{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(7,15,36,0.98);border:1.5px solid rgba(74,184,255,.16);border-radius:13px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.9);display:none;backdrop-filter:blur(24px);max-height:300px;overflow-y:auto}
+.dd.show{display:block}
+.dd::-webkit-scrollbar{width:3px}
+.dd::-webkit-scrollbar-thumb{background:rgba(74,184,255,.2);border-radius:4px}
+.ddi{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s}
+.ddi:last-child{border-bottom:none}
+.ddi:hover{background:rgba(74,184,255,.09)}
+.ddi-name{font-size:14px;font-weight:600;color:#e8f4ff}
+.ddi-name mark{background:rgba(74,184,255,.3);color:#fff;border-radius:3px;padding:0 3px}
+.ddi-type{font-size:11px;color:#6a93c4;margin-top:2px}
+.ddi-arr{font-size:12px;color:rgba(74,184,255,.4)}
+.dd-empty{padding:18px;text-align:center;font-size:13px;color:#6a93c4}
+#map{position:fixed;inset:0;top:60px}
+#worldmap{width:100%;height:100%}
+#pathsvg{position:fixed;inset:0;top:60px;pointer-events:none;z-index:35;width:100%;height:100%}
+#plane{position:fixed;font-size:24px;z-index:40;display:none;pointer-events:none;filter:drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 18px rgba(255,150,0,.7))}
+.icn-dot{position:fixed;z-index:45;pointer-events:none;transform:translate(-50%,-50%)}
+.icn-ring{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle,#fff 20%,#4ab8ff 80%);box-shadow:0 0 0 0 rgba(74,184,255,.9);animation:icn-pulse 2s infinite}
+@keyframes icn-pulse{0%{box-shadow:0 0 0 0 rgba(74,184,255,.9)}70%{box-shadow:0 0 0 14px rgba(74,184,255,0)}100%{box-shadow:0 0 0 0 rgba(74,184,255,0)}}
+.icn-label{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;color:#4ab8ff;white-space:nowrap;letter-spacing:1px;text-shadow:0 0 8px rgba(74,184,255,.9)}
+.popup{position:fixed;z-index:60;left:50%;bottom:36px;transform:translateX(-50%);background:linear-gradient(145deg,rgba(7,15,36,0.98),rgba(12,24,55,0.98));border:1.5px solid rgba(74,184,255,.3);border-radius:18px;padding:20px 24px;min-width:240px;box-shadow:0 24px 64px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.05);display:none;backdrop-filter:blur(24px)}
+.popup.show{animation:pop .3s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes pop{from{opacity:0;transform:translateX(-50%) scale(.75)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+.popup-flag{margin-bottom:10px}
+.popup-flag img{width:72px;height:48px;border-radius:6px;object-fit:cover;box-shadow:0 2px 10px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1)}
+.popup-flag .flag-fallback{font-size:32px;line-height:1}
+.popup-country{font-size:20px;font-weight:700;color:#fff;margin-bottom:8px}
+.popup-types{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.popup-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px}
+.info-card{background:rgba(255,255,255,.05);border:1px solid rgba(74,184,255,.12);border-radius:8px;padding:8px 10px}
+.info-card-label{font-size:10px;color:#6a93c4;margin-bottom:3px;letter-spacing:.5px}
+.info-card-value{font-size:14px;font-weight:700;color:#e8f4ff}
+.info-card-sub{font-size:10px;color:#4ab8ff;margin-top:1px}
+.popup-type-label{font-size:11px;color:#6a93c4;margin-bottom:4px;margin-top:6px}
+.type-btn{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(74,184,255,.08);border:1px solid rgba(74,184,255,.2);border-radius:10px;color:#e8f4ff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;width:100%}
+.type-btn:hover{background:rgba(74,184,255,.2);border-color:rgba(74,184,255,.5);transform:translateX(2px)}
+.type-btn-arrow{color:#4ab8ff;font-size:13px}
+.popup-close{position:absolute;top:12px;right:13px;background:rgba(255,255,255,.07);border:none;color:rgba(255,255,255,.4);font-size:15px;cursor:pointer;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.popup-close:hover{background:rgba(255,255,255,.14);color:#fff}
+.loading{position:fixed;inset:0;top:60px;display:flex;align-items:center;justify-content:center;z-index:20;color:#6a93c4;font-size:14px;gap:10px}
+.ld{width:8px;height:8px;border-radius:50%;background:#4ab8ff;display:inline-block;animation:ldot 1.2s infinite}
+.ld:nth-child(2){animation-delay:.2s}.ld:nth-child(3){animation-delay:.4s}
+@keyframes ldot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+</style>
 </head>
 <body>
 
-<!-- 헤더 -->
-<div class="header">
-    <div class="header-container">
-        <div class="header-title">✈️ BizTrip Hub FAQ</div>
-        <div class="sync-status">
-            <div class="sync-indicator" id="syncDot"></div>
-            <span id="syncText">연결 중...</span>
-        </div>
-    </div>
-</div>
-
-<!-- 본문 -->
-<div class="container">
-
-    <!-- 검색 -->
-    <div class="search-section">
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="질문 또는 답변 내용으로 검색..." oninput="applyFilters()">
-        </div>
-    </div>
-
-    <!-- 국내/해외 필터 -->
-    <div class="filter-section" style="margin-bottom:1rem">
-        <span class="filter-label">구분</span>
-        <div class="filter-buttons" id="regionButtons"></div>
-    </div>
-
-    <!-- 카테고리 필터 -->
-    <div class="filter-section">
-        <span class="filter-label">카테고리</span>
-        <div class="filter-buttons" id="filterButtons"></div>
-    </div>
-
-    <!-- 결과 수 -->
-    <div class="result-count" id="resultCount"></div>
-
-    <!-- FAQ 목록 -->
-    <div class="faq-list" id="faqList">
-        <div class="state-box"><div class="spinner"></div><p>데이터를 불러오는 중입니다...</p></div>
-    </div>
-
-</div>
+<div class="aurora" style="width:700px;height:500px;background:radial-gradient(circle,rgba(0,70,180,0.2),transparent);top:-150px;left:-100px;--d:11s"></div>
+<div class="aurora" style="width:500px;height:600px;background:radial-gradient(circle,rgba(80,0,180,0.15),transparent);top:100px;right:-80px;--d:14s"></div>
+<div class="aurora" style="width:600px;height:400px;background:radial-gradient(circle,rgba(0,130,130,0.1),transparent);bottom:-100px;left:25%;--d:9s"></div>
 
 <script>
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ▶ Power Automate Flow URL
-const FLOW_URL = 'https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/5d5e7cee8a9940848698d00b1832af3e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3rg8pYmCX_TdmTuaEIlR8f39UsXRMnBGQQk1m-UmlJs';
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+for(var i=0;i<160;i++){
+  var s=document.createElement('div');s.className='star';
+  var sz=Math.random()*2.2+.3;
+  var col=Math.random()<.25?'hsl('+(200+Math.random()*40)+',90%,85%)':'#fff';
+  s.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;background:'+col+';--d:'+(2+Math.random()*5)+'s;animation-delay:'+(-Math.random()*5)+'s';
+  document.body.appendChild(s);
+}
+</script>
 
-const REGIONS = ['전체', '국내출장', '해외출장'];
-let currentRegion = '전체';
+<header class="hd">
+  <div class="hd-left">
+    <div class="hd-badge">POSCO International</div>
+    <div class="hd-div"></div>
+    <span class="hd-title">✈ <em>국가별</em> 비자 발급 안내</span>
+  </div>
+  <div class="hd-info">행정지원그룹 고은영 과장 T.2548 | 현대드림투어</div>
+</header>
 
-const CATEGORIES = ['전체', '항공권', '출장 여비 기준', '신청/정산', '숙박비', '교통비', '기타'];
+<div class="sw">
+  <div class="sb">
+    <input type="text" id="si" placeholder="출장 국가를 검색하세요..." autocomplete="off" spellcheck="false">
+    <span class="si-icon">🔍</span>
+    <div class="dd" id="dd"></div>
+  </div>
+</div>
 
-let allItems = [];
-let currentCategory = '전체';
+<div class="loading" id="loading">
+  <span class="ld"></span><span class="ld"></span><span class="ld"></span>
+  <span>지도 불러오는 중...</span>
+</div>
 
-// ── 동기 상태 표시
-function setSyncStatus(state, text) {
-    const dot  = document.getElementById('syncDot');
-    const span = document.getElementById('syncText');
-    dot.className = 'sync-indicator' + (state !== 'ok' ? ' ' + state : '');
-    span.textContent = text;
+<div id="map"><svg id="worldmap" viewBox="0 0 960 500"></svg></div>
+
+<svg id="pathsvg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="tglow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <path id="flightpath" fill="none" stroke="rgba(255,220,50,0)" stroke-width="2" stroke-dasharray="8,5" filter="url(#tglow)" opacity="0"/>
+</svg>
+
+<div id="plane">✈</div>
+<div class="icn-dot" id="icnDot"><div class="icn-label">ICN</div><div class="icn-ring"></div></div>
+
+<div class="popup" id="popup">
+  <button class="popup-close" onclick="closePopup()">×</button>
+  <div class="popup-flag" id="pflag">🌐</div>
+  <div class="popup-country" id="pcountry"></div>
+  <div class="popup-info" id="pinfo"></div>
+  <div class="popup-type-label">비자 유형을 선택하세요</div>
+  <div class="popup-types" id="ptypes"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+var BASE = 'https://poscointl1.sharepoint.com/sites/VisaGuide/SitePages/';
+
+function typeToSlug(country, type) {
+  var slug = type.replace(/\//g,'_').replace(/\s+/g,'_').replace(/[()]/g,'');
+  return BASE + encodeURIComponent(country + '_' + slug) + '.aspx';
 }
 
-// ── 데이터 로드
-async function loadFAQ() {
-    setSyncStatus('loading', '불러오는 중...');
+// tz: UTC 시차(분), fly: 비행시간(시간), 한국=UTC+9(540분)
+var VISA = {
+  '가나':            {t:['비즈니스','관광/방문'],lat:7.9,  lng:-1.0,  f:'🇬🇭',iso:'gh',id:288, tz:0,   fly:16, tzCity:'아크라'},
+  '미국':            {t:['B1/B2','ESTA'],        lat:37.1, lng:-95.7, f:'🇺🇸',iso:'us',id:840, tz:-300,fly:13, tzCity:'뉴욕(동부)'},
+  '일본':            {t:['무비자'],              lat:36.2, lng:138.3, f:'🇯🇵',iso:'jp',id:392, tz:540, fly:2,  tzCity:'도쿄'},
+  '중국':            {t:['무비자/한시적'],       lat:35.9, lng:104.2, f:'🇨🇳',iso:'cn',id:156, tz:480, fly:2,  tzCity:'베이징'},
+  '인도':            {t:['상용','전자상용'],     lat:20.6, lng:79.0,  f:'🇮🇳',iso:'in',id:356, tz:330, fly:9,  tzCity:'뉴델리'},
+  '베트남':          {t:['무비자','E-VISA'],     lat:14.1, lng:108.3, f:'🇻🇳',iso:'vn',id:704, tz:420, fly:5,  tzCity:'하노이'},
+  '태국':            {t:['무비자'],              lat:15.9, lng:101.0, f:'🇹🇭',iso:'th',id:764, tz:420, fly:6,  tzCity:'방콕'},
+  '독일':            {t:['무비자'],              lat:51.2, lng:10.5,  f:'🇩🇪',iso:'de',id:276, tz:60,  fly:11, tzCity:'베를린'},
+  '영국':            {t:['ETA'],                lat:55.4, lng:-3.4,  f:'🇬🇧',iso:'gb',id:826, tz:0,   fly:12, tzCity:'런던'},
+  '호주':            {t:['ETA'],                lat:-25.3,lng:133.8, f:'🇦🇺',iso:'au',id:36,  tz:600, fly:10, tzCity:'시드니'},
+  '캐나다':          {t:['ETA'],                lat:56.1, lng:-106.3,f:'🇨🇦',iso:'ca',id:124, tz:-480,fly:10, tzCity:'밴쿠버'},
+  '러시아':          {t:['무비자','상용'],       lat:61.5, lng:105.3, f:'🇷🇺',iso:'ru',id:643, tz:180, fly:9,  tzCity:'모스크바'},
+  '인도네시아':      {t:['도착비자','전자비자'], lat:-0.8, lng:113.9, f:'🇮🇩',iso:'id',id:360, tz:420, fly:7,  tzCity:'자카르타'},
+  '말레이시아':      {t:['무비자'],              lat:4.2,  lng:109.0, f:'🇲🇾',iso:'my',id:458, tz:480, fly:7,  tzCity:'쿠알라룸푸르'},
+  '필리핀':          {t:['무비자'],              lat:12.9, lng:121.8, f:'🇵🇭',iso:'ph',id:608, tz:480, fly:4,  tzCity:'마닐라'},
+  '사우디':          {t:['전자비자'],            lat:23.9, lng:45.1,  f:'🇸🇦',iso:'sa',id:682, tz:180, fly:10, tzCity:'리야드'},
+  '이집트':          {t:['도착비자'],            lat:26.8, lng:30.8,  f:'🇪🇬',iso:'eg',id:818, tz:120, fly:11, tzCity:'카이로'},
+  '나이지리아':      {t:['상용'],               lat:9.1,  lng:8.7,   f:'🇳🇬',iso:'ng',id:566, tz:60,  fly:15, tzCity:'라고스'},
+  '케냐':            {t:['전자비자'],            lat:-0.0, lng:37.9,  f:'🇰🇪',iso:'ke',id:404, tz:180, fly:12, tzCity:'나이로비'},
+  '남아프리카공화국':{t:['무비자'],              lat:-30.6,lng:22.9,  f:'🇿🇦',iso:'za',id:710, tz:120, fly:14, tzCity:'요하네스버그'},
+  '멕시코':          {t:['무비자'],              lat:23.6, lng:-102.5,f:'🇲🇽',iso:'mx',id:484, tz:-360,fly:15, tzCity:'멕시코시티'},
+  '칠레':            {t:['무비자'],              lat:-35.7,lng:-71.5, f:'🇨🇱',iso:'cl',id:152, tz:-180,fly:22, tzCity:'산티아고'},
+  '프랑스':          {t:['쉥겐비자'],            lat:46.2, lng:2.2,   f:'🇫🇷',iso:'fr',id:250, tz:60,  fly:12, tzCity:'파리'},
+};
 
-    try {
-        const fixedUrl = FLOW_URL.replace('api-version=1&', 'api-version=2024-10-01&');
-        const res = await fetch(fixedUrl);
+var idToName = {};
+Object.keys(VISA).forEach(function(n){ idToName[VISA[n].id]=n; });
 
+// 국가 색상 팔레트 (대륙별)
+var regionColors = {
+  // 아시아 - 청
+  392:'#1c3d70',156:'#1c3d70',356:'#2a2060',704:'#1c4a38',764:'#1c4a38',
+  360:'#1c4a38',458:'#1c4a38',608:'#1c4a38',682:'#4a3a10',643:'#1a2e50',
+  // 유럽 - 보라
+  276:'#2e1f60',826:'#2e1f60',250:'#2e1f60',
+  // 아프리카 - 황토
+  288:'#3a2a08',566:'#3a2a08',710:'#3a2a08',404:'#3a2a08',818:'#3a2a08',
+  // 아메리카 - 청록
+  840:'#1a3a5a',124:'#1a3a5a',484:'#1a4a3a',152:'#1a4a3a',
+  // 오세아니아 - 붉은갈색
+  36:'#3a1f10',
+  // 한국
+  410:'#003087',
+};
 
+var ICN={lat:37.4602,lng:126.4407};
+var proj, cT=null;
+var W=960, H=500;
 
+var svg=d3.select('#worldmap');
+proj=d3.geoNaturalEarth1().scale(153).translate([W/2,H/2]);
+var path=d3.geoPath().projection(proj);
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+var defs=svg.append('defs');
+var sg=defs.append('radialGradient').attr('id','sg').attr('cx','50%').attr('cy','50%').attr('r','70%');
+sg.append('stop').attr('offset','0%').attr('stop-color','#0d2040');
+sg.append('stop').attr('offset','100%').attr('stop-color','#060e1f');
 
-        const data = await res.json();
-        const raw = Array.isArray(data) ? data : (data.value || []);
-        allItems = raw.filter(item => {
-            const active = item['OData__xd65c__xc131__xd654_'] ?? true;
-            return active === true || active === 1;
-        });
+svg.append('path').datum({type:'Sphere'})
+  .attr('d',path).attr('fill','url(#sg)')
+  .attr('stroke','rgba(74,184,255,0.07)').attr('stroke-width','0.5');
 
-        setSyncStatus('ok', `실시간 연동 중 · ${allItems.length}개 항목`);
-        renderFilterButtons();
-        applyFilters();
+svg.append('path').datum(d3.geoGraticule()())
+  .attr('d',path).attr('fill','none')
+  .attr('stroke','rgba(74,184,255,0.04)').attr('stroke-width','0.3');
 
-    } catch (e) {
-        setSyncStatus('error', '연결 실패');
-        document.getElementById('faqList').innerHTML = `
-            <div class="state-box">
-                <p>⚠️ 데이터를 불러올 수 없습니다.</p>
-                <p style="font-size:0.83rem;margin-top:8px;color:#9CA3AF">${e.message}</p>
-            </div>`;
-    }
-}
+d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function(world){
+  document.getElementById('loading').style.display='none';
+  var countries=topojson.feature(world,world.objects.countries);
 
-// ── 카테고리 필터 버튼 생성
-function renderFilterButtons() {
-    document.getElementById('regionButtons').innerHTML = REGIONS.map(r => `
-        <button class="filter-btn ${r === '전체' ? 'all ' : ''}${r === currentRegion ? 'active' : ''}"
-                onclick="selectRegion('${r}')">
-            ${r}
-        </button>
-    `).join('');
-    document.getElementById('filterButtons').innerHTML = CATEGORIES.map(cat => `
-        <button class="filter-btn ${cat === '전체' ? 'all ' : ''}${cat === currentCategory ? 'active' : ''}"
-                onclick="selectCategory('${cat}')">
-            ${cat}
-        </button>
-    `).join('');
-}
-
-function selectRegion(r) {
-    currentRegion = r;
-    renderFilterButtons();
-    applyFilters();
-}
-
-function selectCategory(cat) {
-    currentCategory = cat;
-    renderFilterButtons();
-    applyFilters();
-}
-
-// ── 필터 + 검색 적용
-function applyFilters() {
-    const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase();
-
-    const filtered = allItems.filter(item => {
-        const q   = (item.Title || '').toLowerCase();
-        const a   = (item.field_1 || '').toLowerCase();
-        const catArr = item['OData__xad6d__xb0b4__x002f__xd574__xc6'] || [];
-        const cat = catArr.length > 0 ? catArr[0].Value : '';
-        const region = item.field_2 || '';
-
-        const matchRegion = currentRegion === '전체' || region === currentRegion;
-        const matchCat  = currentCategory === '전체' || cat === currentCategory;
-        const matchText = !keyword || q.includes(keyword) || a.includes(keyword);
-        return matchRegion && matchCat && matchText;
+  svg.selectAll('.cp')
+    .data(countries.features)
+    .enter().append('path')
+    .attr('class','cp')
+    .attr('d',path)
+    .attr('fill',function(d){
+      var id=+d.id;
+      if(id===410) return '#003087';
+      return regionColors[id]||'#112438';
+    })
+    .attr('stroke',function(d){
+      var id=+d.id;
+      if(id===410) return '#4ab8ff';
+      if(regionColors[id]) return 'rgba(100,180,255,0.2)';
+      return 'rgba(30,70,120,0.35)';
+    })
+    .attr('stroke-width',function(d){return +d.id===410?1.5:0.5;})
+    .on('click',function(event,d){
+      var name=idToName[+d.id];
+      if(name) fly(name);
+    })
+    .append('title').text(function(d){
+      var name=idToName[+d.id];
+      return name?name+' (클릭하여 비자 안내 보기)':'';
     });
 
-    document.getElementById('resultCount').textContent =
-        `총 ${filtered.length}개의 FAQ`;
+  svg.append('path')
+    .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
+    .attr('d',path).attr('fill','none')
+    .attr('stroke','rgba(74,184,255,0.08)').attr('stroke-width','0.4');
 
-    // 국내출장 먼저, 해외출장 다음 정렬
-    filtered.sort((a, b) => {
-        const order = { '국내출장': 0, '해외출장': 1 };
-        const ra = order[a.field_2] ?? 2;
-        const rb = order[b.field_2] ?? 2;
-        return ra - rb;
-    });
-    renderFAQ(filtered);
+  placeICN();
+  setTimeout(placeICN, 200);
+  initSearch();
+}).catch(function(){
+  document.getElementById('loading').style.display='none';
+  placeICN();
+  setTimeout(placeICN, 200);
+  initSearch();
+});
+
+function ll2screen(lng,lat){
+  var pt=proj([lng,lat]);
+  var r=document.getElementById('worldmap').getBoundingClientRect();
+  return{x:r.left+pt[0]*(r.width/W), y:r.top+pt[1]*(r.height/H)};
 }
+function ll2svg(lng,lat){ return proj([lng,lat]); }
 
-// ── FAQ 렌더링
-function renderFAQ(items) {
-    const listEl = document.getElementById('faqList');
+function placeICN(){
+  var sc=ll2screen(ICN.lng,ICN.lat);
+  var el=document.getElementById('icnDot');
+  el.style.left=sc.x+'px'; el.style.top=sc.y+'px';
+}
+window.addEventListener('resize',function(){ if(proj) placeICN(); });
 
-    if (items.length === 0) {
-        listEl.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-icon">📭</div>
-                <p>검색 결과가 없습니다. 다른 검색어나 카테고리를 시도해보세요.</p>
-            </div>`;
-        return;
-    }
-
-    listEl.innerHTML = items.map((item, i) => {
-        const q        = item.Title || '';
-        const a        = item.field_1 || '';
-        const catArr2  = item['OData__xad6d__xb0b4__x002f__xd574__xc6'] || [];
-        const cat      = catArr2.length > 0 ? catArr2[0].Value : '';
-        const region   = item.field_2 || '국내';
-        const modified = item['OData__xcd5c__xc885__xc218__xc815__xc7'] || item.Modified || '';
-        const id       = `faq-${i}`;
-
-        const regionClass = region === '해외' ? 'badge-overseas' : 'badge-domestic';
-        const dateStr = modified
-            ? new Date(modified).toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' }) + ' 업데이트'
-            : '';
-
-        return `
-        <div class="faq-item" id="${id}">
-            <div class="faq-header" onclick="toggleFAQ('${id}')">
-                <div class="faq-question-wrapper">
-                    <span class="region-badge ${regionClass}">${region || '국내'}</span>
-                    <span class="cat-badge">${cat}</span>
-                    <p class="faq-question">${q}</p>
-                </div>
-                <div class="faq-toggle">▼</div>
-            </div>
-            <div class="faq-content" id="${id}-content">
-                <div class="faq-answer">${a}</div>
-                <div class="faq-meta">${dateStr}</div>
-            </div>
-        </div>`;
+function initSearch(){
+  var CL=Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');});
+  document.getElementById('si').addEventListener('input',function(){
+    var q=this.value.trim(),dd=document.getElementById('dd');
+    if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+    var m=CL.filter(function(c){return c.indexOf(q)>=0;});
+    if(!m.length){dd.innerHTML='<div class="dd-empty">검색 결과 없음</div>';dd.classList.add('show');return;}
+    dd.innerHTML=m.slice(0,8).map(function(c){
+      var d=VISA[c],lbl=c.split(q).join('<mark>'+q+'</mark>');
+      return '<div class="ddi" onclick="fly(\''+c+'\')">'
+        +'<div><div class="ddi-name">'+(d.f||'')+'&nbsp;'+lbl+'</div>'
+        +'<div class="ddi-type">'+(d.t||[]).join(' / ')+'</div></div>'
+        +'<span class="ddi-arr">→</span></div>';
     }).join('');
+    dd.classList.add('show');
+  });
+
+  // 엔터 또는 돋보기 클릭 시 첫 번째 결과로 바로 이동
+  function doSearch(){
+    var q=document.getElementById('si').value.trim();
+    if(!q) return;
+    var m=CL.filter(function(c){return c.indexOf(q)>=0;});
+    if(m.length) fly(m[0]);
+  }
+  document.getElementById('si').addEventListener('keydown',function(e){
+    if(e.key==='Enter') doSearch();
+  });
+  document.querySelector('.si-icon').style.cursor='pointer';
+  document.querySelector('.si-icon').addEventListener('click', doSearch);
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('.sb')) document.getElementById('dd').classList.remove('show');
+  });
 }
 
-// ── 아코디언 토글
-function toggleFAQ(id) {
-    const item    = document.getElementById(id);
-    const content = document.getElementById(id + '-content');
-    const isOpen  = item.classList.contains('open');
+window.fly=function(country){
+  document.getElementById('dd').classList.remove('show');
+  document.getElementById('si').value=country;
+  var popup=document.getElementById('popup');
+  popup.style.display='none';popup.classList.remove('show');
+  if(cT) clearInterval(cT);
 
-    // 열린 항목 모두 닫기
-    document.querySelectorAll('.faq-item.open').forEach(el => {
-        el.classList.remove('open');
-        el.querySelector('.faq-content').style.maxHeight = '0';
-    });
+  var d=VISA[country]; if(!d) return;
+  var fs=ll2svg(ICN.lng,ICN.lat), ts=ll2svg(d.lng,d.lat);
+  var mx=(fs[0]+ts[0])/2, my=Math.min(fs[1],ts[1])-Math.abs(ts[0]-fs[0])*0.3-30;
 
-    if (!isOpen) {
-        item.classList.add('open');
-        content.style.maxHeight = content.scrollHeight + 'px';
+  var pe=document.getElementById('flightpath');
+  pe.setAttribute('d','M'+fs[0]+','+fs[1]+' Q'+mx+','+my+' '+ts[0]+','+ts[1]);
+  pe.setAttribute('stroke','rgba(255,220,50,0.8)'); pe.setAttribute('opacity','1');
+
+  var pl=document.getElementById('plane'); pl.style.display='block';
+  var dur=3000, start=null;
+
+  (function step(ts2){
+    if(!start) start=ts2;
+    var p=Math.min((ts2-start)/dur,1), ep=p<0.5?2*p*p:-1+(4-2*p)*p;
+    var bx=(1-ep)*(1-ep)*fs[0]+2*(1-ep)*ep*mx+ep*ep*ts[0];
+    var by=(1-ep)*(1-ep)*fs[1]+2*(1-ep)*ep*my+ep*ep*ts[1];
+    var tp=Math.min(ep+0.01,1);
+    var tnx=(1-tp)*(1-tp)*fs[0]+2*(1-tp)*tp*mx+tp*tp*ts[0];
+    var tny=(1-tp)*(1-tp)*fs[1]+2*(1-tp)*tp*my+tp*tp*ts[1];
+    var angle=Math.atan2(tny-by,tnx-bx)*180/Math.PI;
+    var r=document.getElementById('worldmap').getBoundingClientRect();
+    pl.style.left=(r.left+bx*(r.width/W)-13)+'px';
+    pl.style.top=(r.top+by*(r.height/H)-13)+'px';
+    pl.style.transform='rotate('+angle+'deg)';
+    if(p<1){requestAnimationFrame(step);}
+    else{
+      setTimeout(function(){
+        pl.style.display='none'; pe.setAttribute('opacity','0.15');
+        showPopup(country,d);
+      },150);
     }
+  })(performance.now());
+};
+
+function showPopup(country,d){
+  var popup=document.getElementById('popup');
+  var flagEl=document.getElementById('pflag');
+  if(d.iso){
+    flagEl.innerHTML='<img src="https://flagcdn.com/w80/'+d.iso+'.png" alt="'+country+'" onerror="this.parentElement.innerHTML=\'<span class=\\\"flag-fallback\\\">\'+(\''+d.f+'\')+\'</span>\'">';
+  } else {
+    flagEl.innerHTML='<span class="flag-fallback">'+(d.f||'🌐')+'</span>';
+  }
+  document.getElementById('pcountry').textContent=country;
+
+  // 시차 + 현지시간 계산
+  var infoEl=document.getElementById('pinfo');
+  if(d.tz!==undefined && d.fly!==undefined){
+    var KST=540; // 한국 UTC+9(분)
+    var diff=(d.tz-KST)/60; // 시차
+    var diffStr=diff===0?'한국과 동일':(diff>0?'+'+diff+'시간':diff+'시간');
+
+    // 현지 현재시각
+    var now=new Date();
+    var localMs=now.getTime()+(now.getTimezoneOffset()*60000)+(d.tz*60000);
+    var local=new Date(localMs);
+    var hh=local.getHours().toString().padStart(2,'0');
+    var mm=local.getMinutes().toString().padStart(2,'0');
+    var localTime=hh+':'+mm;
+
+    infoEl.innerHTML=
+      '<div class="info-card">'
+        +'<div class="info-card-label">⏰ 현지 시각</div>'
+        +'<div class="info-card-value">'+localTime+'</div>'
+        +'<div class="info-card-sub">시차 '+diffStr+'</div>'
+      +'</div>'
+      +'<div class="info-card">'
+        +'<div class="info-card-label">✈ 비행시간</div>'
+        +'<div class="info-card-value">약 '+d.fly+'시간</div>'
+        +'<div class="info-card-sub">인천 직항 기준</div>'
+      +'</div>';
+  } else {
+    infoEl.innerHTML='';
+  }
+
+  // 비자유형 버튼
+  var typesEl=document.getElementById('ptypes');
+  if(d.t.length===1){
+    var url=typeToSlug(country,d.t[0]);
+    typesEl.innerHTML='<a class="type-btn" href="'+url+'" target="_blank">'
+      +'<span>📋 '+d.t[0]+'</span><span class="type-btn-arrow">→</span></a>';
+  } else {
+    typesEl.innerHTML=d.t.map(function(type){
+      var url=typeToSlug(country,type);
+      return '<a class="type-btn" href="'+url+'" target="_blank">'
+        +'<span>📋 '+type+'</span><span class="type-btn-arrow">→</span></a>';
+    }).join('');
+  }
+
+  popup.style.display='block';
+  requestAnimationFrame(function(){ popup.classList.add('show'); });
 }
 
-loadFAQ();
+window.closePopup=function(){
+  document.getElementById('popup').style.display='none';
+  document.getElementById('popup').classList.remove('show');
+  if(cT) clearInterval(cT);
+};
 </script>
 </body>
 </html>
