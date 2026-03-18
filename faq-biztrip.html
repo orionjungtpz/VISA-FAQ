@@ -324,7 +324,11 @@ async function loadFAQ() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
-        allItems = Array.isArray(data) ? data : (data.value || []);
+        const raw = Array.isArray(data) ? data : (data.value || []);
+        allItems = raw.filter(item => {
+            const active = item['활성화'] ?? item['IsActive'] ?? true;
+            return active === true || active === 1;
+        });
 
         setSyncStatus('ok', `실시간 연동 중 · ${allItems.length}개 항목`);
         renderFilterButtons();
@@ -361,9 +365,9 @@ function applyFilters() {
     const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase();
 
     const filtered = allItems.filter(item => {
-        const q   = (item.Title || item.질문 || '').toLowerCase();
-        const a   = (item.Answer || item.답변 || '').toLowerCase();
-        const cat = item.Category || item.카테고리 || '';
+        const q   = (item['질문'] || item.Title || '').toLowerCase();
+        const a   = (item['답변'] || item.Answer || '').toLowerCase();
+        const cat = item['카테고리'] || item['카테고리Value'] || item.Category || '';
 
         const matchCat  = currentCategory === '전체' || cat === currentCategory;
         const matchText = !keyword || q.includes(keyword) || a.includes(keyword);
@@ -390,11 +394,11 @@ function renderFAQ(items) {
     }
 
     listEl.innerHTML = items.map((item, i) => {
-        const q        = item.Title    || item.질문    || '';
-        const a        = item.Answer   || item.답변    || '';
-        const cat      = item.Category || item.카테고리 || '';
-        const region   = item.Region   || item['국내_x002f_해외'] || '국내';
-        const modified = item.Modified || item.최종수정일 || '';
+        const q        = item['질문'] || item.Title || '';
+        const a        = item['답변'] || item.Answer || '';
+        const cat      = item['카테고리'] || item['카테고리Value'] || item.Category || '';
+        const region   = item['국내/해외'] || item['OData__x uad6d_xb0b4__x002f__xd574_xc678_'] || item['국내_x002f_해외'] || '국내';
+        const modified = item['최종수정일'] || item.Modified || '';
         const id       = `faq-${i}`;
 
         const regionClass = region === '해외' ? 'badge-overseas' : 'badge-domestic';
