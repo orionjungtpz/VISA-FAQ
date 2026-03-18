@@ -131,41 +131,128 @@ for(var i=0;i<160;i++){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <script>
 var BASE = 'https://poscointl1.sharepoint.com/sites/VisaGuide/SitePages/';
+var API_URL = 'https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/575bbc8293674a9e99a37357f2ee74e7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jZ5DqKljJNjpUXoYDLsTgJ3ZcII2qTeYBzlnhAJjaq8';
 
 function typeToSlug(country, type) {
-  var slug = type.replace(/\//g,'_').replace(/\s+/g,'_').replace(/[()]/g,'');
+  var slug = type.replace(/\//g,'_').replace(/\s+/g,'_').replace(/[()]/g,'').replace(/\*/g,'').replace(/\s+/g,'_').replace(/_+/g,'_').replace(/_$/,'');
   return BASE + encodeURIComponent(country + '_' + slug) + '.aspx';
 }
 
-// tz: UTC 시차(분), fly: 비행시간(시간), 한국=UTC+9(540분)
-var VISA = {
-  '가나':            {t:['비즈니스','관광/방문'],lat:7.9,  lng:-1.0,  f:'🇬🇭',iso:'gh',id:288, tz:0,   fly:16, tzCity:'아크라'},
-  '미국':            {t:['B1/B2','ESTA'],        lat:37.1, lng:-95.7, f:'🇺🇸',iso:'us',id:840, tz:-300,fly:13, tzCity:'뉴욕(동부)'},
-  '일본':            {t:['무비자'],              lat:36.2, lng:138.3, f:'🇯🇵',iso:'jp',id:392, tz:540, fly:2,  tzCity:'도쿄'},
-  '중국':            {t:['무비자/한시적'],       lat:35.9, lng:104.2, f:'🇨🇳',iso:'cn',id:156, tz:480, fly:2,  tzCity:'베이징'},
-  '인도':            {t:['상용','전자상용'],     lat:20.6, lng:79.0,  f:'🇮🇳',iso:'in',id:356, tz:330, fly:9,  tzCity:'뉴델리'},
-  '베트남':          {t:['무비자','E-VISA'],     lat:14.1, lng:108.3, f:'🇻🇳',iso:'vn',id:704, tz:420, fly:5,  tzCity:'하노이'},
-  '태국':            {t:['무비자'],              lat:15.9, lng:101.0, f:'🇹🇭',iso:'th',id:764, tz:420, fly:6,  tzCity:'방콕'},
-  '독일':            {t:['무비자'],              lat:51.2, lng:10.5,  f:'🇩🇪',iso:'de',id:276, tz:60,  fly:11, tzCity:'베를린'},
-  '영국':            {t:['ETA'],                lat:55.4, lng:-3.4,  f:'🇬🇧',iso:'gb',id:826, tz:0,   fly:12, tzCity:'런던'},
-  '호주':            {t:['ETA'],                lat:-25.3,lng:133.8, f:'🇦🇺',iso:'au',id:36,  tz:600, fly:10, tzCity:'시드니'},
-  '캐나다':          {t:['ETA'],                lat:56.1, lng:-106.3,f:'🇨🇦',iso:'ca',id:124, tz:-480,fly:10, tzCity:'밴쿠버'},
-  '러시아':          {t:['무비자','상용'],       lat:61.5, lng:105.3, f:'🇷🇺',iso:'ru',id:643, tz:180, fly:9,  tzCity:'모스크바'},
-  '인도네시아':      {t:['도착비자','전자비자'], lat:-0.8, lng:113.9, f:'🇮🇩',iso:'id',id:360, tz:420, fly:7,  tzCity:'자카르타'},
-  '말레이시아':      {t:['무비자'],              lat:4.2,  lng:109.0, f:'🇲🇾',iso:'my',id:458, tz:480, fly:7,  tzCity:'쿠알라룸푸르'},
-  '필리핀':          {t:['무비자'],              lat:12.9, lng:121.8, f:'🇵🇭',iso:'ph',id:608, tz:480, fly:4,  tzCity:'마닐라'},
-  '사우디':          {t:['전자비자'],            lat:23.9, lng:45.1,  f:'🇸🇦',iso:'sa',id:682, tz:180, fly:10, tzCity:'리야드'},
-  '이집트':          {t:['도착비자'],            lat:26.8, lng:30.8,  f:'🇪🇬',iso:'eg',id:818, tz:120, fly:11, tzCity:'카이로'},
-  '나이지리아':      {t:['상용'],               lat:9.1,  lng:8.7,   f:'🇳🇬',iso:'ng',id:566, tz:60,  fly:15, tzCity:'라고스'},
-  '케냐':            {t:['전자비자'],            lat:-0.0, lng:37.9,  f:'🇰🇪',iso:'ke',id:404, tz:180, fly:12, tzCity:'나이로비'},
-  '남아프리카공화국':{t:['무비자'],              lat:-30.6,lng:22.9,  f:'🇿🇦',iso:'za',id:710, tz:120, fly:14, tzCity:'요하네스버그'},
-  '멕시코':          {t:['무비자'],              lat:23.6, lng:-102.5,f:'🇲🇽',iso:'mx',id:484, tz:-360,fly:15, tzCity:'멕시코시티'},
-  '칠레':            {t:['무비자'],              lat:-35.7,lng:-71.5, f:'🇨🇱',iso:'cl',id:152, tz:-180,fly:22, tzCity:'산티아고'},
-  '프랑스':          {t:['쉥겐비자'],            lat:46.2, lng:2.2,   f:'🇫🇷',iso:'fr',id:250, tz:60,  fly:12, tzCity:'파리'},
+// 국가별 고정 데이터 (좌표, 시차, 비행시간, ISO코드)
+var GEO = {
+  '가나':            {lat:7.9,   lng:-1.0,   iso:'gh', tz:0,    fly:16, tzCity:'아크라',         id:288},
+  '감비아':          {lat:13.4,  lng:-15.3,  iso:'gm', tz:0,    fly:15, tzCity:'반줄',           id:270},
+  '나이지리아':      {lat:9.1,   lng:8.7,    iso:'ng', tz:60,   fly:15, tzCity:'라고스',         id:566},
+  '남아프리카공화국':{lat:-30.6, lng:22.9,   iso:'za', tz:120,  fly:14, tzCity:'요하네스버그',   id:710},
+  '네팔':            {lat:28.4,  lng:84.1,   iso:'np', tz:345,  fly:8,  tzCity:'카트만두',       id:524},
+  '뉴질랜드':        {lat:-40.9, lng:174.9,  iso:'nz', tz:720,  fly:11, tzCity:'오클랜드',       id:554},
+  '대만':            {lat:23.7,  lng:121.0,  iso:'tw', tz:480,  fly:2,  tzCity:'타이베이',       id:158},
+  '독일':            {lat:51.2,  lng:10.5,   iso:'de', tz:60,   fly:11, tzCity:'베를린',         id:276},
+  '러시아':          {lat:61.5,  lng:105.3,  iso:'ru', tz:180,  fly:9,  tzCity:'모스크바',       id:643},
+  '레바논':          {lat:33.9,  lng:35.9,   iso:'lb', tz:120,  fly:10, tzCity:'베이루트',       id:422},
+  '루마니아':        {lat:45.9,  lng:24.9,   iso:'ro', tz:120,  fly:11, tzCity:'부쿠레슈티',     id:642},
+  '르완다':          {lat:-1.9,  lng:29.9,   iso:'rw', tz:120,  fly:13, tzCity:'키갈리',         id:646},
+  '리비아':          {lat:26.3,  lng:17.2,   iso:'ly', tz:120,  fly:12, tzCity:'트리폴리',       id:434},
+  '마다가스카르':    {lat:-18.8, lng:46.9,   iso:'mg', tz:180,  fly:13, tzCity:'안타나나리보',   id:450},
+  '말레이시아':      {lat:4.2,   lng:109.0,  iso:'my', tz:480,  fly:7,  tzCity:'쿠알라룸푸르',  id:458},
+  '멕시코':          {lat:23.6,  lng:-102.5, iso:'mx', tz:-360, fly:15, tzCity:'멕시코시티',     id:484},
+  '모로코':          {lat:31.8,  lng:-7.1,   iso:'ma', tz:60,   fly:13, tzCity:'카사블랑카',     id:504},
+  '모리타니아':      {lat:21.0,  lng:-10.9,  iso:'mr', tz:0,    fly:15, tzCity:'누악쇼트',       id:478},
+  '모잠비크':        {lat:-18.7, lng:35.5,   iso:'mz', tz:120,  fly:13, tzCity:'마푸토',         id:508},
+  '몽골':            {lat:46.9,  lng:103.8,  iso:'mn', tz:480,  fly:3,  tzCity:'울란바토르',     id:496},
+  '미국':            {lat:37.1,  lng:-95.7,  iso:'us', tz:-300, fly:13, tzCity:'뉴욕(동부)',     id:840},
+  '미얀마':          {lat:21.9,  lng:96.0,   iso:'mm', tz:390,  fly:6,  tzCity:'양곤',           id:104},
+  '방글라데시':      {lat:23.7,  lng:90.4,   iso:'bd', tz:360,  fly:7,  tzCity:'다카',           id:50},
+  '베트남':          {lat:14.1,  lng:108.3,  iso:'vn', tz:420,  fly:5,  tzCity:'하노이',         id:704},
+  '벨라루스':        {lat:53.7,  lng:28.0,   iso:'by', tz:180,  fly:10, tzCity:'민스크',         id:112},
+  '사우디':          {lat:23.9,  lng:45.1,   iso:'sa', tz:180,  fly:10, tzCity:'리야드',         id:682},
+  '세네갈':          {lat:14.5,  lng:-14.5,  iso:'sn', tz:0,    fly:15, tzCity:'다카르',         id:686},
+  '수단':            {lat:12.9,  lng:30.2,   iso:'sd', tz:180,  fly:12, tzCity:'하르툼',         id:729},
+  '쉥겐비자':        {lat:50.9,  lng:4.4,    iso:'eu', tz:60,   fly:11, tzCity:'브뤼셀',         id:null},
+  '스리랑카':        {lat:7.9,   lng:80.8,   iso:'lk', tz:330,  fly:9,  tzCity:'콜롬보',         id:144},
+  '알제리':          {lat:28.0,  lng:1.7,    iso:'dz', tz:60,   fly:13, tzCity:'알제',           id:12},
+  '앙골라':          {lat:-11.2, lng:17.9,   iso:'ao', tz:60,   fly:14, tzCity:'루안다',         id:24},
+  '에티오피아':      {lat:9.1,   lng:40.5,   iso:'et', tz:180,  fly:11, tzCity:'아디스아바바',   id:231},
+  '영국':            {lat:55.4,  lng:-3.4,   iso:'gb', tz:0,    fly:12, tzCity:'런던',           id:826},
+  '요르단':          {lat:30.6,  lng:36.2,   iso:'jo', tz:180,  fly:10, tzCity:'암만',           id:400},
+  '우간다':          {lat:1.4,   lng:32.3,   iso:'ug', tz:180,  fly:12, tzCity:'캄팔라',         id:800},
+  '우즈베키스탄':    {lat:41.4,  lng:64.6,   iso:'uz', tz:300,  fly:7,  tzCity:'타슈켄트',       id:860},
+  '이란':            {lat:32.4,  lng:53.7,   iso:'ir', tz:210,  fly:8,  tzCity:'테헤란',         id:364},
+  '이집트':          {lat:26.8,  lng:30.8,   iso:'eg', tz:120,  fly:11, tzCity:'카이로',         id:818},
+  '인도':            {lat:20.6,  lng:79.0,   iso:'in', tz:330,  fly:9,  tzCity:'뉴델리',         id:356},
+  '인도네시아':      {lat:-0.8,  lng:113.9,  iso:'id', tz:420,  fly:7,  tzCity:'자카르타',       id:360},
+  '일본':            {lat:36.2,  lng:138.3,  iso:'jp', tz:540,  fly:2,  tzCity:'도쿄',           id:392},
+  '잠비아':          {lat:-13.1, lng:27.8,   iso:'zm', tz:120,  fly:13, tzCity:'루사카',         id:894},
+  '중국':            {lat:35.9,  lng:104.2,  iso:'cn', tz:480,  fly:2,  tzCity:'베이징',         id:156},
+  '짐바브웨':        {lat:-19.0, lng:29.2,   iso:'zw', tz:120,  fly:14, tzCity:'하라레',         id:716},
+  '차드':            {lat:15.5,  lng:18.7,   iso:'td', tz:60,   fly:13, tzCity:'은자메나',       id:148},
+  '체코':            {lat:49.8,  lng:15.5,   iso:'cz', tz:60,   fly:11, tzCity:'프라하',         id:203},
+  '칠레':            {lat:-35.7, lng:-71.5,  iso:'cl', tz:-180, fly:22, tzCity:'산티아고',       id:152},
+  '카메룬':          {lat:3.8,   lng:11.5,   iso:'cm', tz:60,   fly:14, tzCity:'야운데',         id:120},
+  '캄보디아':        {lat:12.6,  lng:105.0,  iso:'kh', tz:420,  fly:6,  tzCity:'프놈펜',         id:116},
+  '캐나다':          {lat:56.1,  lng:-106.3, iso:'ca', tz:-480, fly:10, tzCity:'밴쿠버',         id:124},
+  '케냐':            {lat:-0.0,  lng:37.9,   iso:'ke', tz:180,  fly:12, tzCity:'나이로비',       id:404},
+  '코트디브아르':    {lat:7.5,   lng:-5.5,   iso:'ci', tz:0,    fly:15, tzCity:'아비장',         id:384},
+  '콩고민주공화국':  {lat:-4.0,  lng:21.8,   iso:'cd', tz:60,   fly:14, tzCity:'킨샤사',         id:180},
+  '쿠바':            {lat:21.5,  lng:-77.8,  iso:'cu', tz:-300, fly:16, tzCity:'아바나',         id:192},
+  '쿠웨이트':        {lat:29.3,  lng:47.5,   iso:'kw', tz:180,  fly:10, tzCity:'쿠웨이트시티',  id:414},
+  '탄자니아':        {lat:-6.4,  lng:34.9,   iso:'tz', tz:180,  fly:12, tzCity:'다르에스살람',  id:834},
+  '태국':            {lat:15.9,  lng:101.0,  iso:'th', tz:420,  fly:6,  tzCity:'방콕',           id:764},
+  '튀니지':          {lat:33.9,  lng:9.5,    iso:'tn', tz:60,   fly:12, tzCity:'튀니스',         id:788},
+  '파나마':          {lat:8.5,   lng:-80.8,  iso:'pa', tz:-300, fly:17, tzCity:'파나마시티',     id:591},
+  '파키스탄':        {lat:30.4,  lng:69.3,   iso:'pk', tz:300,  fly:8,  tzCity:'이슬라마바드',  id:586},
+  '파푸아뉴기니':    {lat:-6.3,  lng:144.0,  iso:'pg', tz:600,  fly:9,  tzCity:'포트모르즈비',  id:598},
+  '페루':            {lat:-9.2,  lng:-75.0,  iso:'pe', tz:-300, fly:20, tzCity:'리마',           id:604},
+  '필리핀':          {lat:12.9,  lng:121.8,  iso:'ph', tz:480,  fly:4,  tzCity:'마닐라',         id:608},
+  '헝가리':          {lat:47.2,  lng:19.5,   iso:'hu', tz:60,   fly:11, tzCity:'부다페스트',     id:348},
+  '홍콩':            {lat:22.3,  lng:114.2,  iso:'hk', tz:480,  fly:3,  tzCity:'홍콩',           id:344},
+  '호주':            {lat:-25.3, lng:133.8,  iso:'au', tz:600,  fly:10, tzCity:'시드니',         id:36},
 };
 
-var idToName = {};
-Object.keys(VISA).forEach(function(n){ idToName[VISA[n].id]=n; });
+// SharePoint에서 국가/비자유형 불러오기
+var VISA = {};
+var VISA_LOADED = false;
+
+function loadVisaData() {
+  fetch(API_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'})
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      var items = Array.isArray(json) ? json : (json.value || []);
+      var map = {};
+      items.forEach(function(item){
+        var country = item.Title || item['국가명'] || '';
+        var type = item['비자유형'] || '';
+        if(!country) return;
+        if(!map[country]) map[country] = [];
+        map[country].push(type || '개선중');
+      });
+      // GEO 데이터와 합치기
+      Object.keys(map).forEach(function(country){
+        var geo = GEO[country] || {};
+        VISA[country] = Object.assign({}, geo, {t: map[country]});
+      });
+      VISA_LOADED = true;
+      // idToName 재구성
+      idToName = {};
+      Object.keys(VISA).forEach(function(n){
+        if(VISA[n].id) idToName[VISA[n].id] = n;
+      });
+      // 지도 국가 색상 업데이트
+      updateMapColors();
+      initSearch();
+      document.getElementById('loading2') && (document.getElementById('loading2').style.display='none');
+    })
+    .catch(function(){
+      // API 실패시 GEO 데이터만으로 폴백
+      Object.keys(GEO).forEach(function(c){ VISA[c] = Object.assign({}, GEO[c], {t:['개선중']}); });
+      VISA_LOADED = true;
+      idToName = {};
+      Object.keys(VISA).forEach(function(n){ if(VISA[n].id) idToName[VISA[n].id]=n; });
+      initSearch();
+    });
+}
+
+loadVisaData();
 
 // 국가 색상 팔레트 (대륙별)
 var regionColors = {
@@ -242,13 +329,20 @@ d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(f
 
   placeICN();
   setTimeout(placeICN, 200);
-  initSearch();
 }).catch(function(){
   document.getElementById('loading').style.display='none';
   placeICN();
   setTimeout(placeICN, 200);
-  initSearch();
 });
+
+// 지도 로드 후 VISA 데이터 기반으로 색상 업데이트
+function updateMapColors(){
+  svg.selectAll('.cp').attr('fill',function(d){
+    var id=+d.id;
+    if(id===410) return '#003087';
+    return regionColors[id]||'#112438';
+  });
+}
 
 function ll2screen(lng,lat){
   var pt=proj([lng,lat]);
@@ -264,28 +358,30 @@ function placeICN(){
 }
 window.addEventListener('resize',function(){ if(proj) placeICN(); });
 
+var SEARCH_INIT = false;
 function initSearch(){
-  var CL=Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');});
+  if(SEARCH_INIT) return;
+  SEARCH_INIT = true;
+  function getCL(){ return Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');}); }
   document.getElementById('si').addEventListener('input',function(){
     var q=this.value.trim(),dd=document.getElementById('dd');
     if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
-    var m=CL.filter(function(c){return c.indexOf(q)>=0;});
+    var m=getCL().filter(function(c){return c.indexOf(q)>=0;});
     if(!m.length){dd.innerHTML='<div class="dd-empty">검색 결과 없음</div>';dd.classList.add('show');return;}
     dd.innerHTML=m.slice(0,8).map(function(c){
       var d=VISA[c],lbl=c.split(q).join('<mark>'+q+'</mark>');
       return '<div class="ddi" onclick="fly(\''+c+'\')">'
-        +'<div><div class="ddi-name">'+(d.f||'')+'&nbsp;'+lbl+'</div>'
+        +'<div><div class="ddi-name">'+(d.iso?'':'')+'&nbsp;'+lbl+'</div>'
         +'<div class="ddi-type">'+(d.t||[]).join(' / ')+'</div></div>'
         +'<span class="ddi-arr">→</span></div>';
     }).join('');
     dd.classList.add('show');
   });
 
-  // 엔터 또는 돋보기 클릭 시 첫 번째 결과로 바로 이동
   function doSearch(){
     var q=document.getElementById('si').value.trim();
     if(!q) return;
-    var m=CL.filter(function(c){return c.indexOf(q)>=0;});
+    var m=getCL().filter(function(c){return c.indexOf(q)>=0;});
     if(m.length) fly(m[0]);
   }
   document.getElementById('si').addEventListener('keydown',function(e){
@@ -381,17 +477,15 @@ function showPopup(country,d){
 
   // 비자유형 버튼
   var typesEl=document.getElementById('ptypes');
-  if(d.t.length===1){
-    var url=typeToSlug(country,d.t[0]);
-    typesEl.innerHTML='<a class="type-btn" href="'+url+'" target="_blank">'
-      +'<span>📋 '+d.t[0]+'</span><span class="type-btn-arrow">→</span></a>';
-  } else {
-    typesEl.innerHTML=d.t.map(function(type){
-      var url=typeToSlug(country,type);
-      return '<a class="type-btn" href="'+url+'" target="_blank">'
-        +'<span>📋 '+type+'</span><span class="type-btn-arrow">→</span></a>';
-    }).join('');
-  }
+  typesEl.innerHTML=d.t.map(function(type){
+    if(!type || type==='개선중'){
+      return '<div class="type-btn" style="opacity:.5;cursor:default;pointer-events:none;">'
+        +'<span>🔧 페이지 개선중</span><span class="type-btn-arrow">—</span></div>';
+    }
+    var url=typeToSlug(country,type);
+    return '<a class="type-btn" href="'+url+'" target="_blank">'
+      +'<span>📋 '+type+'</span><span class="type-btn-arrow">→</span></a>';
+  }).join('');
 
   popup.style.display='block';
   requestAnimationFrame(function(){ popup.classList.add('show'); });
