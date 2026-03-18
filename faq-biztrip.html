@@ -379,6 +379,13 @@ function applyFilters() {
     document.getElementById('resultCount').textContent =
         `총 ${filtered.length}개의 FAQ`;
 
+    // 국내출장 먼저, 해외출장 다음 정렬
+    filtered.sort((a, b) => {
+        const order = { '국내출장': 0, '해외출장': 1 };
+        const ra = order[a.field_2] ?? 2;
+        const rb = order[b.field_2] ?? 2;
+        return ra - rb;
+    });
     renderFAQ(filtered);
 }
 
