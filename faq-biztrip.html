@@ -276,6 +276,12 @@
         </div>
     </div>
 
+    <!-- 국내/해외 필터 -->
+    <div class="filter-section" style="margin-bottom:1rem">
+        <span class="filter-label">구분</span>
+        <div class="filter-buttons" id="regionButtons"></div>
+    </div>
+
     <!-- 카테고리 필터 -->
     <div class="filter-section">
         <span class="filter-label">카테고리</span>
@@ -297,6 +303,9 @@
 // ▶ Power Automate Flow URL
 const FLOW_URL = 'https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/5d5e7cee8a9940848698d00b1832af3e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3rg8pYmCX_TdmTuaEIlR8f39UsXRMnBGQQk1m-UmlJs';
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+const REGIONS = ['전체', '국내출장', '해외출장'];
+let currentRegion = '전체';
 
 const CATEGORIES = ['전체', '항공권', '출장 여비 기준', '신청/정산', '숙박비', '교통비', '기타'];
 
@@ -347,12 +356,24 @@ async function loadFAQ() {
 
 // ── 카테고리 필터 버튼 생성
 function renderFilterButtons() {
+    document.getElementById('regionButtons').innerHTML = REGIONS.map(r => `
+        <button class="filter-btn ${r === '전체' ? 'all ' : ''}${r === currentRegion ? 'active' : ''}"
+                onclick="selectRegion('${r}')">
+            ${r}
+        </button>
+    `).join('');
     document.getElementById('filterButtons').innerHTML = CATEGORIES.map(cat => `
         <button class="filter-btn ${cat === '전체' ? 'all ' : ''}${cat === currentCategory ? 'active' : ''}"
                 onclick="selectCategory('${cat}')">
             ${cat}
         </button>
     `).join('');
+}
+
+function selectRegion(r) {
+    currentRegion = r;
+    renderFilterButtons();
+    applyFilters();
 }
 
 function selectCategory(cat) {
@@ -370,10 +391,12 @@ function applyFilters() {
         const a   = (item.field_1 || '').toLowerCase();
         const catArr = item['OData__xad6d__xb0b4__x002f__xd574__xc6'] || [];
         const cat = catArr.length > 0 ? catArr[0].Value : '';
+        const region = item.field_2 || '';
 
+        const matchRegion = currentRegion === '전체' || region === currentRegion;
         const matchCat  = currentCategory === '전체' || cat === currentCategory;
         const matchText = !keyword || q.includes(keyword) || a.includes(keyword);
-        return matchCat && matchText;
+        return matchRegion && matchCat && matchText;
     });
 
     document.getElementById('resultCount').textContent =
@@ -420,8 +443,8 @@ function renderFAQ(items) {
         <div class="faq-item" id="${id}">
             <div class="faq-header" onclick="toggleFAQ('${id}')">
                 <div class="faq-question-wrapper">
-                    <span class="cat-badge">${cat}</span>
                     <span class="region-badge ${regionClass}">${region || '국내'}</span>
+                    <span class="cat-badge">${cat}</span>
                     <p class="faq-question">${q}</p>
                 </div>
                 <div class="faq-toggle">▼</div>
