@@ -294,8 +294,9 @@ svg.append('path').datum(d3.geoGraticule()())
 
 // unpkg로 지도 데이터 로드 (jsdelivr 차단 우회)
 var MAP_URLS = [
+  './countries-110m.json',
   'https://unpkg.com/world-atlas@2/countries-110m.json',
-  'https://cdn.skypack.dev/world-atlas@2/countries-110m.json'
+  'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 ];
 
 function loadMap(urls, idx) {
