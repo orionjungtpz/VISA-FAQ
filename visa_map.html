@@ -220,11 +220,23 @@ function loadVisaData() {
       var items = Array.isArray(json) ? json : (json.value || []);
       var map = {};
       items.forEach(function(item){
-        var country = item.Title || item['국가명'] || '';
-        var type = item['비자유형'] || '';
+        var country = item.Title || item['{Name}'] || '';
+        // 비자유형 필드 (SharePoint 인코딩된 필드명 포함 여러 키 시도)
+        var type = '';
+        var visaField = item['OData__xbe44__xc790__xc720__xd615_0'];
+        if(visaField && visaField.Value) {
+          type = visaField.Value;
+        } else {
+          // fallback: 다른 키 탐색
+          Object.keys(item).forEach(function(k){
+            if(k.indexOf('xbe44') > -1 && item[k] && typeof item[k] === 'object' && item[k].Value) {
+              type = item[k].Value;
+            }
+          });
+        }
         if(!country) return;
         if(!map[country]) map[country] = [];
-        map[country].push(type || '개선중');
+        if(type) map[country].push(type);
       });
       // GEO 데이터와 합치기
       Object.keys(map).forEach(function(country){
