@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizTrip Hub - FAQ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary:    #1B4E7D;
+            --secondary:  #2B7DAE;
+            --accent:     #4A90C7;
+            --light-bg:   #F5F7FA;
+            --border:     #DCE0E5;
+            --text-dark:  #1F2937;
+            --text-light: #6B7280;
+            --white:      #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* ── 헤더 ── */
+        .header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sync-status {
+            font-size: 0.82rem;
+            color: #C7E9C0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sync-indicator {
+            width: 8px; height: 8px;
+            background: #C7E9C0;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .sync-indicator.loading { background: #F9CA6A; animation: pulse .6s infinite; }
+        .sync-indicator.error   { background: #E74C3C; animation: none; }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.4; }
+        }
+
+        /* ── 컨테이너 ── */
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+        /* ── 검색 ── */
+        .search-section { margin-bottom: 1.5rem; }
+        .search-box { position: relative; }
+        .search-box input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.8rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color .25s;
+            background: var(--white);
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(43,125,174,0.1);
+        }
+        .search-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        /* ── 필터 ── */
+        .filter-section { margin-bottom: 2rem; }
+        .filter-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.7rem;
+            display: block;
+        }
+        .filter-buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .filter-btn {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid var(--border);
+            padding: 0.5rem 1.1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all .2s;
+        }
+        .filter-btn:hover { border-color: var(--secondary); color: var(--secondary); }
+        .filter-btn.active {
+            background: var(--secondary);
+            color: var(--white);
+            border-color: var(--secondary);
+        }
+        .filter-btn.all.active { background: var(--primary); border-color: var(--primary); }
+
+        /* ── FAQ 목록 ── */
+        .faq-list { display: flex; flex-direction: column; gap: 0.8rem; }
+
+        .faq-item {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow .25s, border-color .25s;
+        }
+        .faq-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--accent); }
+
+        .faq-header {
+            padding: 1.1rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            background: var(--white);
+            transition: background .2s;
+            user-select: none;
+        }
+        .faq-header:hover,
+        .faq-item.open .faq-header { background: var(--light-bg); }
+
+        .faq-question-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        .cat-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--white);
+            padding: 0.25rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .region-badge {
+            display: inline-block;
+            padding: 0.25rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .badge-domestic { background: #E8F5E9; color: #2E7D32; }
+        .badge-overseas { background: #E3F2FD; color: #1565C0; }
+
+        .faq-question {
+            font-size: 0.97rem;
+            font-weight: 500;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .faq-toggle {
+            color: var(--text-light);
+            font-size: 0.8rem;
+            transition: transform .3s;
+            flex-shrink: 0;
+        }
+        .faq-item.open .faq-toggle { transform: rotate(180deg); }
+
+        /* ── 답변 영역 ── */
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .35s ease;
+        }
+        .faq-answer {
+            padding: 1rem 1.25rem;
+            font-size: 0.93rem;
+            line-height: 1.8;
+            color: #374151;
+            border-top: 1px solid var(--border);
+            white-space: pre-wrap;
+        }
+        .faq-meta {
+            padding: 0.6rem 1.25rem 1rem;
+            font-size: 0.78rem;
+            color: #9CA3AF;
+            text-align: right;
+        }
+
+        /* ── 로딩 / 에러 / 빈 결과 ── */
+        .state-box {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .spinner {
+            width: 36px; height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state { text-align: center; padding: 40px; color: var(--text-light); }
+        .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+        /* ── 결과 카운트 ── */
+        .result-count {
+            font-size: 0.83rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+    <div class="header-container">
+        <div class="header-title">✈️ BizTrip Hub FAQ</div>
+        <div class="sync-status">
+            <div class="sync-indicator" id="syncDot"></div>
+            <span id="syncText">연결 중...</span>
+        </div>
+    </div>
+</div>
+
+<!-- 본문 -->
+<div class="container">
+
+    <!-- 검색 -->
+    <div class="search-section">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="질문 또는 답변 내용으로 검색..." oninput="applyFilters()">
+        </div>
+    </div>
+
+    <!-- 카테고리 필터 -->
+    <div class="filter-section">
+        <span class="filter-label">카테고리</span>
+        <div class="filter-buttons" id="filterButtons"></div>
+    </div>
+
+    <!-- 결과 수 -->
+    <div class="result-count" id="resultCount"></div>
+
+    <!-- FAQ 목록 -->
+    <div class="faq-list" id="faqList">
+        <div class="state-box"><div class="spinner"></div><p>데이터를 불러오는 중입니다...</p></div>
+    </div>
+
+</div>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ▶ Power Automate Flow URL
+const FLOW_URL = 'https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/5d5e7cee8a9940848698d00b1832af3e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3rg8pYmCX_TdmTuaEIlR8f39UsXRMnBGQQk1m-UmlJs';
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+const CATEGORIES = ['전체', '항공권', '출장 여비 기준', '신청/정산', '숙박비', '교통비', '기타'];
+
+let allItems = [];
+let currentCategory = '전체';
+
+// ── 동기 상태 표시
+function setSyncStatus(state, text) {
+    const dot  = document.getElementById('syncDot');
+    const span = document.getElementById('syncText');
+    dot.className = 'sync-indicator' + (state !== 'ok' ? ' ' + state : '');
+    span.textContent = text;
+}
+
+// ── 데이터 로드
+async function loadFAQ() {
+    setSyncStatus('loading', '불러오는 중...');
+
+    try {
+        const fixedUrl = FLOW_URL.replace('api-version=1&', 'api-version=2016-06-01&');
+        const res = await fetch(fixedUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        allItems = Array.isArray(data) ? data : (data.value || []);
+
+        setSyncStatus('ok', `실시간 연동 중 · ${allItems.length}개 항목`);
+        renderFilterButtons();
+        applyFilters();
+
+    } catch (e) {
+        setSyncStatus('error', '연결 실패');
+        document.getElementById('faqList').innerHTML = `
+            <div class="state-box">
+                <p>⚠️ 데이터를 불러올 수 없습니다.</p>
+                <p style="font-size:0.83rem;margin-top:8px;color:#9CA3AF">${e.message}</p>
+            </div>`;
+    }
+}
+
+// ── 카테고리 필터 버튼 생성
+function renderFilterButtons() {
+    document.getElementById('filterButtons').innerHTML = CATEGORIES.map(cat => `
+        <button class="filter-btn ${cat === '전체' ? 'all ' : ''}${cat === currentCategory ? 'active' : ''}"
+                onclick="selectCategory('${cat}')">
+            ${cat}
+        </button>
+    `).join('');
+}
+
+function selectCategory(cat) {
+    currentCategory = cat;
+    renderFilterButtons();
+    applyFilters();
+}
+
+// ── 필터 + 검색 적용
+function applyFilters() {
+    const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase();
+
+    const filtered = allItems.filter(item => {
+        const q   = (item.Title || item.질문 || '').toLowerCase();
+        const a   = (item.Answer || item.답변 || '').toLowerCase();
+        const cat = item.Category || item.카테고리 || '';
+
+        const matchCat  = currentCategory === '전체' || cat === currentCategory;
+        const matchText = !keyword || q.includes(keyword) || a.includes(keyword);
+        return matchCat && matchText;
+    });
+
+    document.getElementById('resultCount').textContent =
+        `총 ${filtered.length}개의 FAQ`;
+
+    renderFAQ(filtered);
+}
+
+// ── FAQ 렌더링
+function renderFAQ(items) {
+    const listEl = document.getElementById('faqList');
+
+    if (items.length === 0) {
+        listEl.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>검색 결과가 없습니다. 다른 검색어나 카테고리를 시도해보세요.</p>
+            </div>`;
+        return;
+    }
+
+    listEl.innerHTML = items.map((item, i) => {
+        const q        = item.Title    || item.질문    || '';
+        const a        = item.Answer   || item.답변    || '';
+        const cat      = item.Category || item.카테고리 || '';
+        const region   = item.Region   || item['국내_x002f_해외'] || '국내';
+        const modified = item.Modified || item.최종수정일 || '';
+        const id       = `faq-${i}`;
+
+        const regionClass = region === '해외' ? 'badge-overseas' : 'badge-domestic';
+        const dateStr = modified
+            ? new Date(modified).toLocaleDateString('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit' }) + ' 업데이트'
+            : '';
+
+        return `
+        <div class="faq-item" id="${id}">
+            <div class="faq-header" onclick="toggleFAQ('${id}')">
+                <div class="faq-question-wrapper">
+                    <span class="cat-badge">${cat}</span>
+                    <span class="region-badge ${regionClass}">${region || '국내'}</span>
+                    <p class="faq-question">${q}</p>
+                </div>
+                <div class="faq-toggle">▼</div>
+            </div>
+            <div class="faq-content" id="${id}-content">
+                <div class="faq-answer">${a}</div>
+                <div class="faq-meta">${dateStr}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ── 아코디언 토글
+function toggleFAQ(id) {
+    const item    = document.getElementById(id);
+    const content = document.getElementById(id + '-content');
+    const isOpen  = item.classList.contains('open');
+
+    // 열린 항목 모두 닫기
+    document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-content').style.maxHeight = '0';
+    });
+
+    if (!isOpen) {
+        item.classList.add('open');
+        content.style.maxHeight = content.scrollHeight + 'px';
+    }
+}
+
+loadFAQ();
+</script>
+</body>
+</html>
