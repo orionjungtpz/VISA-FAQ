@@ -37,9 +37,32 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Noto Sans KR',sans
 .ddi-type{font-size:11px;color:#6a93c4;margin-top:2px}
 .ddi-arr{font-size:12px;color:rgba(74,184,255,.4)}
 .dd-empty{padding:18px;text-align:center;font-size:13px;color:#6a93c4}
-#map{position:fixed;inset:0;top:60px}
-#worldmap{width:100%;height:100%}
-#pathsvg{position:fixed;inset:0;top:60px;pointer-events:none;z-index:35;width:100%;height:100%}
+/* 왼쪽 사이드바 */
+.sidebar{position:fixed;left:0;top:60px;bottom:0;width:220px;z-index:45;background:rgba(6,14,31,0.92);border-right:1px solid rgba(74,184,255,0.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s ease}
+.sidebar.collapsed{transform:translateX(-220px)}
+.sidebar-header{padding:12px 16px;border-bottom:1px solid rgba(74,184,255,0.1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sidebar-title{font-size:11px;font-weight:700;color:#4ab8ff;letter-spacing:1px;text-transform:uppercase}
+.sidebar-count{font-size:10px;color:#6a93c4;background:rgba(74,184,255,.1);padding:2px 8px;border-radius:10px}
+.sidebar-list{overflow-y:auto;flex:1;padding:6px 0}
+.sidebar-list::-webkit-scrollbar{width:3px}
+.sidebar-list::-webkit-scrollbar-thumb{background:rgba(74,184,255,.2);border-radius:4px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.03);transition:background .12s}
+.sidebar-item:hover{background:rgba(74,184,255,.09)}
+.sidebar-item.active{background:rgba(74,184,255,.15);border-left:2px solid #4ab8ff}
+.sidebar-flag{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.sidebar-flag img{width:22px;height:15px;border-radius:2px;object-fit:cover}
+.sidebar-name{font-size:12px;font-weight:600;color:#e8f4ff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-types{font-size:10px;color:#6a93c4;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 토글 버튼 */
+.sidebar-toggle{position:fixed;left:220px;top:50%;transform:translateY(-50%);z-index:46;width:18px;height:48px;background:rgba(6,14,31,0.92);border:1px solid rgba(74,184,255,0.2);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#4ab8ff;font-size:11px;transition:left .3s ease;backdrop-filter:blur(10px)}
+.sidebar-toggle.collapsed{left:0}
+/* 지도 왼쪽 여백 */
+#map{position:fixed;top:60px;bottom:0;right:0;left:220px;transition:left .3s ease}
+#map.full{left:0}
+#pathsvg{position:fixed;top:60px;bottom:0;right:0;left:220px;pointer-events:none;z-index:35;transition:left .3s ease}
+#pathsvg.full{left:0}
+.sw{left:calc(50% + 110px);transition:left .3s ease}
+.sw.full{left:50%}
 #plane{position:fixed;font-size:24px;z-index:40;display:none;pointer-events:none;filter:drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 18px rgba(255,150,0,.7))}
 .icn-dot{position:fixed;z-index:45;pointer-events:none;transform:translate(-50%,-50%)}
 .icn-ring{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle,#fff 20%,#4ab8ff 80%);box-shadow:0 0 0 0 rgba(74,184,255,.9);animation:icn-pulse 2s infinite}
@@ -107,6 +130,18 @@ for(var i=0;i<160;i++){
   <span class="ld"></span><span class="ld"></span><span class="ld"></span>
   <span>지도 불러오는 중...</span>
 </div>
+
+<!-- 사이드바 -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-title">🌍 국가 목록</span>
+    <span class="sidebar-count" id="sidebar-count">-</span>
+  </div>
+  <div class="sidebar-list" id="sidebar-list">
+    <div style="padding:20px;text-align:center;font-size:12px;color:#6a93c4">불러오는 중...</div>
+  </div>
+</div>
+<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">◀</button>
 
 <div id="map"><svg id="worldmap" viewBox="0 0 960 500"></svg></div>
 
@@ -252,6 +287,7 @@ function loadVisaData() {
       // 지도 국가 색상 업데이트
       updateMapColors();
       initSearch();
+      renderSidebar();
       document.getElementById('loading2') && (document.getElementById('loading2').style.display='none');
     })
     .catch(function(){
@@ -269,16 +305,16 @@ loadVisaData();
 // 국가 색상 팔레트 (대륙별)
 var regionColors = {
   // 아시아 - 청
-  392:'#1c3d70',156:'#1c3d70',356:'#2a2060',704:'#1c4a38',764:'#1c4a38',
-  360:'#1c4a38',458:'#1c4a38',608:'#1c4a38',682:'#4a3a10',643:'#1a2e50',
+  392:'#2a5fa8',156:'#2a5fa8',356:'#3a3090',704:'#2a6e55',764:'#2a6e55',
+  360:'#2a6e55',458:'#2a6e55',608:'#2a6e55',682:'#7a5a18',643:'#2a4878',
   // 유럽 - 보라
-  276:'#2e1f60',826:'#2e1f60',250:'#2e1f60',
+  276:'#4a328a',826:'#4a328a',250:'#4a328a',
   // 아프리카 - 황토
-  288:'#3a2a08',566:'#3a2a08',710:'#3a2a08',404:'#3a2a08',818:'#3a2a08',
+  288:'#7a5a18',566:'#7a5a18',710:'#7a5a18',404:'#7a5a18',818:'#7a5a18',
   // 아메리카 - 청록
-  840:'#1a3a5a',124:'#1a3a5a',484:'#1a4a3a',152:'#1a4a3a',
+  840:'#2a5a8a',124:'#2a5a8a',484:'#2a6e55',152:'#2a6e55',
   // 오세아니아 - 붉은갈색
-  36:'#3a1f10',
+  36:'#7a3a20',
   // 한국
   410:'#003087',
 };
@@ -297,8 +333,13 @@ sg.append('stop').attr('offset','0%').attr('stop-color','#0d2040');
 sg.append('stop').attr('offset','100%').attr('stop-color','#060e1f');
 
 svg.append('path').datum({type:'Sphere'})
-  .attr('d',path).attr('fill','url(#sg)')
-  .attr('stroke','rgba(74,184,255,0.07)').attr('stroke-width','0.5');
+  .attr('d',path).attr('fill','url(#sg)').attr('stroke','none');
+
+// 은은한 테두리 하나만
+svg.append('path').datum({type:'Sphere'})
+  .attr('d',path).attr('fill','none')
+  .attr('stroke','rgba(120,180,255,0.25)')
+  .attr('stroke-width','1.2');
 
 svg.append('path').datum(d3.geoGraticule()())
   .attr('d',path).attr('fill','none')
@@ -331,7 +372,7 @@ function loadMap(urls, idx) {
       .attr('fill',function(d){
         var id=+d.id;
         if(id===410) return '#003087';
-        return regionColors[id]||'#112438';
+        return regionColors[id]||'#1e3a52';
       })
       .attr('stroke',function(d){
         var id=+d.id;
@@ -425,6 +466,7 @@ function initSearch(){
 window.fly=function(country){
   document.getElementById('dd').classList.remove('show');
   document.getElementById('si').value=country;
+  setSidebarActive(country);
   var popup=document.getElementById('popup');
   popup.style.display='none';popup.classList.remove('show');
   if(cT) clearInterval(cT);
@@ -519,11 +561,52 @@ function showPopup(country,d){
   requestAnimationFrame(function(){ popup.classList.add('show'); });
 }
 
-window.closePopup=function(){
-  document.getElementById('popup').style.display='none';
-  document.getElementById('popup').classList.remove('show');
-  if(cT) clearInterval(cT);
-};
+// 사이드바 렌더링
+function renderSidebar(){
+  var list = document.getElementById('sidebar-list');
+  var CL = Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');});
+  document.getElementById('sidebar-count').textContent = CL.length + '개국';
+  list.innerHTML = CL.map(function(country){
+    var d = VISA[country];
+    var flagHtml = d.iso
+      ? '<img src="https://flagcdn.com/w40/'+d.iso+'.png" onerror="this.style.display=\'none\'">'
+      : '';
+    var types = (d.t||[]).join(' · ');
+    return '<div class="sidebar-item" id="si-'+country+'" onclick="fly(\''+country+'\')">'
+      +'<div class="sidebar-flag">'+flagHtml+'</div>'
+      +'<div><div class="sidebar-name">'+country+'</div>'
+      +'<div class="sidebar-types">'+types+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+// 사이드바 토글
+function toggleSidebar(){
+  var sb = document.getElementById('sidebar');
+  var tg = document.getElementById('sidebar-toggle');
+  var map = document.getElementById('map');
+  var ps = document.getElementById('pathsvg');
+  var sw = document.querySelector('.sw');
+  sb.classList.toggle('collapsed');
+  tg.classList.toggle('collapsed');
+  map.classList.toggle('full');
+  ps.classList.toggle('full');
+  sw.classList.toggle('full');
+  tg.textContent = sb.classList.contains('collapsed') ? '▶' : '◀';
+  setTimeout(placeICN, 350);
+}
 </script>
 </body>
 </html>
+<script>
+window.closePopup=function(){
+  document.getElementById('popup').style.display='none';
+  document.getElementById('popup').classList.remove('show');
+  if(typeof cT!=='undefined') clearInterval(cT);
+};
+function setSidebarActive(country){
+  document.querySelectorAll('.sidebar-item').forEach(function(el){el.classList.remove('active');});
+  var el=document.getElementById('si-'+country);
+  if(el){el.classList.add('active');el.scrollIntoView({block:'nearest',behavior:'smooth'});}
+}
+</script>
