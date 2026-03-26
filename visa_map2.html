@@ -101,8 +101,8 @@ body{
 
 /* 도시 시계 */
 .city-clock{position:absolute;pointer-events:none;text-align:center}
-.city-name{font-family:'Orbitron',monospace;font-size:8px;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
-.city-time{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:#fff;letter-spacing:2px;text-shadow:0 0 10px rgba(255,255,255,.8),0 0 20px rgba(255,255,255,.4);animation:flicker 8s infinite}
+.city-name{font-family:'Orbitron',monospace;font-size:6px;font-weight:400;color:rgba(255,255,255,.45);letter-spacing:.8px;text-transform:uppercase;margin-bottom:1px}
+.city-time{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:#fff;letter-spacing:1.5px;text-shadow:0 0 8px rgba(255,255,255,.7),0 0 16px rgba(255,255,255,.3);animation:flicker 8s infinite}
 @keyframes flicker{0%,98%,100%{opacity:1}99%{opacity:.9}}
 
 /* POSCO 로고 */
@@ -309,16 +309,14 @@ var GEO={
 
 // 도시별 실시간 시계 (지도 위 표시)
 var CITY_CLOCKS=[
-  {name:'Seoul',   tz:540, lat:37.5, lng:126.9},
-  {name:'Tokyo',   tz:540, lat:35.7, lng:139.7},
-  {name:'New Delhi',tz:330,lat:28.6, lng:77.2},
-  {name:'Dubai',   tz:240, lat:25.2, lng:55.3},
-  {name:'Moscow',  tz:180, lat:55.7, lng:37.6},
-  {name:'London',  tz:0,   lat:51.5, lng:-0.1},
-  {name:'New York',tz:-300,lat:40.7, lng:-74.0},
-  {name:'Sydney',  tz:600, lat:-33.9,lng:151.2},
-  {name:'Johannesburg',tz:120,lat:-26.2,lng:28.0},
-  {name:'São Paulo',tz:-180,lat:-23.5,lng:-46.6},
+  {name:'Seoul',    tz:540,  lat:34.0, lng:128.0},
+  {name:'New Delhi',tz:330,  lat:25.0, lng:74.0},
+  {name:'Moscow',   tz:180,  lat:58.0, lng:38.0},
+  {name:'London',   tz:0,    lat:52.0, lng:-3.0},
+  {name:'New York', tz:-300, lat:42.0, lng:-78.0},
+  {name:'Sydney',   tz:600,  lat:-30.0,lng:152.0},
+  {name:'Johannesburg',tz:120,lat:-28.0,lng:24.0},
+  {name:'São Paulo',tz:-180, lat:-26.0,lng:-50.0},
 ];
 
 var VISA={}, idToName={}, VISA_LOADED=false, SEARCH_INIT=false;
@@ -441,10 +439,13 @@ function loadMap(urls,idx){
       .attr('d',path).attr('fill','none')
       .attr('stroke','rgba(180,160,100,0.2)').attr('stroke-width','1');
 
-    // POSCO 로고 배치 - 지도 중앙 하단
+    // POSCO 로고 - 타원형 중앙 최하단
+    var sphereBottom = proj([0, -85]); // 타원 최하단 근처
+    var logoW = 200, logoH = 52;
     var fo=svg.append('foreignObject')
-      .attr('x',W/2-100).attr('y',H-60)
-      .attr('width',200).attr('height',60);
+      .attr('x', W/2 - logoW/2)
+      .attr('y', sphereBottom[1] - logoH - 4)
+      .attr('width', logoW).attr('height', logoH);
     fo.append('xhtml:div')
       .attr('class','posco-logo')
       .style('position','relative')
@@ -455,8 +456,8 @@ function loadMap(urls,idx){
       var pt=proj([c.lng,c.lat]);
       if(!pt) return;
       var fo2=svg.append('foreignObject')
-        .attr('x',pt[0]-35).attr('y',pt[1]-32)
-        .attr('width',70).attr('height',34);
+        .attr('x',pt[0]-28).attr('y',pt[1]-22)
+        .attr('width',56).attr('height',24);
       fo2.append('xhtml:div')
         .attr('class','city-clock')
         .attr('id','clock-'+c.name.replace(/\s/g,'-'))
