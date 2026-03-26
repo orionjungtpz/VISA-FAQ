@@ -371,7 +371,7 @@ loadVisaData();
 
 // D3 지도
 var svg=d3.select('#worldmap');
-proj=d3.geoNaturalEarth1().scale(153).translate([W/2,H/2]).center([127,37]).rotate([-127,-37,0]);
+proj=d3.geoNaturalEarth1().scale(153).translate([W/2,H/2]).rotate([-127,0,0]);
 var path=d3.geoPath().projection(proj);
 var defs=svg.append('defs');
 
