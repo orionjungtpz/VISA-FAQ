@@ -450,17 +450,8 @@ function loadMap(urls,idx){
     // POSCO 로고 - 타원형 중앙 최하단
     var sphereBottom = proj([0, -85]);
     var logoW = 220, logoH = 80;
-    var logoY = sphereBottom[1] - logoH - 60;
-    // 검정 배경 패널
-    svg.append('rect')
-      .attr('x', W/2 - logoW/2 - 16)
-      .attr('y', logoY - 10)
-      .attr('width', logoW + 32)
-      .attr('height', logoH + 16)
-      .attr('rx', 8)
-      .attr('fill', 'rgba(0,0,0,0.75)')
-      .attr('stroke', 'rgba(255,255,255,0.06)')
-      .attr('stroke-width', '0.8');
+    var logoY = sphereBottom[1] - logoH - 45;
+    
     var fo=svg.append('foreignObject')
       .attr('x', W/2 - logoW/2)
       .attr('y', logoY)
