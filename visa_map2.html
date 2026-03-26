@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POSCO International - 국가별 비자 안내</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif}
+
+/* 벽 질감 배경 */
+body{
+  background-color:#2a2820;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px),
+    repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 8px);
+}
+
+/* 헤더 */
+.hd{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 32px;background:rgba(30,28,24,0.95);border-bottom:1px solid rgba(180,160,120,0.2);backdrop-filter:blur(10px)}
+.hd-left{display:flex;align-items:center;gap:14px}
+.hd-badge{background:linear-gradient(135deg,#003087,#0051c3);padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.hd-div{width:1px;height:20px;background:rgba(180,160,120,0.3)}
+.hd-title{font-size:14px;font-weight:600;color:#d4c8a8;letter-spacing:.3px}
+.hd-info{font-size:11px;color:#9a8a6a;text-align:right;line-height:1.7}
+
+/* 검색 */
+.sw{position:fixed;top:58px;left:50%;transform:translateX(-50%);z-index:50;width:100%;max-width:480px;padding:12px 20px}
+.sb{position:relative}
+.sb input{width:100%;padding:13px 46px 13px 18px;background:rgba(40,36,28,0.9);border:1.5px solid rgba(180,160,120,0.3);border-radius:10px;color:#e0d4b0;font-family:inherit;font-size:14px;outline:none;transition:all .25s;backdrop-filter:blur(10px)}
+.sb input:focus{border-color:rgba(200,180,100,0.6);background:rgba(50,46,36,0.95);box-shadow:0 0 0 3px rgba(200,180,100,0.1)}
+.sb input::placeholder{color:rgba(180,160,120,.5)}
+.si-icon{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:rgba(180,160,120,.6);font-size:15px;pointer-events:none}
+.dd{position:absolute;top:calc(100% + 5px);left:0;right:0;background:rgba(30,28,22,0.98);border:1.5px solid rgba(180,160,120,.2);border-radius:10px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.8);display:none;backdrop-filter:blur(20px);max-height:280px;overflow-y:auto}
+.dd.show{display:block}
+.dd::-webkit-scrollbar{width:3px}
+.dd::-webkit-scrollbar-thumb{background:rgba(180,160,120,.3);border-radius:4px}
+.ddi{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s}
+.ddi:hover{background:rgba(180,160,120,.08)}
+.ddi-name{font-size:13px;font-weight:600;color:#e0d4b0}
+.ddi-name mark{background:rgba(200,180,100,.3);color:#e0d4b0;border-radius:2px;padding:0 2px}
+.ddi-type{font-size:11px;color:#9a8a6a;margin-top:1px}
+.ddi-arr{font-size:12px;color:rgba(180,160,120,.4)}
+.dd-empty{padding:16px;text-align:center;font-size:13px;color:#9a8a6a}
+
+/* 사이드바 */
+.sidebar{position:fixed;left:0;top:58px;bottom:0;width:210px;z-index:45;background:rgba(28,26,20,0.95);border-right:1px solid rgba(180,160,120,0.15);backdrop-filter:blur(16px);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s ease}
+.sidebar.collapsed{transform:translateX(-210px)}
+.sidebar-header{padding:11px 16px;border-bottom:1px solid rgba(180,160,120,0.15);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sidebar-title{font-size:10px;font-weight:700;color:#c0a860;letter-spacing:1.2px;text-transform:uppercase}
+.sidebar-count{font-size:10px;color:#7a6a4a;background:rgba(180,160,100,.1);padding:2px 8px;border-radius:10px}
+.sidebar-list{overflow-y:auto;flex:1;padding:4px 0}
+.sidebar-list::-webkit-scrollbar{width:2px}
+.sidebar-list::-webkit-scrollbar-thumb{background:rgba(180,160,120,.2);border-radius:4px}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.025);transition:background .12s}
+.sidebar-item:hover{background:rgba(180,160,100,.07)}
+.sidebar-item.active{background:rgba(180,160,100,.12);border-left:2px solid #c0a860}
+.sidebar-flag img{width:20px;height:14px;border-radius:2px;object-fit:cover;opacity:.9}
+.sidebar-name{font-size:11px;font-weight:600;color:#d4c8a8;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-types{font-size:9px;color:#7a6a4a;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-toggle{position:fixed;left:210px;top:50%;transform:translateY(-50%);z-index:46;width:16px;height:44px;background:rgba(28,26,20,0.95);border:1px solid rgba(180,160,120,0.2);border-left:none;border-radius:0 6px 6px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#c0a860;font-size:10px;transition:left .3s ease}
+.sidebar-toggle.collapsed{left:0}
+
+/* 지도 */
+#map{position:fixed;top:58px;bottom:0;left:210px;right:0;transition:left .3s ease}
+#map.full{left:0}
+#worldmap{width:100%;height:100%}
+#pathsvg{position:fixed;top:58px;bottom:0;left:210px;right:0;pointer-events:none;z-index:35;transition:left .3s ease}
+#pathsvg.full{left:0}
+.sw{left:calc(50% + 105px);transition:left .3s ease}
+.sw.full{left:50%}
+
+/* 메탈릭 대륙 스타일 */
+.country-metal{
+  fill:url(#metalGrad);
+  stroke:#8a8070;
+  stroke-width:0.4;
+  filter:url(#metalShadow);
+  cursor:pointer;
+  transition:filter .2s;
+}
+.country-metal:hover{
+  filter:url(#metalHover);
+}
+.country-metal.has-visa{
+  fill:url(#metalGradVisa);
+  stroke:#b0a080;
+  stroke-width:0.6;
+  cursor:pointer;
+}
+.country-metal.has-visa:hover{
+  fill:url(#metalGradVisaHover);
+}
+.country-korea{
+  fill:url(#koreaGrad);
+  stroke:#4ab8ff;
+  stroke-width:1;
+  filter:url(#koreaGlow);
+}
+
+/* 도시 시계 */
+.city-clock{position:absolute;pointer-events:none;text-align:center}
+.city-name{font-family:'Orbitron',monospace;font-size:8px;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.city-time{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:#fff;letter-spacing:2px;text-shadow:0 0 10px rgba(255,255,255,.8),0 0 20px rgba(255,255,255,.4);animation:flicker 8s infinite}
+@keyframes flicker{0%,98%,100%{opacity:1}99%{opacity:.9}}
+
+/* POSCO 로고 */
+.posco-logo{
+  position:absolute;
+  font-family:'Orbitron',monospace;
+  text-align:center;
+  pointer-events:none;
+  z-index:10;
+}
+.posco-main{
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:4px;
+  color:#fff;
+  text-shadow:0 0 15px rgba(255,255,255,.9),0 0 30px rgba(255,255,255,.5),0 0 60px rgba(200,200,255,.3);
+  animation:neon-pulse 3s ease-in-out infinite alternate;
+}
+.posco-sub{
+  font-size:9px;
+  font-weight:400;
+  letter-spacing:5px;
+  color:rgba(255,255,255,.7);
+  text-shadow:0 0 8px rgba(255,255,255,.6);
+  margin-top:2px;
+}
+@keyframes neon-pulse{
+  0%{text-shadow:0 0 10px rgba(255,255,255,.8),0 0 25px rgba(255,255,255,.4)}
+  100%{text-shadow:0 0 20px rgba(255,255,255,1),0 0 40px rgba(255,255,255,.6),0 0 80px rgba(200,220,255,.4)}
+}
+
+/* 비행기 */
+#plane{position:fixed;font-size:24px;z-index:40;display:none;pointer-events:none;filter:drop-shadow(0 0 6px #ffd700)}
+
+/* 팝업 */
+.popup{position:fixed;z-index:60;left:50%;bottom:32px;transform:translateX(-50%);background:linear-gradient(145deg,rgba(28,26,20,0.98),rgba(38,34,24,0.98));border:1.5px solid rgba(180,160,100,.3);border-radius:16px;padding:18px 22px;min-width:230px;box-shadow:0 20px 60px rgba(0,0,0,.95),inset 0 1px 0 rgba(200,180,100,.08);display:none;backdrop-filter:blur(24px)}
+.popup.show{animation:pop .3s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes pop{from{opacity:0;transform:translateX(-50%) scale(.75)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+.popup-flag{margin-bottom:8px}
+.popup-flag img{width:64px;height:43px;border-radius:5px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.popup-country{font-size:19px;font-weight:700;color:#e0d4b0;margin-bottom:8px}
+.popup-info{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0}
+.info-card{background:rgba(180,160,100,.06);border:1px solid rgba(180,160,100,.12);border-radius:7px;padding:7px 9px}
+.info-card-label{font-size:9px;color:#7a6a4a;margin-bottom:2px;letter-spacing:.5px}
+.info-card-value{font-size:13px;font-weight:700;color:#e0d4b0}
+.info-card-sub{font-size:9px;color:#c0a860;margin-top:1px}
+.popup-type-label{font-size:10px;color:#7a6a4a;margin-bottom:4px;margin-top:6px}
+.popup-types{display:flex;flex-direction:column;gap:7px}
+.type-btn{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:rgba(180,160,100,.07);border:1px solid rgba(180,160,100,.2);border-radius:8px;color:#e0d4b0;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;width:100%}
+.type-btn:hover{background:rgba(180,160,100,.15);border-color:rgba(200,180,100,.4);transform:translateX(2px)}
+.type-btn-arrow{color:#c0a860;font-size:12px}
+.popup-close{position:absolute;top:11px;right:12px;background:rgba(255,255,255,.06);border:none;color:rgba(255,255,255,.35);font-size:14px;cursor:pointer;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.popup-close:hover{background:rgba(255,255,255,.12);color:#fff}
+
+/* 인천 마커 */
+.icn-dot{position:fixed;z-index:45;pointer-events:none;transform:translate(-50%,-50%)}
+.icn-ring{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,#fff 20%,#4ab8ff 80%);box-shadow:0 0 0 0 rgba(74,184,255,.9);animation:icn-pulse 2s infinite}
+@keyframes icn-pulse{0%{box-shadow:0 0 0 0 rgba(74,184,255,.9)}70%{box-shadow:0 0 0 12px rgba(74,184,255,0)}100%{box-shadow:0 0 0 0 rgba(74,184,255,0)}}
+.icn-label{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:#4ab8ff;white-space:nowrap;letter-spacing:1px}
+
+.loading{position:fixed;inset:0;top:58px;display:flex;align-items:center;justify-content:center;z-index:20;color:#9a8a6a;font-size:13px;gap:8px}
+.ld{width:7px;height:7px;border-radius:50%;background:#c0a860;display:inline-block;animation:ldot 1.2s infinite}
+.ld:nth-child(2){animation-delay:.2s}.ld:nth-child(3){animation-delay:.4s}
+@keyframes ldot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-left">
+    <div class="hd-badge">POSCO International</div>
+    <div class="hd-div"></div>
+    <span class="hd-title">✈ 국가별 비자 발급 안내</span>
+  </div>
+  <div class="hd-info">행정지원그룹 고은영 과장 T.2548 | 현대드림투어</div>
+</header>
+
+<div class="sw">
+  <div class="sb">
+    <input type="text" id="si" placeholder="출장 국가를 검색하세요..." autocomplete="off" spellcheck="false">
+    <span class="si-icon">🔍</span>
+    <div class="dd" id="dd"></div>
+  </div>
+</div>
+
+<!-- 사이드바 -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-title">🌍 국가 목록</span>
+    <span class="sidebar-count" id="sidebar-count">-</span>
+  </div>
+  <div class="sidebar-list" id="sidebar-list">
+    <div style="padding:16px;text-align:center;font-size:11px;color:#7a6a4a">불러오는 중...</div>
+  </div>
+</div>
+<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">◀</button>
+
+<div class="loading" id="loading">
+  <span class="ld"></span><span class="ld"></span><span class="ld"></span>
+  <span>지도 불러오는 중...</span>
+</div>
+
+<div id="map">
+  <svg id="worldmap" viewBox="0 0 960 500"></svg>
+</div>
+
+<svg id="pathsvg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="tglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <path id="flightpath" fill="none" stroke="rgba(255,220,100,0)" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#tglow)" opacity="0"/>
+</svg>
+
+<div id="plane">✈</div>
+<div class="icn-dot" id="icnDot"><div class="icn-label">ICN</div><div class="icn-ring"></div></div>
+
+<div class="popup" id="popup">
+  <button class="popup-close" onclick="closePopup()">×</button>
+  <div class="popup-flag" id="pflag"></div>
+  <div class="popup-country" id="pcountry"></div>
+  <div class="popup-info" id="pinfo"></div>
+  <div class="popup-type-label">비자 유형을 선택하세요</div>
+  <div class="popup-types" id="ptypes"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+var BASE='https://poscointl1.sharepoint.com/sites/VisaGuide/SitePages/';
+var API_URL='https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/575bbc8293674a9e99a37357f2ee74e7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jZ5DqKljJNjpUXoYDLsTgJ3ZcII2qTeYBzlnhAJjaq8';
+
+function typeToSlug(country,type){
+  var slug=type.replace(/\//g,'_').replace(/\s+/g,'_').replace(/[()]/g,'').replace(/\*/g,'').replace(/_+/g,'_').replace(/_$/,'');
+  return BASE+encodeURIComponent(country+'_'+slug)+'.aspx';
+}
+
+var GEO={
+  '가나':            {lat:7.9,  lng:-1.0,  iso:'gh',tz:0,   fly:16,tzCity:'아크라',        id:288},
+  '감비아':          {lat:13.4, lng:-15.3, iso:'gm',tz:0,   fly:15,tzCity:'반줄',          id:270},
+  '나이지리아':      {lat:9.1,  lng:8.7,   iso:'ng',tz:60,  fly:15,tzCity:'라고스',        id:566},
+  '남아프리카공화국':{lat:-30.6,lng:22.9,  iso:'za',tz:120, fly:14,tzCity:'요하네스버그',  id:710},
+  '네팔':            {lat:28.4, lng:84.1,  iso:'np',tz:345, fly:8, tzCity:'카트만두',       id:524},
+  '뉴질랜드':        {lat:-40.9,lng:174.9, iso:'nz',tz:720, fly:11,tzCity:'오클랜드',       id:554},
+  '대만':            {lat:23.7, lng:121.0, iso:'tw',tz:480, fly:2, tzCity:'타이베이',       id:158},
+  '독일':            {lat:51.2, lng:10.5,  iso:'de',tz:60,  fly:11,tzCity:'베를린',        id:276},
+  '러시아':          {lat:61.5, lng:105.3, iso:'ru',tz:180, fly:9, tzCity:'모스크바',       id:643},
+  '레바논':          {lat:33.9, lng:35.9,  iso:'lb',tz:120, fly:10,tzCity:'베이루트',       id:422},
+  '루마니아':        {lat:45.9, lng:24.9,  iso:'ro',tz:120, fly:11,tzCity:'부쿠레슈티',    id:642},
+  '르완다':          {lat:-1.9, lng:29.9,  iso:'rw',tz:120, fly:13,tzCity:'키갈리',        id:646},
+  '리비아':          {lat:26.3, lng:17.2,  iso:'ly',tz:120, fly:12,tzCity:'트리폴리',      id:434},
+  '마다가스카르':    {lat:-18.8,lng:46.9,  iso:'mg',tz:180, fly:13,tzCity:'안타나나리보',  id:450},
+  '말레이시아':      {lat:4.2,  lng:109.0, iso:'my',tz:480, fly:7, tzCity:'쿠알라룸푸르', id:458},
+  '멕시코':          {lat:23.6, lng:-102.5,iso:'mx',tz:-360,fly:15,tzCity:'멕시코시티',    id:484},
+  '모로코':          {lat:31.8, lng:-7.1,  iso:'ma',tz:60,  fly:13,tzCity:'카사블랑카',    id:504},
+  '모리타니아':      {lat:21.0, lng:-10.9, iso:'mr',tz:0,   fly:15,tzCity:'누악쇼트',      id:478},
+  '모잠비크':        {lat:-18.7,lng:35.5,  iso:'mz',tz:120, fly:13,tzCity:'마푸토',        id:508},
+  '몽골':            {lat:46.9, lng:103.8, iso:'mn',tz:480, fly:3, tzCity:'울란바토르',    id:496},
+  '미국':            {lat:37.1, lng:-95.7, iso:'us',tz:-300,fly:13,tzCity:'뉴욕(동부)',    id:840},
+  '미얀마':          {lat:21.9, lng:96.0,  iso:'mm',tz:390, fly:6, tzCity:'양곤',          id:104},
+  '방글라데시':      {lat:23.7, lng:90.4,  iso:'bd',tz:360, fly:7, tzCity:'다카',          id:50},
+  '베트남':          {lat:14.1, lng:108.3, iso:'vn',tz:420, fly:5, tzCity:'하노이',        id:704},
+  '벨라루스':        {lat:53.7, lng:28.0,  iso:'by',tz:180, fly:10,tzCity:'민스크',        id:112},
+  '사우디':          {lat:23.9, lng:45.1,  iso:'sa',tz:180, fly:10,tzCity:'리야드',        id:682},
+  '세네갈':          {lat:14.5, lng:-14.5, iso:'sn',tz:0,   fly:15,tzCity:'다카르',        id:686},
+  '수단':            {lat:12.9, lng:30.2,  iso:'sd',tz:180, fly:12,tzCity:'하르툼',        id:729},
+  '쉥겐비자':        {lat:50.9, lng:4.4,   iso:'eu',tz:60,  fly:11,tzCity:'브뤼셀',        id:null},
+  '스리랑카':        {lat:7.9,  lng:80.8,  iso:'lk',tz:330, fly:9, tzCity:'콜롬보',        id:144},
+  '알제리':          {lat:28.0, lng:1.7,   iso:'dz',tz:60,  fly:13,tzCity:'알제',          id:12},
+  '앙골라':          {lat:-11.2,lng:17.9,  iso:'ao',tz:60,  fly:14,tzCity:'루안다',        id:24},
+  '에티오피아':      {lat:9.1,  lng:40.5,  iso:'et',tz:180, fly:11,tzCity:'아디스아바바',  id:231},
+  '영국':            {lat:55.4, lng:-3.4,  iso:'gb',tz:0,   fly:12,tzCity:'런던',          id:826},
+  '요르단':          {lat:30.6, lng:36.2,  iso:'jo',tz:180, fly:10,tzCity:'암만',          id:400},
+  '우간다':          {lat:1.4,  lng:32.3,  iso:'ug',tz:180, fly:12,tzCity:'캄팔라',        id:800},
+  '우즈베키스탄':    {lat:41.4, lng:64.6,  iso:'uz',tz:300, fly:7, tzCity:'타슈켄트',      id:860},
+  '이란':            {lat:32.4, lng:53.7,  iso:'ir',tz:210, fly:8, tzCity:'테헤란',        id:364},
+  '이집트':          {lat:26.8, lng:30.8,  iso:'eg',tz:120, fly:11,tzCity:'카이로',        id:818},
+  '인도':            {lat:20.6, lng:79.0,  iso:'in',tz:330, fly:9, tzCity:'뉴델리',        id:356},
+  '인도네시아':      {lat:-0.8, lng:113.9, iso:'id',tz:420, fly:7, tzCity:'자카르타',      id:360},
+  '일본':            {lat:36.2, lng:138.3, iso:'jp',tz:540, fly:2, tzCity:'도쿄',          id:392},
+  '잠비아':          {lat:-13.1,lng:27.8,  iso:'zm',tz:120, fly:13,tzCity:'루사카',        id:894},
+  '중국':            {lat:35.9, lng:104.2, iso:'cn',tz:480, fly:2, tzCity:'베이징',        id:156},
+  '짐바브웨':        {lat:-19.0,lng:29.2,  iso:'zw',tz:120, fly:14,tzCity:'하라레',        id:716},
+  '차드':            {lat:15.5, lng:18.7,  iso:'td',tz:60,  fly:13,tzCity:'은자메나',      id:148},
+  '체코':            {lat:49.8, lng:15.5,  iso:'cz',tz:60,  fly:11,tzCity:'프라하',        id:203},
+  '칠레':            {lat:-35.7,lng:-71.5, iso:'cl',tz:-180,fly:22,tzCity:'산티아고',      id:152},
+  '카메룬':          {lat:3.8,  lng:11.5,  iso:'cm',tz:60,  fly:14,tzCity:'야운데',        id:120},
+  '캄보디아':        {lat:12.6, lng:105.0, iso:'kh',tz:420, fly:6, tzCity:'프놈펜',        id:116},
+  '캐나다':          {lat:56.1, lng:-106.3,iso:'ca',tz:-480,fly:10,tzCity:'밴쿠버',        id:124},
+  '케냐':            {lat:-0.0, lng:37.9,  iso:'ke',tz:180, fly:12,tzCity:'나이로비',      id:404},
+  '코트디브아르':    {lat:7.5,  lng:-5.5,  iso:'ci',tz:0,   fly:15,tzCity:'아비장',        id:384},
+  '콩고민주공화국':  {lat:-4.0, lng:21.8,  iso:'cd',tz:60,  fly:14,tzCity:'킨샤사',       id:180},
+  '쿠바':            {lat:21.5, lng:-77.8, iso:'cu',tz:-300,fly:16,tzCity:'아바나',        id:192},
+  '쿠웨이트':        {lat:29.3, lng:47.5,  iso:'kw',tz:180, fly:10,tzCity:'쿠웨이트시티', id:414},
+  '탄자니아':        {lat:-6.4, lng:34.9,  iso:'tz',tz:180, fly:12,tzCity:'다르에스살람', id:834},
+  '태국':            {lat:15.9, lng:101.0, iso:'th',tz:420, fly:6, tzCity:'방콕',          id:764},
+  '튀니지':          {lat:33.9, lng:9.5,   iso:'tn',tz:60,  fly:12,tzCity:'튀니스',        id:788},
+  '파나마':          {lat:8.5,  lng:-80.8, iso:'pa',tz:-300,fly:17,tzCity:'파나마시티',    id:591},
+  '파키스탄':        {lat:30.4, lng:69.3,  iso:'pk',tz:300, fly:8, tzCity:'이슬라마바드', id:586},
+  '파푸아뉴기니':    {lat:-6.3, lng:144.0, iso:'pg',tz:600, fly:9, tzCity:'포트모르즈비', id:598},
+  '페루':            {lat:-9.2, lng:-75.0, iso:'pe',tz:-300,fly:20,tzCity:'리마',          id:604},
+  '필리핀':          {lat:12.9, lng:121.8, iso:'ph',tz:480, fly:4, tzCity:'마닐라',        id:608},
+  '헝가리':          {lat:47.2, lng:19.5,  iso:'hu',tz:60,  fly:11,tzCity:'부다페스트',    id:348},
+  '홍콩':            {lat:22.3, lng:114.2, iso:'hk',tz:480, fly:3, tzCity:'홍콩',          id:344},
+  '호주':            {lat:-25.3,lng:133.8, iso:'au',tz:600, fly:10,tzCity:'시드니',        id:36},
+};
+
+// 도시별 실시간 시계 (지도 위 표시)
+var CITY_CLOCKS=[
+  {name:'Seoul',   tz:540, lat:37.5, lng:126.9},
+  {name:'Tokyo',   tz:540, lat:35.7, lng:139.7},
+  {name:'New Delhi',tz:330,lat:28.6, lng:77.2},
+  {name:'Dubai',   tz:240, lat:25.2, lng:55.3},
+  {name:'Moscow',  tz:180, lat:55.7, lng:37.6},
+  {name:'London',  tz:0,   lat:51.5, lng:-0.1},
+  {name:'New York',tz:-300,lat:40.7, lng:-74.0},
+  {name:'Sydney',  tz:600, lat:-33.9,lng:151.2},
+  {name:'Johannesburg',tz:120,lat:-26.2,lng:28.0},
+  {name:'São Paulo',tz:-180,lat:-23.5,lng:-46.6},
+];
+
+var VISA={}, idToName={}, VISA_LOADED=false, SEARCH_INIT=false;
+var ICN={lat:37.46,lng:126.44};
+var W=960,H=500,proj,cT=null;
+
+// SharePoint 데이터 로드
+function loadVisaData(){
+  fetch(API_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
+    .then(function(r){return r.json();})
+    .then(function(json){
+      var items=Array.isArray(json)?json:(json.value||[]);
+      var map={};
+      items.forEach(function(item){
+        var country=item.Title||item['{Name}']||'';
+        var type='';
+        var vf=item['OData__xbe44__xc790__xc720__xd615_0'];
+        if(vf&&vf.Value){type=vf.Value;}
+        else{Object.keys(item).forEach(function(k){if(k.indexOf('xbe44')>-1&&item[k]&&typeof item[k]==='object'&&item[k].Value)type=item[k].Value;});}
+        if(!country)return;
+        if(!map[country])map[country]=[];
+        if(type)map[country].push(type);
+      });
+      Object.keys(map).forEach(function(c){
+        var geo=GEO[c]||{};
+        VISA[c]=Object.assign({},geo,{t:map[c]});
+      });
+      VISA_LOADED=true;
+      idToName={};
+      Object.keys(VISA).forEach(function(n){if(VISA[n].id)idToName[VISA[n].id]=n;});
+      renderSidebar();
+      initSearch();
+    })
+    .catch(function(){
+      Object.keys(GEO).forEach(function(c){VISA[c]=Object.assign({},GEO[c],{t:['개선중']});});
+      VISA_LOADED=true;
+      idToName={};
+      Object.keys(VISA).forEach(function(n){if(VISA[n].id)idToName[VISA[n].id]=n;});
+      renderSidebar();
+      initSearch();
+    });
+}
+loadVisaData();
+
+// D3 지도
+var svg=d3.select('#worldmap');
+proj=d3.geoNaturalEarth1().scale(153).translate([W/2,H/2]);
+var path=d3.geoPath().projection(proj);
+var defs=svg.append('defs');
+
+// 메탈 그라데이션
+var mg=defs.append('linearGradient').attr('id','metalGrad').attr('x1','0%').attr('y1','0%').attr('x2','100%').attr('y2','100%');
+mg.append('stop').attr('offset','0%').attr('stop-color','#7a7060');
+mg.append('stop').attr('offset','30%').attr('stop-color','#c8bca0');
+mg.append('stop').attr('offset','60%').attr('stop-color','#9a9080');
+mg.append('stop').attr('offset','100%').attr('stop-color','#6a6050');
+
+var mgv=defs.append('linearGradient').attr('id','metalGradVisa').attr('x1','0%').attr('y1','0%').attr('x2','100%').attr('y2','100%');
+mgv.append('stop').attr('offset','0%').attr('stop-color','#8a8272');
+mgv.append('stop').attr('offset','30%').attr('stop-color','#ddd0b0');
+mgv.append('stop').attr('offset','60%').attr('stop-color','#aaa090');
+mgv.append('stop').attr('offset','100%').attr('stop-color','#7a7060');
+
+var mgvh=defs.append('linearGradient').attr('id','metalGradVisaHover').attr('x1','0%').attr('y1','0%').attr('x2','100%').attr('y2','100%');
+mgvh.append('stop').attr('offset','0%').attr('stop-color','#aaa090');
+mgvh.append('stop').attr('offset','30%').attr('stop-color','#f0e4c4');
+mgvh.append('stop').attr('offset','60%').attr('stop-color','#c8bca0');
+mgvh.append('stop').attr('offset','100%').attr('stop-color','#9a9080');
+
+var kg=defs.append('linearGradient').attr('id','koreaGrad').attr('x1','0%').attr('y1','0%').attr('x2','100%').attr('y2','100%');
+kg.append('stop').attr('offset','0%').attr('stop-color','#4a8adf');
+kg.append('stop').attr('offset','100%').attr('stop-color','#2060c0');
+
+// 그림자 필터
+var msf=defs.append('filter').attr('id','metalShadow').attr('x','-5%').attr('y','-5%').attr('width','110%').attr('height','110%');
+msf.append('feDropShadow').attr('dx','1').attr('dy','2').attr('stdDeviation','2').attr('flood-color','rgba(0,0,0,0.5)');
+
+var mhf=defs.append('filter').attr('id','metalHover').attr('x','-5%').attr('y','-5%').attr('width','110%').attr('height','110%');
+mhf.append('feDropShadow').attr('dx','2').attr('dy','3').attr('stdDeviation','3').attr('flood-color','rgba(0,0,0,0.7)');
+
+var kgf=defs.append('filter').attr('id','koreaGlow').attr('x','-20%').attr('y','-20%').attr('width','140%').attr('height','140%');
+kgf.append('feGaussianBlur').attr('stdDeviation','3').attr('result','b');
+var km=kgf.append('feMerge');km.append('feMergeNode').attr('in','b');km.append('feMergeNode').attr('in','SourceGraphic');
+
+// 배경 (어두운 벽 색)
+svg.append('path').datum({type:'Sphere'})
+  .attr('d',path).attr('fill','rgba(30,28,22,0.0)').attr('stroke','none');
+
+// 격자
+svg.append('path').datum(d3.geoGraticule()())
+  .attr('d',path).attr('fill','none')
+  .attr('stroke','rgba(180,160,100,0.04)').attr('stroke-width','0.3');
+
+var MAP_URLS=['./countries-110m.json','https://unpkg.com/world-atlas@2/countries-110m.json'];
+function loadMap(urls,idx){
+  if(idx>=urls.length){document.getElementById('loading').style.display='none';placeICN();return;}
+  d3.json(urls[idx]).then(function(world){
+    document.getElementById('loading').style.display='none';
+    var countries=topojson.feature(world,world.objects.countries);
+    svg.selectAll('.cp')
+      .data(countries.features)
+      .enter().append('path')
+      .attr('class',function(d){
+        var id=+d.id;
+        if(id===410) return 'country-korea';
+        if(idToName[id]) return 'country-metal has-visa';
+        return 'country-metal';
+      })
+      .attr('d',path)
+      .on('click',function(event,d){var name=idToName[+d.id];if(name)fly(name);})
+      .append('title').text(function(d){var name=idToName[+d.id];return name?name+' (클릭)':'';});
+
+    svg.append('path')
+      .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
+      .attr('d',path).attr('fill','none')
+      .attr('stroke','rgba(100,90,70,0.4)').attr('stroke-width','0.4');
+
+    // 테두리
+    svg.append('path').datum({type:'Sphere'})
+      .attr('d',path).attr('fill','none')
+      .attr('stroke','rgba(180,160,100,0.2)').attr('stroke-width','1');
+
+    // POSCO 로고 배치
+    var center=proj([127,37]);
+    var fo=svg.append('foreignObject')
+      .attr('x',center[0]-80).attr('y',center[1]+60)
+      .attr('width',160).attr('height',50);
+    fo.append('xhtml:div')
+      .attr('class','posco-logo')
+      .style('position','relative')
+      .html('<div class="posco-main">posco</div><div class="posco-sub">INTERNATIONAL</div>');
+
+    // 도시 시계 배치
+    CITY_CLOCKS.forEach(function(c){
+      var pt=proj([c.lng,c.lat]);
+      if(!pt) return;
+      var fo2=svg.append('foreignObject')
+        .attr('x',pt[0]-35).attr('y',pt[1]-32)
+        .attr('width',70).attr('height',34);
+      fo2.append('xhtml:div')
+        .attr('class','city-clock')
+        .attr('id','clock-'+c.name.replace(/\s/g,'-'))
+        .style('position','relative')
+        .html('<div class="city-name">'+c.name+'</div><div class="city-time" id="t-'+c.name.replace(/[\s\/]/g,'-')+'">00:00</div>');
+    });
+
+    updateClocks();
+    setInterval(updateClocks,1000);
+    placeICN();
+    setTimeout(placeICN,200);
+  }).catch(function(){loadMap(urls,idx+1);});
+}
+loadMap(MAP_URLS,0);
+
+function updateClocks(){
+  var now=new Date();
+  CITY_CLOCKS.forEach(function(c){
+    var ms=now.getTime()+(now.getTimezoneOffset()*60000)+(c.tz*60000);
+    var d2=new Date(ms);
+    var t=d2.getHours().toString().padStart(2,'0')+':'+d2.getMinutes().toString().padStart(2,'0');
+    var el=document.getElementById('t-'+c.name.replace(/[\s\/]/g,'-'));
+    if(el) el.textContent=t;
+  });
+}
+
+function ll2screen(lng,lat){
+  var pt=proj([lng,lat]);
+  var r=document.getElementById('worldmap').getBoundingClientRect();
+  return{x:r.left+pt[0]*(r.width/W),y:r.top+pt[1]*(r.height/H)};
+}
+function ll2svg(lng,lat){return proj([lng,lat]);}
+
+function placeICN(){
+  var sc=ll2screen(ICN.lng,ICN.lat);
+  var el=document.getElementById('icnDot');
+  el.style.left=sc.x+'px';el.style.top=sc.y+'px';
+}
+window.addEventListener('resize',function(){if(proj)placeICN();});
+
+var SEARCH_INIT=false;
+function initSearch(){
+  if(SEARCH_INIT)return;SEARCH_INIT=true;
+  function getCL(){return Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');});}
+  document.getElementById('si').addEventListener('input',function(){
+    var q=this.value.trim(),dd=document.getElementById('dd');
+    if(!q){dd.classList.remove('show');dd.innerHTML='';return;}
+    var m=getCL().filter(function(c){return c.indexOf(q)>=0;});
+    if(!m.length){dd.innerHTML='<div class="dd-empty">검색 결과 없음</div>';dd.classList.add('show');return;}
+    dd.innerHTML=m.slice(0,8).map(function(c){
+      var d=VISA[c],lbl=c.split(q).join('<mark>'+q+'</mark>');
+      return '<div class="ddi" onclick="fly(\''+c+'\')">'
+        +'<div><div class="ddi-name">'+lbl+'</div>'
+        +'<div class="ddi-type">'+(d.t||[]).join(' / ')+'</div></div>'
+        +'<span class="ddi-arr">→</span></div>';
+    }).join('');
+    dd.classList.add('show');
+  });
+  function doSearch(){
+    var q=document.getElementById('si').value.trim();
+    if(!q)return;
+    var m=getCL().filter(function(c){return c.indexOf(q)>=0;});
+    if(m.length)fly(m[0]);
+  }
+  document.getElementById('si').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
+  document.querySelector('.si-icon').style.cursor='pointer';
+  document.querySelector('.si-icon').addEventListener('click',doSearch);
+  document.addEventListener('click',function(e){if(!e.target.closest('.sb'))document.getElementById('dd').classList.remove('show');});
+}
+
+window.fly=function(country){
+  document.getElementById('dd').classList.remove('show');
+  document.getElementById('si').value=country;
+  setSidebarActive(country);
+  var popup=document.getElementById('popup');
+  popup.style.display='none';popup.classList.remove('show');
+  if(cT)clearInterval(cT);
+  var d=VISA[country];if(!d)return;
+  var fs=ll2svg(ICN.lng,ICN.lat),ts=ll2svg(d.lng,d.lat);
+  if(!fs||!ts)return;
+  var mx=(fs[0]+ts[0])/2,my=Math.min(fs[1],ts[1])-Math.abs(ts[0]-fs[0])*0.3-30;
+  var pe=document.getElementById('flightpath');
+  pe.setAttribute('d','M'+fs[0]+','+fs[1]+' Q'+mx+','+my+' '+ts[0]+','+ts[1]);
+  pe.setAttribute('stroke','rgba(255,210,80,0.7)');pe.setAttribute('opacity','1');
+  var pl=document.getElementById('plane');pl.style.display='block';
+  var dur=3000,start=null;
+  (function step(ts2){
+    if(!start)start=ts2;
+    var p=Math.min((ts2-start)/dur,1),ep=p<0.5?2*p*p:-1+(4-2*p)*p;
+    var bx=(1-ep)*(1-ep)*fs[0]+2*(1-ep)*ep*mx+ep*ep*ts[0];
+    var by=(1-ep)*(1-ep)*fs[1]+2*(1-ep)*ep*my+ep*ep*ts[1];
+    var tp=Math.min(ep+0.01,1);
+    var tnx=(1-tp)*(1-tp)*fs[0]+2*(1-tp)*tp*mx+tp*tp*ts[0];
+    var tny=(1-tp)*(1-tp)*fs[1]+2*(1-tp)*tp*my+tp*tp*ts[1];
+    var angle=Math.atan2(tny-by,tnx-bx)*180/Math.PI;
+    var r=document.getElementById('worldmap').getBoundingClientRect();
+    pl.style.left=(r.left+bx*(r.width/W)-13)+'px';
+    pl.style.top=(r.top+by*(r.height/H)-13)+'px';
+    pl.style.transform='rotate('+angle+'deg)';
+    if(p<1){requestAnimationFrame(step);}
+    else{setTimeout(function(){pl.style.display='none';pe.setAttribute('opacity','0.15');showPopup(country,d);},150);}
+  })(performance.now());
+};
+
+function showPopup(country,d){
+  var popup=document.getElementById('popup');
+  var flagEl=document.getElementById('pflag');
+  if(d.iso){
+    flagEl.innerHTML='<img src="https://flagcdn.com/w80/'+d.iso+'.png" alt="'+country+'" onerror="this.style.display=\'none\'">';
+  } else {
+    flagEl.innerHTML='';
+  }
+  document.getElementById('pcountry').textContent=country;
+  var infoEl=document.getElementById('pinfo');
+  if(d.tz!==undefined&&d.fly!==undefined){
+    var KST=540,diff=(d.tz-KST)/60;
+    var diffStr=diff===0?'한국과 동일':(diff>0?'+'+diff+'시간':diff+'시간');
+    var now=new Date();
+    var localMs=now.getTime()+(now.getTimezoneOffset()*60000)+(d.tz*60000);
+    var local=new Date(localMs);
+    var hh=local.getHours().toString().padStart(2,'0'),mm=local.getMinutes().toString().padStart(2,'0');
+    infoEl.innerHTML='<div class="info-card"><div class="info-card-label">⏰ 현지 시각</div><div class="info-card-value">'+hh+':'+mm+'</div><div class="info-card-sub">시차 '+diffStr+'</div></div>'
+      +'<div class="info-card"><div class="info-card-label">✈ 비행시간</div><div class="info-card-value">약 '+d.fly+'시간</div><div class="info-card-sub">인천 직항 기준</div></div>';
+  } else {infoEl.innerHTML='';}
+  var typesEl=document.getElementById('ptypes');
+  typesEl.innerHTML=(d.t||[]).map(function(type){
+    if(!type||type==='개선중') return '<div class="type-btn" style="opacity:.5;cursor:default;pointer-events:none;"><span>🔧 페이지 개선중</span><span class="type-btn-arrow">—</span></div>';
+    var url=typeToSlug(country,type);
+    return '<a class="type-btn" href="'+url+'" target="_blank"><span>📋 '+type+'</span><span class="type-btn-arrow">→</span></a>';
+  }).join('');
+  popup.style.display='block';
+  requestAnimationFrame(function(){popup.classList.add('show');});
+}
+
+window.closePopup=function(){
+  document.getElementById('popup').style.display='none';
+  document.getElementById('popup').classList.remove('show');
+  if(cT)clearInterval(cT);
+};
+
+function renderSidebar(){
+  var list=document.getElementById('sidebar-list');
+  var CL=Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');});
+  document.getElementById('sidebar-count').textContent=CL.length+'개국';
+  list.innerHTML=CL.map(function(country){
+    var d=VISA[country];
+    var flagHtml=d.iso?'<img src="https://flagcdn.com/w40/'+d.iso+'.png" onerror="this.style.display=\'none\'">':'';
+    var types=(d.t||[]).join(' · ');
+    return '<div class="sidebar-item" id="si-'+country+'" onclick="fly(\''+country+'\')">'
+      +'<div class="sidebar-flag">'+flagHtml+'</div>'
+      +'<div><div class="sidebar-name">'+country+'</div>'
+      +'<div class="sidebar-types">'+types+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function setSidebarActive(country){
+  document.querySelectorAll('.sidebar-item').forEach(function(el){el.classList.remove('active');});
+  var el=document.getElementById('si-'+country);
+  if(el){el.classList.add('active');el.scrollIntoView({block:'nearest',behavior:'smooth'});}
+}
+
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar'),tg=document.getElementById('sidebar-toggle');
+  var map=document.getElementById('map'),ps=document.getElementById('pathsvg');
+  var sw=document.querySelector('.sw');
+  sb.classList.toggle('collapsed');tg.classList.toggle('collapsed');
+  map.classList.toggle('full');ps.classList.toggle('full');sw.classList.toggle('full');
+  tg.textContent=sb.classList.contains('collapsed')?'▶':'◀';
+  setTimeout(placeICN,350);
+}
+</script>
+</body>
+</html>
