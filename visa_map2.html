@@ -138,9 +138,9 @@ body{
 #plane{position:fixed;font-size:24px;z-index:40;display:none;pointer-events:none;filter:drop-shadow(0 0 6px #ffd700)}
 
 /* 팝업 */
-.popup{position:fixed;z-index:60;left:50%;bottom:32px;transform:translateX(-50%);background:linear-gradient(145deg,rgba(28,26,20,0.98),rgba(38,34,24,0.98));border:1.5px solid rgba(180,160,100,.3);border-radius:16px;padding:18px 22px;min-width:230px;box-shadow:0 20px 60px rgba(0,0,0,.95),inset 0 1px 0 rgba(200,180,100,.08);display:none;backdrop-filter:blur(24px)}
+.popup{position:fixed;z-index:60;background:linear-gradient(145deg,rgba(28,26,20,0.98),rgba(38,34,24,0.98));border:1.5px solid rgba(180,160,100,.3);border-radius:16px;padding:18px 22px;min-width:230px;max-width:260px;box-shadow:0 20px 60px rgba(0,0,0,.95),inset 0 1px 0 rgba(200,180,100,.08);display:none;backdrop-filter:blur(24px)}
 .popup.show{animation:pop .3s cubic-bezier(.34,1.56,.64,1) forwards}
-@keyframes pop{from{opacity:0;transform:translateX(-50%) scale(.75)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes pop{from{opacity:0;transform:scale(.75)}to{opacity:1;transform:scale(1)}}
 .popup-flag{margin-bottom:8px}
 .popup-flag img{width:64px;height:43px;border-radius:5px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.5)}
 .popup-country{font-size:19px;font-weight:700;color:#e0d4b0;margin-bottom:8px}
@@ -558,11 +558,18 @@ window.fly=function(country){
     pl.style.top=(r.top+by*(r.height/H)-13)+'px';
     pl.style.transform='rotate('+angle+'deg)';
     if(p<1){requestAnimationFrame(step);}
-    else{setTimeout(function(){pl.style.display='none';pe.setAttribute('opacity','0.15');showPopup(country,d);},150);}
+    else{setTimeout(function(){
+      pl.style.display='none';pe.setAttribute('opacity','0.15');
+      // 도착 지점 화면 좌표 계산
+      var r=document.getElementById('worldmap').getBoundingClientRect();
+      var arrX=r.left+ts[0]*(r.width/W);
+      var arrY=r.top+ts[1]*(r.height/H);
+      showPopup(country,d,arrX,arrY);
+    },150);}
   })(performance.now());
 };
 
-function showPopup(country,d){
+function showPopup(country,d,arrX,arrY){
   var popup=document.getElementById('popup');
   var flagEl=document.getElementById('pflag');
   if(d.iso){
@@ -589,6 +596,21 @@ function showPopup(country,d){
     return '<a class="type-btn" href="'+url+'" target="_blank"><span>📋 '+type+'</span><span class="type-btn-arrow">→</span></a>';
   }).join('');
   popup.style.display='block';
+
+  // 도착 위치 기준으로 팝업 위치 결정
+  if(arrX!==undefined && arrY!==undefined){
+    var pw=270, ph=220;
+    var px=arrX+16, py=arrY-ph/2;
+    // 화면 밖으로 나가면 반대쪽으로
+    if(px+pw > window.innerWidth-10) px=arrX-pw-16;
+    if(py < 70) py=70;
+    if(py+ph > window.innerHeight-10) py=window.innerHeight-ph-10;
+    popup.style.left=px+'px';
+    popup.style.top=py+'px';
+    popup.style.bottom='auto';
+    popup.style.transform='none';
+  }
+
   requestAnimationFrame(function(){popup.classList.add('show');});
 }
 
