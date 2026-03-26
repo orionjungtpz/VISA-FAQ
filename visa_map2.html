@@ -441,11 +441,10 @@ function loadMap(urls,idx){
       .attr('d',path).attr('fill','none')
       .attr('stroke','rgba(180,160,100,0.2)').attr('stroke-width','1');
 
-    // POSCO 로고 배치
-    var center=proj([127,37]);
+    // POSCO 로고 배치 - 지도 중앙 하단
     var fo=svg.append('foreignObject')
-      .attr('x',center[0]-80).attr('y',center[1]+60)
-      .attr('width',160).attr('height',50);
+      .attr('x',W/2-100).attr('y',H-60)
+      .attr('width',200).attr('height',60);
     fo.append('xhtml:div')
       .attr('class','posco-logo')
       .style('position','relative')
