@@ -77,20 +77,20 @@ body{
   stroke:#8a8070;
   stroke-width:0.4;
   filter:url(#metalShadow);
-  cursor:pointer;
-  transition:filter .2s;
-}
-.country-metal:hover{
-  filter:url(#metalHover);
+  cursor:default;
 }
 .country-metal.has-visa{
   fill:url(#metalGradVisa);
-  stroke:#b0a080;
-  stroke-width:0.6;
-  cursor:pointer;
+  stroke:#c0a860;
+  stroke-width:0.7;
+  cursor:default;
+  transition:fill .15s, stroke .15s, filter .15s;
 }
 .country-metal.has-visa:hover{
-  fill:url(#metalGradVisaHover);
+  fill:#e8d48c;
+  stroke:#f0e060;
+  stroke-width:1.2;
+  filter:drop-shadow(0 0 4px rgba(240,220,80,.6));
 }
 .country-korea{
   fill:url(#koreaGrad);
@@ -170,7 +170,11 @@ body{
 .ld:nth-child(2){animation-delay:.2s}.ld:nth-child(3){animation-delay:.4s}
 @keyframes ldot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
 
-@keyframes logo-neon{
+.visa-marker{animation:marker-pulse 2.5s ease-in-out infinite alternate}
+@keyframes marker-pulse{
+  0%{stroke:rgba(255,220,80,0.6);r:2.5;}
+  100%{stroke:rgba(255,240,120,1);r:3.5;}
+}
   0%{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px rgba(255,255,255,.6));}
   50%{filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 14px rgba(255,255,255,.9)) drop-shadow(0 0 28px rgba(200,230,255,.5));}
   100%{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 8px rgba(255,255,255,.7));}
@@ -357,6 +361,7 @@ function loadVisaData(){
       Object.keys(VISA).forEach(function(n){if(VISA[n].id)idToName[VISA[n].id]=n;});
       renderSidebar();
       initSearch();
+      renderMarkers();
     })
     .catch(function(){
       Object.keys(GEO).forEach(function(c){VISA[c]=Object.assign({},GEO[c],{t:['개선중']});});
@@ -365,6 +370,7 @@ function loadVisaData(){
       Object.keys(VISA).forEach(function(n){if(VISA[n].id)idToName[VISA[n].id]=n;});
       renderSidebar();
       initSearch();
+      renderMarkers();
     });
 }
 loadVisaData();
@@ -433,9 +439,15 @@ function loadMap(urls,idx){
         if(idToName[id]) return 'country-metal has-visa';
         return 'country-metal';
       })
+      .style('cursor', function(d){
+        var id=+d.id;
+        return (id===410||idToName[id]) ? 'pointer' : 'default';
+      })
       .attr('d',path)
-      .on('click',function(event,d){var name=idToName[+d.id];if(name)fly(name);})
       .append('title').text(function(d){var name=idToName[+d.id];return name?name+' (클릭)':'';});
+
+    // 비자 마커는 VISA 데이터 로드 후 별도 렌더링
+    window._countriesFeatures = countries.features;
 
     svg.append('path')
       .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
@@ -546,7 +558,9 @@ window.fly=function(country){
   popup.style.display='none';popup.classList.remove('show');
   if(cT)clearInterval(cT);
   var d=VISA[country];if(!d)return;
-  var fs=ll2svg(ICN.lng,ICN.lat),ts=ll2svg(d.lng,d.lat);
+  var fs=ll2svg(ICN.lng,ICN.lat);
+  // centroid 좌표 우선, 없으면 GEO lat/lng 사용
+  var ts = (d._cx!==undefined && d._cy!==undefined) ? [d._cx, d._cy] : ll2svg(d.lng,d.lat);
   if(!fs||!ts)return;
   var mx=(fs[0]+ts[0])/2,my=Math.min(fs[1],ts[1])-Math.abs(ts[0]-fs[0])*0.3-30;
   var pe=document.getElementById('flightpath');
@@ -630,6 +644,45 @@ window.closePopup=function(){
   if(cT)clearInterval(cT);
 };
 
+function renderMarkers(){
+  if(!window._countriesFeatures||!Object.keys(idToName).length)return;
+  svg.selectAll('.visa-marker').remove();
+  svg.selectAll('.visa-marker')
+    .data(window._countriesFeatures.filter(function(d){return !!idToName[+d.id];}))
+    .enter().append('circle')
+    .attr('class','visa-marker')
+    .attr('cx',function(d){var c=path.centroid(d);return c[0];})
+    .attr('cy',function(d){var c=path.centroid(d);return c[1];})
+    .attr('data-id', function(d){ return d.id; })
+    .attr('r',4)
+    .attr('fill','rgba(255,220,80,0.15)')
+    .attr('stroke','rgba(255,220,80,0.9)')
+    .attr('stroke-width',1.8)
+    .style('pointer-events','all')
+    .style('cursor','pointer')
+    .on('mouseover',function(event,d){
+      var cid = d.id;
+      d3.select(this).attr('r',6).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',2.2);
+      d3.select('path[data-id="'+cid+'"]')
+        .attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
+    })
+    .on('mouseout',function(event,d){
+      var cid = d.id;
+      d3.select(this).attr('r',4).attr('fill','rgba(255,220,80,0.15)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1.8);
+      d3.select('path[data-id="'+cid+'"]')
+        .attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
+    })
+    .on('click',function(event,d){var name=idToName[+d.id];if(name)fly(name);})
+    .append('title').text(function(d){
+      var name=idToName[+d.id];
+      // centroid 좌표를 VISA에 저장 → 비행기 도착 위치로 사용
+      if(name && VISA[name]){
+        var c=path.centroid(d);
+        VISA[name]._cx=c[0]; VISA[name]._cy=c[1];
+      }
+      return name||'';
+    });
+}
 function renderSidebar(){
   var list=document.getElementById('sidebar-list');
   var CL=Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');});
