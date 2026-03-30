@@ -595,6 +595,8 @@ window.fly=function(country){
   if(!fs||!ts)return;
   var mx=(fs[0]+ts[0])/2,my=Math.min(fs[1],ts[1])-Math.abs(ts[0]-fs[0])*0.3-30;
   var pe=document.getElementById('flightpath');
+  // SVG 맨 앞으로 이동 (대륙 위에 표시)
+  pe.parentNode.appendChild(pe);
   pe.setAttribute('d','M'+fs[0]+','+fs[1]+' Q'+mx+','+my+' '+ts[0]+','+ts[1]);
   pe.setAttribute('stroke','rgba(255,210,80,0.7)');pe.setAttribute('opacity','1');
   var pl=document.getElementById('plane');pl.style.display='block';
