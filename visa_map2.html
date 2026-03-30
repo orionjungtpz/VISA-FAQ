@@ -720,53 +720,76 @@ function renderMarkers(){
     .attr('fill','rgba(255,220,80,0.2)')
     .attr('stroke','rgba(255,220,80,0.9)')
     .attr('stroke-width',1)
-    .style('pointer-events','all')
-    .style('cursor','pointer')
-    .each(function(d){
-      var el = this;
-      var cid = d.id;
-      var name = idToName[+cid];
-      var cx = +d3.select(el).attr('cx');
-      var cy = +d3.select(el).attr('cy');
+    .style('pointer-events','none');
 
-      // 투명한 큰 hit area 원 추가
-      var hitEl = svg.append('circle')
-        .attr('cx', cx).attr('cy', cy)
-        .attr('r', 10)
-        .attr('fill', 'transparent')
-        .attr('stroke', 'none')
-        .style('cursor','pointer')
-        .style('pointer-events','all')
-        .node();
-
-      [el, hitEl].forEach(function(target){
-        target.addEventListener('mouseover', function(event){
-          d3.select(el).attr('r',3.5).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',1.5);
-          d3.select('path[data-id="'+cid+'"]').attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
-          var tt=document.getElementById('mapTooltip');
-          var d2=VISA[name]||{};
-          var flagHtml=d2.iso?'<img class="tt-flag" src="https://flagcdn.com/w40/'+d2.iso+'.png">':'';
-          var types=(d2.t||[]).filter(function(t){return t&&t!=='개선중';});
-          var hint=types.length?types.join(' · '):'클릭하여 확인';
-          tt.innerHTML=flagHtml+'<div><div class="tt-name">'+(name||'?')+'</div><div class="tt-hint">'+hint+'</div></div>';
-          tt.classList.add('show');
-          tt.style.left=(event.clientX+16)+'px';
-          tt.style.top=(event.clientY-20)+'px';
-        });
-        target.addEventListener('mousemove', function(event){
-          var tt=document.getElementById('mapTooltip');
-          tt.style.left=(event.clientX+16)+'px';
-          tt.style.top=(event.clientY-20)+'px';
-        });
-        target.addEventListener('mouseout', function(){
-          d3.select(el).attr('r',2).attr('fill','rgba(255,220,80,0.2)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1);
-          d3.select('path[data-id="'+cid+'"]').attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
-          document.getElementById('mapTooltip').classList.remove('show');
-        });
-        target.addEventListener('click', function(){
-          if(name) fly(name);
-        });
+    // SVG 전체 mousemove로 가장 가까운 마커 찾기
+    var markerData = [];
+    svg.selectAll('.visa-marker').each(function(d){
+      markerData.push({
+        id: d.id,
+        cx: +d3.select(this).attr('cx'),
+        cy: +d3.select(this).attr('cy'),
+        name: idToName[+d.id]
       });
+    });
+
+    var lastActive = null;
+    document.getElementById('worldmap').addEventListener('mousemove', function(event){
+      var rect = this.getBoundingClientRect();
+      var scaleX = 960 / rect.width;
+      var scaleY = 500 / rect.height;
+      var mx = (event.clientX - rect.left) * scaleX;
+      var my = (event.clientY - rect.top) * scaleY;
+
+      var closest = null, minDist = 20; // 20px 이내만
+      markerData.forEach(function(m){
+        var dist = Math.sqrt((m.cx-mx)*(m.cx-mx)+(m.cy-my)*(m.cy-my));
+        if(dist < minDist){ minDist=dist; closest=m; }
+      });
+
+      if(closest){
+        if(lastActive !== closest.name){
+          lastActive = closest.name;
+          var tt = document.getElementById('mapTooltip');
+          var d2 = VISA[closest.name]||{};
+          var flagHtml = d2.iso?'<img class="tt-flag" src="https://flagcdn.com/w40/'+d2.iso+'.png">':'';
+          var types = (d2.t||[]).filter(function(t){return t&&t!=='개선중';});
+          var hint = types.length?types.join(' · '):'클릭하여 확인';
+          tt.innerHTML = flagHtml+'<div><div class="tt-name">'+closest.name+'</div><div class="tt-hint">'+hint+'</div></div>';
+          tt.classList.add('show');
+          // 해당 나라 강조
+          svg.selectAll('path[data-id]').each(function(p){
+            if(p && +p.id===+closest.id){
+              d3.select(this).attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
+            }
+          });
+        }
+        var tt = document.getElementById('mapTooltip');
+        tt.style.left=(event.clientX+16)+'px';
+        tt.style.top=(event.clientY-20)+'px';
+        document.getElementById('worldmap').style.cursor='pointer';
+      } else {
+        if(lastActive){
+          var prevName = lastActive;
+          var prevId = (VISA[prevName]||{}).id;
+          if(prevId){
+            svg.selectAll('path[data-id="'+prevId+'"]')
+              .attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
+          }
+          lastActive = null;
+        }
+        document.getElementById('mapTooltip').classList.remove('show');
+        document.getElementById('worldmap').style.cursor='default';
+      }
+    });
+
+    document.getElementById('worldmap').addEventListener('mouseleave', function(){
+      document.getElementById('mapTooltip').classList.remove('show');
+      lastActive = null;
+    });
+
+    document.getElementById('worldmap').addEventListener('click', function(event){
+      if(lastActive) fly(lastActive);
     });
 }
 function renderSidebar(){
