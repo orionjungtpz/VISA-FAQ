@@ -449,6 +449,18 @@ function loadMap(urls,idx){
     // 비자 마커는 VISA 데이터 로드 후 별도 렌더링
     window._countriesFeatures = countries.features;
 
+    // centroid 좌표 미리 저장 (비행기 도착 위치용)
+    countries.features.forEach(function(d){
+      var name = idToName[+d.id];
+      if(name && VISA[name]){
+        var c = path.centroid(d);
+        if(!isNaN(c[0]) && !isNaN(c[1])){
+          VISA[name]._cx = c[0];
+          VISA[name]._cy = c[1];
+        }
+      }
+    });
+
     svg.append('path')
       .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
       .attr('d',path).attr('fill','none')
@@ -673,15 +685,7 @@ function renderMarkers(){
         .attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
     })
     .on('click',function(event,d){var name=idToName[+d.id];if(name)fly(name);})
-    .append('title').text(function(d){
-      var name=idToName[+d.id];
-      // centroid 좌표를 VISA에 저장 → 비행기 도착 위치로 사용
-      if(name && VISA[name]){
-        var c=path.centroid(d);
-        VISA[name]._cx=c[0]; VISA[name]._cy=c[1];
-      }
-      return name||'';
-    });
+    .append('title').text(function(d){return idToName[+d.id]||'';});
 }
 function renderSidebar(){
   var list=document.getElementById('sidebar-list');
