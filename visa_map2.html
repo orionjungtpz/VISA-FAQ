@@ -331,6 +331,32 @@ var ICN={lat:37.46,lng:126.44};
 var W=960,H=500,proj,cT=null;
 
 // SharePoint 데이터 로드
+
+var MAP_READY = false;
+var VISA_READY = false;
+
+function onBothReady(){
+  if(!MAP_READY || !VISA_READY) return;
+  // centroid 저장
+  window._countriesFeatures.forEach(function(d){
+    var name=idToName[+d.id];
+    if(name&&VISA[name]){
+      var c=path.centroid(d);
+      if(!isNaN(c[0])&&!isNaN(c[1])){VISA[name]._cx=c[0];VISA[name]._cy=c[1];}
+    }
+  });
+  // 마커 렌더링
+  renderMarkers();
+  // country path 클래스 업데이트
+  svg.selectAll('path[data-id]').attr('class',function(d){
+    if(!d) return null;
+    var id=+d.id;
+    if(id===410) return 'country-korea';
+    if(idToName[id]) return 'country-metal has-visa';
+    return 'country-metal';
+  });
+}
+
 function loadVisaData(){
   fetch(API_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
     .then(function(r){return r.json();})
@@ -356,17 +382,8 @@ function loadVisaData(){
       Object.keys(VISA).forEach(function(n){if(VISA[n].id)idToName[VISA[n].id]=n;});
       renderSidebar();
       initSearch();
-      renderMarkers();
-      // VISA 로드 후 centroid 재저장
-      if(window._countriesFeatures){
-        window._countriesFeatures.forEach(function(d){
-          var name=idToName[+d.id];
-          if(name&&VISA[name]){
-            var c=path.centroid(d);
-            if(!isNaN(c[0])&&!isNaN(c[1])){VISA[name]._cx=c[0];VISA[name]._cy=c[1];}
-          }
-        });
-      }
+      VISA_READY=true;
+      onBothReady();
     })
     .catch(function(){
       Object.keys(GEO).forEach(function(c){VISA[c]=Object.assign({},GEO[c],{t:['개선중']});});
@@ -375,7 +392,8 @@ function loadVisaData(){
       Object.keys(VISA).forEach(function(n){if(VISA[n].id)idToName[VISA[n].id]=n;});
       renderSidebar();
       initSearch();
-      renderMarkers();
+      VISA_READY=true;
+      onBothReady();
     });
 }
 loadVisaData();
@@ -467,18 +485,8 @@ function loadMap(urls,idx){
 
     // 비자 마커는 VISA 데이터 로드 후 별도 렌더링
     window._countriesFeatures = countries.features;
-
-    // centroid 좌표 미리 저장 (비행기 도착 위치용)
-    countries.features.forEach(function(d){
-      var name = idToName[+d.id];
-      if(name && VISA[name]){
-        var c = path.centroid(d);
-        if(!isNaN(c[0]) && !isNaN(c[1])){
-          VISA[name]._cx = c[0];
-          VISA[name]._cy = c[1];
-        }
-      }
-    });
+    MAP_READY=true;
+    onBothReady();
 
     svg.append('path')
       .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
