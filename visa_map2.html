@@ -66,8 +66,6 @@ body{
 #map{position:fixed;top:58px;bottom:0;left:210px;right:0;transition:left .3s ease}
 #map.full{left:0}
 #worldmap{width:100%;height:100%}
-#pathsvg{position:fixed;top:58px;bottom:0;left:210px;right:0;pointer-events:none;z-index:35;transition:left .3s ease}
-#pathsvg.full{left:0}
 .sw{left:calc(50% + 105px);transition:left .3s ease}
 .sw.full{left:50%}
 
@@ -189,7 +187,7 @@ body{
     <div class="hd-div"></div>
     <span class="hd-title">✈ 국가별 비자 발급 안내</span>
   </div>
-  <div class="hd-info">행정지원그룹 고은영 과장 T.2548 </div>
+  <div class="hd-info">행정지원그룹 고은영 과장 T.2548</div>
 </header>
 
 <div class="sw">
@@ -221,10 +219,7 @@ body{
   <svg id="worldmap" viewBox="0 0 960 500"></svg>
 </div>
 
-<svg id="pathsvg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
-  <defs><filter id="tglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-  <path id="flightpath" fill="none" stroke="rgba(255,220,100,0)" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#tglow)" opacity="0"/>
-</svg>
+
 
 <div id="plane">✈</div>
 <div class="icn-dot" id="icnDot"><div class="icn-label">ICN</div><div class="icn-ring"></div></div>
@@ -362,6 +357,16 @@ function loadVisaData(){
       renderSidebar();
       initSearch();
       renderMarkers();
+      // VISA 로드 후 centroid 재저장
+      if(window._countriesFeatures){
+        window._countriesFeatures.forEach(function(d){
+          var name=idToName[+d.id];
+          if(name&&VISA[name]){
+            var c=path.centroid(d);
+            if(!isNaN(c[0])&&!isNaN(c[1])){VISA[name]._cx=c[0];VISA[name]._cy=c[1];}
+          }
+        });
+      }
     })
     .catch(function(){
       Object.keys(GEO).forEach(function(c){VISA[c]=Object.assign({},GEO[c],{t:['개선중']});});
@@ -381,7 +386,21 @@ proj=d3.geoNaturalEarth1().scale(153).translate([W/2,H/2]).rotate([-127,0,0]);
 var path=d3.geoPath().projection(proj);
 var defs=svg.append('defs');
 
-// 메탈 그라데이션
+var tgf=defs.append('filter').attr('id','tglow');
+tgf.append('feGaussianBlur').attr('stdDeviation','2').attr('result','b');
+var tgm=tgf.append('feMerge');
+tgm.append('feMergeNode').attr('in','b');
+tgm.append('feMergeNode').attr('in','SourceGraphic');
+
+// 비행 경로선 (worldmap SVG 내부)
+svg.append('path')
+  .attr('id','flightpath')
+  .attr('fill','none')
+  .attr('stroke','rgba(255,220,100,0)')
+  .attr('stroke-width','1.5')
+  .attr('stroke-dasharray','6,4')
+  .attr('filter','url(#tglow)')
+  .attr('opacity','0');
 var mg=defs.append('linearGradient').attr('id','metalGrad').attr('x1','0%').attr('y1','0%').attr('x2','100%').attr('y2','100%');
 mg.append('stop').attr('offset','0%').attr('stop-color','#7a7060');
 mg.append('stop').attr('offset','30%').attr('stop-color','#c8bca0');
@@ -711,10 +730,10 @@ function setSidebarActive(country){
 
 function toggleSidebar(){
   var sb=document.getElementById('sidebar'),tg=document.getElementById('sidebar-toggle');
-  var map=document.getElementById('map'),ps=document.getElementById('pathsvg');
+  var map=document.getElementById('map');
   var sw=document.querySelector('.sw');
   sb.classList.toggle('collapsed');tg.classList.toggle('collapsed');
-  map.classList.toggle('full');ps.classList.toggle('full');sw.classList.toggle('full');
+  map.classList.toggle('full');sw.classList.toggle('full');
   tg.textContent=sb.classList.contains('collapsed')?'▶':'◀';
   setTimeout(placeICN,350);
 }
