@@ -65,7 +65,7 @@ body{
 /* 지도 */
 #map{position:fixed;top:58px;bottom:0;left:210px;right:0;transition:left .3s ease}
 #map.full{left:0}
-#worldmap{width:100%;height:100%;pointer-events:none}
+#worldmap{width:100%;height:100%}
 .sw{left:calc(50% + 105px);transition:left .3s ease}
 .sw.full{left:50%}
 
@@ -177,28 +177,6 @@ body{
   50%{filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 14px rgba(255,255,255,.9)) drop-shadow(0 0 28px rgba(200,230,255,.5));}
   100%{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 8px rgba(255,255,255,.7));}
 }
-
-.map-tooltip{
-  position:fixed;z-index:55;pointer-events:none;
-  background:linear-gradient(135deg,rgba(20,18,14,0.96),rgba(32,28,20,0.96));
-  border:1px solid rgba(200,180,100,0.35);
-  border-radius:10px;padding:7px 14px 7px 10px;
-  font-family:'Noto Sans KR',sans-serif;
-  font-size:12px;font-weight:600;
-  color:#e0d4b0;
-  box-shadow:0 6px 24px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.05);
-  backdrop-filter:blur(12px);
-  opacity:0;transition:opacity .15s, transform .15s;
-  transform:translateY(4px);
-  white-space:nowrap;
-  display:flex;align-items:center;gap:8px;
-}
-.map-tooltip.show{opacity:1;transform:translateY(0)}
-.tt-flag{width:20px;height:14px;border-radius:2px;object-fit:cover;flex-shrink:0}
-.tt-name{font-size:12px;font-weight:700;color:#e8d8b0;letter-spacing:.3px}
-.tt-hint{font-size:10px;color:rgba(200,180,100,.6);margin-top:1px}
-
-#map-overlay{position:absolute;inset:0;z-index:10;cursor:default;}
 </style>
 </head>
 <body>
@@ -232,14 +210,12 @@ body{
 </div>
 <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">◀</button>
 
-<div class="map-tooltip" id="mapTooltip"></div>
 <div class="loading" id="loading">
   <span class="ld"></span><span class="ld"></span><span class="ld"></span>
   <span>지도 불러오는 중...</span>
 </div>
 
 <div id="map">
-  <div id="map-overlay"></div>
   <svg id="worldmap" viewBox="0 0 960 500"></svg>
 </div>
 
@@ -723,108 +699,9 @@ function renderMarkers(){
     .attr('fill','rgba(255,220,80,0.2)')
     .attr('stroke','rgba(255,220,80,0.9)')
     .attr('stroke-width',1)
-    .style('pointer-events','none');
-
-    // SVG 전체 mousemove로 가장 가까운 마커 찾기
-    var markerData = [];
-    svg.selectAll('.visa-marker').each(function(d){
-      markerData.push({
-        id: d.id,
-        cx: +d3.select(this).attr('cx'),
-        cy: +d3.select(this).attr('cy'),
-        name: idToName[+d.id]
-      });
-    });
-
-    var lastActive = null;
-    document.getElementById('map-overlay').addEventListener('mousemove', function(event){
-      var rect = this.getBoundingClientRect();
-      var scaleX = 960 / rect.width;
-      var scaleY = 500 / rect.height;
-      var mx = (event.clientX - rect.left) * scaleX;
-      var my = (event.clientY - rect.top) * scaleY;
-
-      var closest = null, minDist = 20; // 20px 이내만
-      markerData.forEach(function(m){
-        var dist = Math.sqrt((m.cx-mx)*(m.cx-mx)+(m.cy-my)*(m.cy-my));
-        if(dist < minDist){ minDist=dist; closest=m; }
-      });
-
-      if(closest){
-        if(lastActive !== closest.name){
-          lastActive = closest.name;
-          var tt = document.getElementById('mapTooltip');
-          var d2 = VISA[closest.name]||{};
-          var flagHtml = d2.iso?'<img class="tt-flag" src="https://flagcdn.com/w40/'+d2.iso+'.png">':'';
-          var types = (d2.t||[]).filter(function(t){return t&&t!=='개선중';});
-          var hint = types.length?types.join(' · '):'클릭하여 확인';
-          tt.innerHTML = flagHtml+'<div><div class="tt-name">'+closest.name+'</div><div class="tt-hint">'+hint+'</div></div>';
-          tt.classList.add('show');
-          // 해당 나라 강조
-          svg.selectAll('path[data-id]').each(function(p){
-            if(p && +p.id===+closest.id){
-              d3.select(this).attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
-            }
-          });
-        }
-        var tt = document.getElementById('mapTooltip');
-        tt.style.left=(event.clientX+16)+'px';
-        tt.style.top=(event.clientY-20)+'px';
-        document.getElementById('map-overlay').style.cursor='pointer';
-      } else {
-        if(lastActive){
-          var prevName = lastActive;
-          var prevId = (VISA[prevName]||{}).id;
-          if(prevId){
-            svg.selectAll('path[data-id="'+prevId+'"]')
-              .attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
-          }
-          lastActive = null;
-        }
-        document.getElementById('mapTooltip').classList.remove('show');
-        document.getElementById('map-overlay').style.cursor='default';
-      }
-    });
-
-    document.getElementById('map-overlay').addEventListener('mouseleave', function(){
-      document.getElementById('mapTooltip').classList.remove('show');
-      lastActive = null;
-    });
-
-    document.getElementById('map-overlay').addEventListener('click', function(event){
-      if(lastActive) fly(lastActive);
-    });
-}
-function renderSidebar(){
-  var list=document.getElementById('sidebar-list');
-  var CL=Object.keys(VISA).sort(function(a,b){return a.localeCompare(b,'ko');});
-  document.getElementById('sidebar-count').textContent=CL.length+'개국';
-  list.innerHTML=CL.map(function(country){
-    var d=VISA[country];
-    var flagHtml=d.iso?'<img src="https://flagcdn.com/w40/'+d.iso+'.png" onerror="this.style.display=\'none\'">':'';
-    var types=(d.t||[]).join(' · ');
-    return '<div class="sidebar-item" id="si-'+country+'" onclick="fly(\''+country+'\')">'
-      +'<div class="sidebar-flag">'+flagHtml+'</div>'
-      +'<div><div class="sidebar-name">'+country+'</div>'
-      +'<div class="sidebar-types">'+types+'</div></div>'
-      +'</div>';
-  }).join('');
-}
-
-function setSidebarActive(country){
-  document.querySelectorAll('.sidebar-item').forEach(function(el){el.classList.remove('active');});
-  var el=document.getElementById('si-'+country);
-  if(el){el.classList.add('active');el.scrollIntoView({block:'nearest',behavior:'smooth'});}
-}
-
-function toggleSidebar(){
-  var sb=document.getElementById('sidebar'),tg=document.getElementById('sidebar-toggle');
-  var map=document.getElementById('map');
-  var sw=document.querySelector('.sw');
-  sb.classList.toggle('collapsed');tg.classList.toggle('collapsed');
-  map.classList.toggle('full');sw.classList.toggle('full');
-  tg.textContent=sb.classList.contains('collapsed')?'▶':'◀';
-  setTimeout(placeICN,350);
+    .style('pointer-events','all')
+    .style('cursor','pointer')
+    .append('title').text(function(d){ return idToName[+d.id]||''; });
 }
 </script>
 </body>
