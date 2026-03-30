@@ -177,6 +177,26 @@ body{
   50%{filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 14px rgba(255,255,255,.9)) drop-shadow(0 0 28px rgba(200,230,255,.5));}
   100%{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 8px rgba(255,255,255,.7));}
 }
+
+.map-tooltip{
+  position:fixed;z-index:55;pointer-events:none;
+  background:linear-gradient(135deg,rgba(20,18,14,0.96),rgba(32,28,20,0.96));
+  border:1px solid rgba(200,180,100,0.35);
+  border-radius:10px;padding:7px 14px 7px 10px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:12px;font-weight:600;
+  color:#e0d4b0;
+  box-shadow:0 6px 24px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  opacity:0;transition:opacity .15s, transform .15s;
+  transform:translateY(4px);
+  white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.map-tooltip.show{opacity:1;transform:translateY(0)}
+.tt-flag{width:20px;height:14px;border-radius:2px;object-fit:cover;flex-shrink:0}
+.tt-name{font-size:12px;font-weight:700;color:#e8d8b0;letter-spacing:.3px}
+.tt-hint{font-size:10px;color:rgba(200,180,100,.6);margin-top:1px}
 </style>
 </head>
 <body>
@@ -210,6 +230,7 @@ body{
 </div>
 <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">◀</button>
 
+<div class="map-tooltip" id="mapTooltip"></div>
 <div class="loading" id="loading">
   <span class="ld"></span><span class="ld"></span><span class="ld"></span>
   <span>지도 불러오는 중...</span>
@@ -481,7 +502,7 @@ function loadMap(urls,idx){
         return (id===410||idToName[id]) ? 'pointer' : 'default';
       })
       .attr('d',path)
-      .append('title').text(function(d){var name=idToName[+d.id];return name?name+' (클릭)':'';});
+;
 
     // 비자 마커는 VISA 데이터 로드 후 별도 렌더링
     window._countriesFeatures = countries.features;
@@ -703,18 +724,35 @@ function renderMarkers(){
     .style('cursor','pointer')
     .on('mouseover',function(event,d){
       var cid = d.id;
+      var name = idToName[+cid];
       d3.select(this).attr('r',3.5).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',1.5);
       d3.select('path[data-id="'+cid+'"]')
         .attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
+      if(name){
+        var tt=document.getElementById('mapTooltip');
+        var d2=VISA[name]||{};
+        var flagHtml=d2.iso?'<img class="tt-flag" src="https://flagcdn.com/w40/'+d2.iso+'.png">':'';
+        var types=(d2.t||[]).filter(function(t){return t&&t!=='개선중';});
+        var hint=types.length?types.join(' · '):'클릭하여 확인';
+        tt.innerHTML=flagHtml+'<div><div class="tt-name">'+name+'</div><div class="tt-hint">'+hint+'</div></div>';
+        tt.classList.add('show');
+        tt.style.left=(event.clientX+16)+'px';
+        tt.style.top=(event.clientY-20)+'px';
+      }
+    })
+    .on('mousemove',function(event){
+      var tt=document.getElementById('mapTooltip');
+      tt.style.left=(event.clientX+14)+'px';
+      tt.style.top=(event.clientY-10)+'px';
     })
     .on('mouseout',function(event,d){
       var cid = d.id;
       d3.select(this).attr('r',2).attr('fill','rgba(255,220,80,0.2)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1);
       d3.select('path[data-id="'+cid+'"]')
         .attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
+      document.getElementById('mapTooltip').classList.remove('show');
     })
     .on('click',function(event,d){var name=idToName[+d.id];if(name)fly(name);})
-    .append('title').text(function(d){return idToName[+d.id]||'';});
 }
 function renderSidebar(){
   var list=document.getElementById('sidebar-list');
