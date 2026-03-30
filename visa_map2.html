@@ -726,31 +726,46 @@ function renderMarkers(){
       var el = this;
       var cid = d.id;
       var name = idToName[+cid];
-      el.addEventListener('mouseover', function(event){
-        d3.select(el).attr('r',3.5).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',1.5);
-        d3.select('path[data-id="'+cid+'"]').attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
-        var tt=document.getElementById('mapTooltip');
-        var d2=VISA[name]||{};
-        var flagHtml=d2.iso?'<img class="tt-flag" src="https://flagcdn.com/w40/'+d2.iso+'.png">':'';
-        var types=(d2.t||[]).filter(function(t){return t&&t!=='개선중';});
-        var hint=types.length?types.join(' · '):'클릭하여 확인';
-        tt.innerHTML=flagHtml+'<div><div class="tt-name">'+(name||'?')+'</div><div class="tt-hint">'+hint+'</div></div>';
-        tt.classList.add('show');
-        tt.style.left=(event.clientX+16)+'px';
-        tt.style.top=(event.clientY-20)+'px';
-      });
-      el.addEventListener('mousemove', function(event){
-        var tt=document.getElementById('mapTooltip');
-        tt.style.left=(event.clientX+16)+'px';
-        tt.style.top=(event.clientY-20)+'px';
-      });
-      el.addEventListener('mouseout', function(){
-        d3.select(el).attr('r',2).attr('fill','rgba(255,220,80,0.2)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1);
-        d3.select('path[data-id="'+cid+'"]').attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
-        document.getElementById('mapTooltip').classList.remove('show');
-      });
-      el.addEventListener('click', function(){
-        if(name) fly(name);
+      var cx = +d3.select(el).attr('cx');
+      var cy = +d3.select(el).attr('cy');
+
+      // 투명한 큰 hit area 원 추가
+      var hitEl = svg.append('circle')
+        .attr('cx', cx).attr('cy', cy)
+        .attr('r', 10)
+        .attr('fill', 'transparent')
+        .attr('stroke', 'none')
+        .style('cursor','pointer')
+        .style('pointer-events','all')
+        .node();
+
+      [el, hitEl].forEach(function(target){
+        target.addEventListener('mouseover', function(event){
+          d3.select(el).attr('r',3.5).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',1.5);
+          d3.select('path[data-id="'+cid+'"]').attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
+          var tt=document.getElementById('mapTooltip');
+          var d2=VISA[name]||{};
+          var flagHtml=d2.iso?'<img class="tt-flag" src="https://flagcdn.com/w40/'+d2.iso+'.png">':'';
+          var types=(d2.t||[]).filter(function(t){return t&&t!=='개선중';});
+          var hint=types.length?types.join(' · '):'클릭하여 확인';
+          tt.innerHTML=flagHtml+'<div><div class="tt-name">'+(name||'?')+'</div><div class="tt-hint">'+hint+'</div></div>';
+          tt.classList.add('show');
+          tt.style.left=(event.clientX+16)+'px';
+          tt.style.top=(event.clientY-20)+'px';
+        });
+        target.addEventListener('mousemove', function(event){
+          var tt=document.getElementById('mapTooltip');
+          tt.style.left=(event.clientX+16)+'px';
+          tt.style.top=(event.clientY-20)+'px';
+        });
+        target.addEventListener('mouseout', function(){
+          d3.select(el).attr('r',2).attr('fill','rgba(255,220,80,0.2)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1);
+          d3.select('path[data-id="'+cid+'"]').attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
+          document.getElementById('mapTooltip').classList.remove('show');
+        });
+        target.addEventListener('click', function(){
+          if(name) fly(name);
+        });
       });
     });
 }
