@@ -6,215 +6,172 @@
 <title>POSCO International - 국가별 비자 안내</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Barlow:wght@700;800;900&family=Oswald:wght@400;500;600&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif}
 
-/* 벽 질감 배경 */
-body{
-  background-color:#2a2820;
-  background-image:
-    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px),
-    repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 8px);
+:root {
+  --bg-main: #0a0b10;
+  --bg-sidebar: rgba(13, 15, 23, 0.85);
+  --bg-header: rgba(10, 11, 16, 0.9);
+  --accent-blue: #005aee;
+  --accent-gold: #c9a063;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --glass-effect: blur(16px);
 }
 
-/* 헤더 */
-.hd{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:12px 32px;background:rgba(30,28,24,0.95);border-bottom:1px solid rgba(180,160,120,0.2);backdrop-filter:blur(10px)}
-.hd-left{display:flex;align-items:center;gap:14px}
-.hd-badge{background:linear-gradient(135deg,#003087,#0051c3);padding:4px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
-.hd-div{width:1px;height:20px;background:rgba(180,160,120,0.3)}
-.hd-title{font-size:14px;font-weight:600;color:#d4c8a8;letter-spacing:.3px}
-.hd-info{font-size:11px;color:#9a8a6a;text-align:right;line-height:1.7}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;background-color: var(--bg-main);color: var(--text-primary)}
 
-/* 검색 */
-.sw{position:fixed;top:58px;left:50%;transform:translateX(-50%);z-index:50;width:100%;max-width:480px;padding:12px 20px}
-.sb{position:relative}
-.sb input{width:100%;padding:13px 46px 13px 18px;background:rgba(40,36,28,0.9);border:1.5px solid rgba(180,160,120,0.3);border-radius:10px;color:#e0d4b0;font-family:inherit;font-size:14px;outline:none;transition:all .25s;backdrop-filter:blur(10px)}
-.sb input:focus{border-color:rgba(200,180,100,0.6);background:rgba(50,46,36,0.95);box-shadow:0 0 0 3px rgba(200,180,100,0.1)}
-.sb input::placeholder{color:rgba(180,160,120,.5)}
-.si-icon{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:rgba(180,160,120,.6);font-size:15px;pointer-events:none}
-.dd{position:absolute;top:calc(100% + 5px);left:0;right:0;background:rgba(30,28,22,0.98);border:1.5px solid rgba(180,160,120,.2);border-radius:10px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.8);display:none;backdrop-filter:blur(20px);max-height:280px;overflow-y:auto}
-.dd.show{display:block}
-.dd::-webkit-scrollbar{width:3px}
-.dd::-webkit-scrollbar-thumb{background:rgba(180,160,120,.3);border-radius:4px}
-.ddi{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s}
-.ddi:hover{background:rgba(180,160,120,.08)}
-.ddi-name{font-size:13px;font-weight:600;color:#e0d4b0}
-.ddi-name mark{background:rgba(200,180,100,.3);color:#e0d4b0;border-radius:2px;padding:0 2px}
-.ddi-type{font-size:11px;color:#9a8a6a;margin-top:1px}
-.ddi-arr{font-size:12px;color:rgba(180,160,120,.4)}
-.dd-empty{padding:16px;text-align:center;font-size:13px;color:#9a8a6a}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(0, 90, 238, 0.05) 0%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  z-index: -1;
+}
 
-/* 사이드바 */
-.sidebar{position:fixed;left:0;top:58px;bottom:0;width:210px;z-index:45;background:rgba(28,26,20,0.95);border-right:1px solid rgba(180,160,120,0.15);backdrop-filter:blur(16px);display:flex;flex-direction:column;overflow:hidden;transition:transform .3s ease}
-.sidebar.collapsed{transform:translateX(-210px)}
-.sidebar-header{padding:11px 16px;border-bottom:1px solid rgba(180,160,120,0.15);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.sidebar-title{font-size:10px;font-weight:700;color:#c0a860;letter-spacing:1.2px;text-transform:uppercase}
-.sidebar-count{font-size:10px;color:#7a6a4a;background:rgba(180,160,100,.1);padding:2px 8px;border-radius:10px}
-.sidebar-list{overflow-y:auto;flex:1;padding:4px 0}
-.sidebar-list::-webkit-scrollbar{width:2px}
-.sidebar-list::-webkit-scrollbar-thumb{background:rgba(180,160,120,.2);border-radius:4px}
-.sidebar-item{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.025);transition:background .12s}
-.sidebar-item:hover{background:rgba(180,160,100,.07)}
-.sidebar-item.active{background:rgba(180,160,100,.12);border-left:2px solid #c0a860}
-.sidebar-flag img{width:20px;height:14px;border-radius:2px;object-fit:cover;opacity:.9}
-.sidebar-name{font-size:11px;font-weight:600;color:#d4c8a8;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sidebar-types{font-size:9px;color:#7a6a4a;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sidebar-toggle{position:fixed;left:210px;top:50%;transform:translateY(-50%);z-index:46;width:16px;height:44px;background:rgba(28,26,20,0.95);border:1px solid rgba(180,160,120,0.2);border-left:none;border-radius:0 6px 6px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#c0a860;font-size:10px;transition:left .3s ease}
+.hd{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:var(--bg-header);border-bottom:1px solid var(--border-color);backdrop-filter:var(--glass-effect)}
+.hd-left{display:flex;align-items:center;gap:20px}
+.hd-badge{background: linear-gradient(135deg, #003087, #005aee); padding:6px 16px; border-radius:4px; font-size:12px; font-weight:800; letter-spacing:1px; color:#fff; box-shadow: 0 4px 12px rgba(0, 48, 135, 0.3)}
+.hd-div{width:1px;height:24px;background:var(--border-color)}
+.hd-title{font-size:16px;font-weight:700;color:var(--text-primary);letter-spacing:-0.5px; display: flex; align-items: center; gap: 8px}
+.hd-info{font-size:13px;color:var(--text-secondary);text-align:right;line-height:1.4}
+
+.sw{position:fixed;top:84px;left:calc(50% + 130px);transform:translateX(-50%);z-index:90;width:100%;max-width:560px;transition:left .4s cubic-bezier(0.4, 0, 0.2, 1)}
+.sw.full{left:50%}
+.sb{position:relative; width: 100%}
+.sb input{width:100%;padding:16px 54px 16px 24px;background:rgba(255, 255, 255, 0.05);border:1px solid var(--border-color);border-radius:14px;color:#fff;font-family:inherit;font-size:15px;outline:none;transition:all .3s;backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0,0,0,0.3)}
+.sb input:focus{border-color:var(--accent-blue);background:rgba(255, 255, 255, 0.08);box-shadow:0 0 0 4px rgba(0, 90, 238, 0.15), 0 8px 32px rgba(0,0,0,0.4)}
+.sb input::placeholder{color:rgba(255,255,255,.3)}
+.si-icon{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:var(--accent-blue);font-size:18px;pointer-events:none}
+
+.dd{position:absolute;top:calc(100% + 12px);left:0;right:0;background:rgba(20, 23, 33, 0.95);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.6);display:none;backdrop-filter:var(--glass-effect);max-height:320px}
+.dd.show{display:block; animation: slideDown 0.3s ease-out}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.ddi{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;cursor:pointer;border-bottom:1px solid var(--border-color);transition:all .2s}
+.ddi:hover{background:rgba(255,255,255,0.05); padding-left: 30px}
+.ddi-name{font-size:15px;font-weight:600;color:var(--text-primary)}
+.ddi-name mark{background:var(--accent-blue);color:#fff;border-radius:2px;padding:0 2px}
+.ddi-type{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.dd-empty{padding:24px;text-align:center;font-size:14px;color:var(--text-secondary)}
+
+.sidebar{position:fixed;left:0;top:64px;bottom:0;width:260px;z-index:80;background:var(--bg-sidebar);border-right:1px solid var(--border-color);backdrop-filter:var(--glass-effect);display:flex;flex-direction:column;transition:transform .4s cubic-bezier(0.4, 0, 0.2, 1)}
+.sidebar.collapsed{transform:translateX(-260px)}
+.sidebar-header{padding:24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between}
+.sidebar-title{font-size:13px;font-weight:700;color:var(--text-primary);letter-spacing:1px;text-transform:uppercase}
+.sidebar-count{font-size:11px;font-weight:700;color:var(--accent-blue);background:rgba(0, 90, 238, 0.15);padding:4px 10px;border-radius:20px}
+.sidebar-list{overflow-y:auto;flex:1;padding:12px 0}
+.sidebar-list::-webkit-scrollbar{width:4px}
+.sidebar-list::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:10px}
+.sidebar-item{display:flex;align-items:center;gap:14px;padding:12px 24px;cursor:pointer;transition:all .2s; border-left: 3px solid transparent}
+.sidebar-item:hover{background:rgba(255,255,255,0.03)}
+.sidebar-item.active{background:rgba(0, 90, 238, 0.1); border-left-color: var(--accent-blue)}
+.sidebar-flag img{width:28px;height:18px;border-radius:3px;object-fit:cover;box-shadow: 0 2px 4px rgba(0,0,0,0.3)}
+.sidebar-name{font-size:14px;font-weight:500;color:var(--text-primary);flex:1}
+.sidebar-types{font-size:11px;color:var(--text-secondary);margin-top:2px}
+
+.sidebar-toggle{position:fixed;left:260px;top:50%;transform:translateY(-50%);z-index:81;width:24px;height:60px;background:var(--bg-sidebar);border:1px solid var(--border-color);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:12px;transition:all .4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: var(--glass-effect)}
+.sidebar-toggle:hover{color:var(--text-primary); background: var(--accent-blue); border-color: var(--accent-blue)}
 .sidebar-toggle.collapsed{left:0}
 
-/* 지도 */
-#map{position:fixed;top:58px;bottom:0;left:210px;right:0;transition:left .3s ease}
+#map{position:fixed;top:64px;bottom:0;left:260px;right:0;transition:left .4s cubic-bezier(0.4, 0, 0.2, 1); background: transparent}
 #map.full{left:0}
 #worldmap{width:100%;height:100%}
-#pathsvg{position:fixed;top:58px;bottom:0;left:210px;right:0;pointer-events:none;z-index:35;transition:left .3s ease}
+
+#pathsvg{position:fixed;top:64px;bottom:0;left:260px;right:0;pointer-events:none;z-index:35;transition:left .4s cubic-bezier(0.4, 0, 0.2, 1)}
 #pathsvg.full{left:0}
-.sw{left:calc(50% + 105px);transition:left .3s ease}
-.sw.full{left:50%}
 
-/* 메탈릭 대륙 스타일 */
-.country-metal{
-  fill:url(#metalGrad);
-  stroke:#8a8070;
-  stroke-width:0.4;
-  filter:url(#metalShadow);
-  cursor:default;
-}
-.country-metal.has-visa{
-  fill:url(#metalGradVisa);
-  stroke:#c0a860;
-  stroke-width:0.7;
-  cursor:default;
-  transition:fill .15s, stroke .15s, filter .15s;
-}
-.country-metal.has-visa:hover{
-  fill:#e8d48c;
-  stroke:#f0e060;
-  stroke-width:1.2;
-  filter:drop-shadow(0 0 4px rgba(240,220,80,.6));
-}
-.country-korea{
-  fill:url(#koreaGrad);
-  stroke:#4ab8ff;
-  stroke-width:1;
-  filter:url(#koreaGlow);
-}
+.country-metal{fill:url(#metalGrad);stroke:rgba(100,90,70,0.4);stroke-width:0.5;transition:all 0.3s ease;filter:url(#metalShadow)}
+.country-metal.has-visa{fill:url(#metalGradVisa);stroke:rgba(180,160,100,0.5);cursor:pointer}
+.country-metal.has-visa:hover{fill:url(#metalGradVisaHover);filter:url(#metalHover)}
+.country-korea{fill:url(#koreaGrad);stroke:#fff;stroke-width:1.5;filter:url(#koreaGlow)}
+.visa-marker{fill:rgba(0,90,238,0.3);stroke:var(--accent-blue);stroke-width:1;cursor:pointer;transition:all 0.2s}
+.visa-marker:hover{fill:rgba(0,90,238,0.6)}
 
-/* 도시 시계 */
 .city-clock{position:absolute;pointer-events:none;text-align:center}
-.city-name{font-family:'Orbitron',monospace;font-size:6px;font-weight:400;color:rgba(255,255,255,.45);letter-spacing:.8px;text-transform:uppercase;margin-bottom:1px}
-.city-time{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:#fff;letter-spacing:1.5px;text-shadow:0 0 8px rgba(255,255,255,.7),0 0 16px rgba(255,255,255,.3);animation:flicker 8s infinite}
-@keyframes flicker{0%,98%,100%{opacity:1}99%{opacity:.9}}
+.city-name{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:var(--text-secondary);letter-spacing:1px;margin-bottom:4px}
+.city-time{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 0 20px var(--accent-blue)}
 
-/* POSCO 로고 */
-.posco-logo{
-  position:relative;
-  text-align:center;
-  pointer-events:none;
-}
-.posco-main{
-  font-family:'Barlow',sans-serif;
-  font-size:26px;
-  font-weight:800;
-  letter-spacing:1px;
-  color:#fff;
-  line-height:1;
-  text-shadow:0 0 12px rgba(255,255,255,.8),0 0 28px rgba(255,255,255,.4),0 0 50px rgba(200,220,255,.3);
-  animation:neon-pulse 3s ease-in-out infinite alternate;
-}
-.posco-sub{
-  font-family:'Oswald',sans-serif;
-  font-size:9.5px;
-  font-weight:400;
-  letter-spacing:4.5px;
-  color:rgba(255,255,255,.75);
-  text-shadow:0 0 8px rgba(255,255,255,.5);
-  margin-top:3px;
-  text-transform:uppercase;
-}
-@keyframes neon-pulse{
-  0%{text-shadow:0 0 8px rgba(255,255,255,.7),0 0 20px rgba(255,255,255,.3)}
-  100%{text-shadow:0 0 18px rgba(255,255,255,1),0 0 36px rgba(255,255,255,.5),0 0 70px rgba(200,220,255,.4)}
-}
+.posco-logo{position:relative;text-align:center;pointer-events:none;opacity:0.75}
+.posco-main{font-family:'Barlow',sans-serif;font-size:32px;font-weight:900;letter-spacing:2px;color:#fff;line-height:1;text-shadow:0 0 20px rgba(0, 90, 238, 0.5)}
+.posco-sub{font-family:'Oswald',sans-serif;font-size:12px;font-weight:500;letter-spacing:6px;color:rgba(255,255,255,0.6);margin-top:6px;text-transform:uppercase}
 
-/* 비행기 */
-#plane{position:fixed;font-size:24px;z-index:40;display:none;pointer-events:none;filter:drop-shadow(0 0 6px #ffd700)}
+.popup{position:fixed;z-index:200;background:rgba(15, 17, 26, 0.95);border:1px solid var(--accent-blue);border-radius:24px;padding:32px;min-width:320px;max-width:360px;box-shadow:0 32px 80px rgba(0,0,0,0.8);display:none;backdrop-filter:blur(32px)}
+.popup.show{display:block;animation:popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards}
+@keyframes popIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.popup-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.05);border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.popup-close:hover{background:rgba(255,0,0,0.1);color:#ff4b4b}
+.popup-flag{margin-bottom:20px;display:inline-block}
+.popup-flag img{width:80px;height:54px;border-radius:8px;object-fit:cover;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.popup-country{font-size:28px;font-weight:800;color:#fff;margin-bottom:24px;letter-spacing:-0.5px}
+.popup-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+.info-card{background:rgba(255,255,255,0.03);border:1px solid var(--border-color);border-radius:12px;padding:14px}
+.info-card-label{font-size:11px;color:var(--text-secondary);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.info-card-value{font-size:16px;font-weight:700;color:var(--accent-gold)}
+.info-card-sub{font-size:11px;color:var(--text-secondary);margin-top:4px}
+.popup-type-label{font-size:12px;color:var(--text-secondary);margin-bottom:12px;font-weight:600}
+.popup-types{display:flex;flex-direction:column;gap:10px}
+.type-btn{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(0,90,238,0.05);border:1px solid rgba(0,90,238,0.2);border-radius:14px;color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s}
+.type-btn:hover{background:var(--accent-blue);border-color:var(--accent-blue);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,90,238,0.3)}
 
-/* 팝업 */
-.popup{position:fixed;z-index:60;background:linear-gradient(145deg,rgba(28,26,20,0.98),rgba(38,34,24,0.98));border:1.5px solid rgba(180,160,100,.3);border-radius:16px;padding:18px 22px;min-width:230px;max-width:260px;box-shadow:0 20px 60px rgba(0,0,0,.95),inset 0 1px 0 rgba(200,180,100,.08);display:none;backdrop-filter:blur(24px)}
-.popup.show{animation:pop .3s cubic-bezier(.34,1.56,.64,1) forwards}
-@keyframes pop{from{opacity:0;transform:scale(.75)}to{opacity:1;transform:scale(1)}}
-.popup-flag{margin-bottom:8px}
-.popup-flag img{width:64px;height:43px;border-radius:5px;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.5)}
-.popup-country{font-size:19px;font-weight:700;color:#e0d4b0;margin-bottom:8px}
-.popup-info{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0}
-.info-card{background:rgba(180,160,100,.06);border:1px solid rgba(180,160,100,.12);border-radius:7px;padding:7px 9px}
-.info-card-label{font-size:9px;color:#7a6a4a;margin-bottom:2px;letter-spacing:.5px}
-.info-card-value{font-size:13px;font-weight:700;color:#e0d4b0}
-.info-card-sub{font-size:9px;color:#c0a860;margin-top:1px}
-.popup-type-label{font-size:10px;color:#7a6a4a;margin-bottom:4px;margin-top:6px}
-.popup-types{display:flex;flex-direction:column;gap:7px}
-.type-btn{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:rgba(180,160,100,.07);border:1px solid rgba(180,160,100,.2);border-radius:8px;color:#e0d4b0;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;width:100%}
-.type-btn:hover{background:rgba(180,160,100,.15);border-color:rgba(200,180,100,.4);transform:translateX(2px)}
-.type-btn-arrow{color:#c0a860;font-size:12px}
-.popup-close{position:absolute;top:11px;right:12px;background:rgba(255,255,255,.06);border:none;color:rgba(255,255,255,.35);font-size:14px;cursor:pointer;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.popup-close:hover{background:rgba(255,255,255,.12);color:#fff}
-
-/* 인천 마커 */
 .icn-dot{position:fixed;z-index:45;pointer-events:none;transform:translate(-50%,-50%)}
-.icn-ring{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle,#fff 20%,#4ab8ff 80%);box-shadow:0 0 0 0 rgba(74,184,255,.9);animation:icn-pulse 2s infinite}
-@keyframes icn-pulse{0%{box-shadow:0 0 0 0 rgba(74,184,255,.9)}70%{box-shadow:0 0 0 12px rgba(74,184,255,0)}100%{box-shadow:0 0 0 0 rgba(74,184,255,0)}}
-.icn-label{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;color:#4ab8ff;white-space:nowrap;letter-spacing:1px}
+.icn-ring{width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 20px var(--accent-blue);animation:pulse 2s infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}
+.icn-label{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-family:'Orbitron';font-size:10px;font-weight:900;color:var(--accent-blue);background:#fff;padding:2px 6px;border-radius:4px;letter-spacing:1px}
 
-.loading{position:fixed;inset:0;top:58px;display:flex;align-items:center;justify-content:center;z-index:20;color:#9a8a6a;font-size:13px;gap:8px}
-.ld{width:7px;height:7px;border-radius:50%;background:#c0a860;display:inline-block;animation:ldot 1.2s infinite}
-.ld:nth-child(2){animation-delay:.2s}.ld:nth-child(3){animation-delay:.4s}
-@keyframes ldot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.loading{position:fixed;inset:0;top:64px;display:flex;align-items:center;justify-content:center;z-index:200;background:var(--bg-main);transition:opacity 0.5s}
+.ld{width:10px;height:10px;border-radius:50%;background:var(--accent-blue);margin:0 4px;animation:bounce 0.6s infinite alternate}
+.ld:nth-child(2){animation-delay:0.2s}.ld:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
 
-.visa-marker{animation:marker-pulse 2.5s ease-in-out infinite alternate}
-@keyframes marker-pulse{
-  0%{stroke:rgba(255,220,80,0.6);r:2.5;}
-  100%{stroke:rgba(255,240,120,1);r:3.5;}
-}
-  0%{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px rgba(255,255,255,.6));}
-  50%{filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 14px rgba(255,255,255,.9)) drop-shadow(0 0 28px rgba(200,230,255,.5));}
-  100%{filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 8px rgba(255,255,255,.7));}
-}
+#plane{position:fixed;font-size:28px;z-index:40;display:none;pointer-events:none;filter:drop-shadow(0 0 10px var(--accent-blue))}
+
+@keyframes dash{to{stroke-dashoffset:-100}}
+#flightpath.active{animation:dash 3s linear infinite;opacity:0.8!important}
 </style>
 </head>
 <body>
-
 <header class="hd">
   <div class="hd-left">
-    <div class="hd-badge">POSCO International</div>
+    <div class="hd-badge">POSCO INTERNATIONAL</div>
     <div class="hd-div"></div>
-    <span class="hd-title">✈ 국가별 비자 발급 안내</span>
+    <span class="hd-title">국가별 비자 발급 안내 <span style="font-size:14px;font-weight:normal;opacity:0.6;margin-left:8px">Global Visa Information System</span></span>
   </div>
-  <div class="hd-info">행정지원그룹 고은영 과장 T.2548 | 현대드림투어</div>
+  <div class="hd-info">
+    <div style="font-weight:700;color:var(--text-primary)">행정지원그룹 고은영 과장 (T.2548)</div>
+    
+  </div>
 </header>
 
 <div class="sw">
   <div class="sb">
-    <input type="text" id="si" placeholder="출장 국가를 검색하세요..." autocomplete="off" spellcheck="false">
+    <input type="text" id="si" placeholder="출장 예정 국가를 입력하세요" autocomplete="off" spellcheck="false">
     <span class="si-icon">🔍</span>
     <div class="dd" id="dd"></div>
   </div>
 </div>
 
-<!-- 사이드바 -->
-<div class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <span class="sidebar-title">🌍 국가 목록</span>
-    <span class="sidebar-count" id="sidebar-count">-</span>
+    <span class="sidebar-count" id="sidebar-count">0개국</span>
   </div>
   <div class="sidebar-list" id="sidebar-list">
-    <div style="padding:16px;text-align:center;font-size:11px;color:#7a6a4a">불러오는 중...</div>
+    <div style="padding:40px 24px;text-align:center;font-size:13px;color:var(--text-secondary);opacity:0.6">
+      데이터 동기화 중...
+    </div>
   </div>
-</div>
+</aside>
+
 <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">◀</button>
 
 <div class="loading" id="loading">
-  <span class="ld"></span><span class="ld"></span><span class="ld"></span>
-  <span>지도 불러오는 중...</span>
+  <div class="ld"></div><div class="ld"></div><div class="ld"></div>
+  <span style="margin-left:16px;font-weight:600;letter-spacing:1px">INITIALIZING INTERACTIVE MAP</span>
 </div>
 
 <div id="map">
@@ -222,19 +179,30 @@ body{
 </div>
 
 <svg id="pathsvg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
-  <defs><filter id="tglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-  <path id="flightpath" fill="none" stroke="rgba(255,220,100,0)" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#tglow)" opacity="0"/>
+  <defs>
+    <filter id="tglow"><feGaussianBlur stdDeviation="3" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+    <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:var(--accent-gold);stop-opacity:0"></stop>
+      <stop offset="50%" style="stop-color:var(--accent-gold);stop-opacity:1"></stop>
+      <stop offset="100%" style="stop-color:var(--accent-gold);stop-opacity:0"></stop>
+    </linearGradient>
+  </defs>
+  <path id="flightpath" fill="none" stroke="url(#pathGrad)" stroke-width="2" stroke-dasharray="8,5" filter="url(#tglow)" opacity="0"></path>
 </svg>
 
 <div id="plane">✈</div>
-<div class="icn-dot" id="icnDot"><div class="icn-label">ICN</div><div class="icn-ring"></div></div>
+
+<div class="icn-dot" id="icnDot">
+  <div class="icn-label">ICN</div>
+  <div class="icn-ring"></div>
+</div>
 
 <div class="popup" id="popup">
-  <button class="popup-close" onclick="closePopup()">×</button>
+  <button class="popup-close" onclick="closePopup()">✕</button>
   <div class="popup-flag" id="pflag"></div>
   <div class="popup-country" id="pcountry"></div>
   <div class="popup-info" id="pinfo"></div>
-  <div class="popup-type-label">비자 유형을 선택하세요</div>
+  <div class="popup-type-label">SELECT VISA TYPE</div>
   <div class="popup-types" id="ptypes"></div>
 </div>
 
@@ -523,8 +491,8 @@ function loadMap(urls,idx){
       var pt=proj([c.lng,c.lat]);
       if(!pt) return;
       var fo2=svg.append('foreignObject')
-        .attr('x',pt[0]-28).attr('y',pt[1]-22)
-        .attr('width',56).attr('height',24);
+        .attr('x',pt[0]-40).attr('y',pt[1]-32)
+        .attr('width',80).attr('height',44);
       fo2.append('xhtml:div')
         .attr('class','city-clock')
         .attr('id','clock-'+c.name.replace(/\s/g,'-'))
@@ -699,7 +667,7 @@ function renderMarkers(){
     .attr('cx',function(d){var c=path.centroid(d);return c[0];})
     .attr('cy',function(d){var c=path.centroid(d);return c[1];})
     .attr('data-id', function(d){ return d.id; })
-    .attr('r',4)
+    .attr('r',2.5)
     .attr('fill','rgba(255,220,80,0.15)')
     .attr('stroke','rgba(255,220,80,0.9)')
     .attr('stroke-width',1.8)
@@ -707,13 +675,13 @@ function renderMarkers(){
     .style('cursor','pointer')
     .on('mouseover',function(event,d){
       var cid = d.id;
-      d3.select(this).attr('r',6).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',2.2);
+      d3.select(this).attr('r',4).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',2.2);
       d3.select('path[data-id="'+cid+'"]')
         .attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
     })
     .on('mouseout',function(event,d){
       var cid = d.id;
-      d3.select(this).attr('r',4).attr('fill','rgba(255,220,80,0.15)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1.8);
+      d3.select(this).attr('r',2.5).attr('fill','rgba(255,220,80,0.15)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1.8);
       d3.select('path[data-id="'+cid+'"]')
         .attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
     })
