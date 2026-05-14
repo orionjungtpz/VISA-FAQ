@@ -189,12 +189,12 @@ body{
     <div class="hd-div"></div>
     <span class="hd-title">✈ 국가별 비자 발급 안내</span>
   </div>
-  <div class="hd-info">행정지원그룹 고은영 과장 T.2548 </div>
+  <div class="hd-info">행정지원그룹 고은영 과장 T.2548 | 현대드림투어</div>
 </header>
 
 <div class="sw">
   <div class="sb">
-    <input type="text" id="si" placeholder="출장 국가를 검색하세요" autocomplete="off" spellcheck="false">
+    <input type="text" id="si" placeholder="출장 국가를 검색하세요..." autocomplete="off" spellcheck="false">
     <span class="si-icon">🔍</span>
     <div class="dd" id="dd"></div>
   </div>
@@ -244,7 +244,52 @@ body{
 var BASE='https://poscointl1.sharepoint.com/sites/VisaGuide/SitePages/';
 var API_URL='https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/575bbc8293674a9e99a37357f2ee74e7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jZ5DqKljJNjpUXoYDLsTgJ3ZcII2qTeYBzlnhAJjaq8';
 
+// 국가+비자유형 → 실제 SharePoint 파일명 매핑
+var PAGE_MAP={
+  '가나':{'관광/방문':'가나_관광_방문','비즈니스':'가나_비즈니스'},
+  '감비아':{'체류':'감비아_체류'},
+  '나이지리아':{'비즈니스':'나이지리아_비즈니스','상용-전자도착':'나이지리아_비즈니스_전자도착'},
+  '남아프리카공화국':{'무비자':'남아프리카공화국_무비자'},
+  '네팔':{'관광':'네팔_관광','도착':'네팔_도착'},
+  '뉴질랜드':{'ETA':'뉴질랜드_ETA'},
+  '대만':{'비즈니스':'대만_비즈니스'},
+  '독일':{'무비자':'독일_무비자'},
+  '러시아':{'무비자':'러시아_무비자','상용':'러시아_비즈니스'},
+  '레바논':{'도착':'레바논_도착'},
+  '루마니아':{'무비자':'루마니아_무비자'},
+  '리비아':{'상용':'리비아_비즈니스'},
+  '마다가스카르':{'도착':'마다가스카르_도착'},
+  '말레이시아':{'무비자':'말레이시아_무비자'},
+  '멕시코':{'무비자':'멕시코_무비자'},
+  '모로코':{'무비자':'모로코_무비자'},
+  '모리타니아':{'상용':'모리타니아_전자비자'},
+  '모잠비크':{'관광도착':'모잠비크_무비자'},
+  '몽골':{'무비자':'몽골_무비자'},
+  '미국':{'B1/B2':'미국_B1_B2','ESTA, 대행가능':'미국_ESTA','ESTA':'미국_ESTA'},
+  '미얀마':{'관광':'미얀마_관광','상용':'미얀마_비즈니스','전자/관광':'미얀마_전자비자','전자/상용':'미얀마_전자비자'},
+  '방글라데시':{'도착':'방글라데시_도착','상용':'방글라데시_비즈니스'},
+  '베트남':{'무비자':'베트남_무비자','E-VISA':'베트남_전자비자'},
+  '벨라루스':{'무비자':'벨라루스_무비자','단기':'벨라루스_전자비자'},
+  '알제리':{'상용':'알제리_비즈니스'},
+  '앙골라':{'관광':'앙골라_무비자','전자':'앙골라_무비자'},
+  '에티오피아':{'도착':'에티오피아_도착','관광E-VISA':'에티오피아_전자비자'},
+  '영국':{'ETA':'영국_전자비자'},
+  '요르단':{'도착/전자상용':'요르단_도착','도착':'요르단_도착','전자':'요르단_전자비자'},
+  '우간다':{'전자':'우간다_전자비자','전자관광':'우간다_전자비자'},
+  '우즈베키스탄':{'무비자':'우즈베키스탄_무비자'},
+  '이집트':{'도착':'이집트_도착','전자':'이집트_전자비자'},
+  '인도':{'전자상용, 대행가능':'인도_전자비자','공항도착':'인도_공항도착'},
+  '인도네시아':{'공항-도착':'인도네시아_공항도착','전자-도착':'인도네시아_전자도착','전자 상용-이민국':'인도네시아_비즈니스_전자','상용-주한대사관':'인도네시아_비즈니스_전자'},
+  '일본':{'무비자':'일본_무비자'},
+  '잠비아':{'무비자':'잠비아_무비자'},
+  '중국':{'무비자/한시적':'중국_비즈니스'},
+  '짐바브웨':{'무비자':'짐바브웨_도착'},
+};
+
 function typeToSlug(country,type){
+  var cm=PAGE_MAP[country];
+  if(cm&&cm[type]) return BASE+cm[type]+'.aspx';
+  // 매핑 없을 경우 기존 변환 로직으로 폴백
   var slug=type.replace(/\//g,'_').replace(/\s+/g,'_').replace(/[()]/g,'').replace(/\*/g,'').replace(/_+/g,'_').replace(/_$/,'');
   return BASE+encodeURIComponent(country+'_'+slug)+'.aspx';
 }
@@ -275,7 +320,7 @@ var GEO={
   '방글라데시':      {lat:23.7, lng:90.4,  iso:'bd',tz:360, fly:7, tzCity:'다카',          id:50},
   '베트남':          {lat:14.1, lng:108.3, iso:'vn',tz:420, fly:5, tzCity:'하노이',        id:704},
   '벨라루스':        {lat:53.7, lng:28.0,  iso:'by',tz:180, fly:10,tzCity:'민스크',        id:112},
-  '사우디':          {lat:23.9, lng:45.1,  iso:'sa',tz:180, fly:10,tzCity:'리야드',        id:682},
+  '사우디아라비아':  {lat:23.9, lng:45.1,  iso:'sa',tz:180, fly:10,tzCity:'리야드',        id:682},
   '세네갈':          {lat:14.5, lng:-14.5, iso:'sn',tz:0,   fly:15,tzCity:'다카르',        id:686},
   '수단':            {lat:12.9, lng:30.2,  iso:'sd',tz:180, fly:12,tzCity:'하르툼',        id:729},
   '쉥겐비자':        {lat:50.9, lng:4.4,   iso:'eu',tz:60,  fly:11,tzCity:'브뤼셀',        id:null},
