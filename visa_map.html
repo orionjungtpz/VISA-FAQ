@@ -526,6 +526,10 @@ function loadMap(urls,idx){
     setInterval(updateClocks,1000);
     placeICN();
     setTimeout(placeICN,200);
+
+    // flightpath를 맨 앞으로 이동 (지도 위에 표시)
+    var fp=document.getElementById('flightpath');
+    if(fp) svg.node().appendChild(fp);
   }).catch(function(){loadMap(urls,idx+1);});
 }
 loadMap(MAP_URLS,0);
