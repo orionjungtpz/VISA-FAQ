@@ -20,103 +20,63 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;background-color: var(--bg-main);color: var(--text-primary)}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Noto Sans KR',sans-serif;background-color:var(--bg-main);color:var(--text-primary)}
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: 
-    radial-gradient(circle at 50% 50%, rgba(0, 90, 238, 0.05) 0%, transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
-  z-index: -1;
-}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(circle at 50% 50%,rgba(0,90,238,0.05) 0%,transparent 50%),linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:100% 100%,40px 40px,40px 40px;z-index:-1}
 
 .hd{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:var(--bg-header);border-bottom:1px solid var(--border-color);backdrop-filter:var(--glass-effect)}
 .hd-left{display:flex;align-items:center;gap:20px}
-.hd-badge{background: linear-gradient(135deg, #003087, #005aee); padding:6px 16px; border-radius:4px; font-size:12px; font-weight:800; letter-spacing:1px; color:#fff; box-shadow: 0 4px 12px rgba(0, 48, 135, 0.3)}
+.hd-badge{background:linear-gradient(135deg,#003087,#005aee);padding:6px 16px;border-radius:4px;font-size:12px;font-weight:800;letter-spacing:1px;color:#fff;box-shadow:0 4px 12px rgba(0,48,135,0.3);text-decoration:none;cursor:pointer}
+.hd-badge:hover{opacity:0.85}
 .hd-div{width:1px;height:24px;background:var(--border-color)}
-.hd-title{font-size:16px;font-weight:700;color:var(--text-primary);letter-spacing:-0.5px; display: flex; align-items: center; gap: 8px}
-.hd-info{font-size:13px;color:var(--text-secondary);text-align:right;line-height:1.4}
-
-/* ── 설정 모달 ── */
-.cfg-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
-.cfg-overlay.hidden{display:none}
-.cfg-box{background:rgba(15,17,26,0.98);border:1px solid var(--accent-blue);border-radius:20px;padding:36px 40px;width:520px;max-width:92vw;box-shadow:0 32px 80px rgba(0,0,0,0.8)}
-.cfg-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px}
-.cfg-sub{font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.6}
-.cfg-label{font-size:12px;font-weight:700;color:var(--text-secondary);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
-.cfg-input{width:100%;padding:14px 18px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:10px;color:#fff;font-family:inherit;font-size:13px;outline:none;transition:all .2s;margin-bottom:18px}
-.cfg-input:focus{border-color:var(--accent-blue);background:rgba(255,255,255,0.08);box-shadow:0 0 0 3px rgba(0,90,238,0.15)}
-.cfg-input::placeholder{color:rgba(255,255,255,.25);font-size:12px}
-.cfg-row{display:flex;gap:12px;margin-top:8px}
-.cfg-btn{flex:1;padding:14px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;border:none}
-.cfg-btn-save{background:var(--accent-blue);color:#fff}
-.cfg-btn-save:hover{background:#0068ff;transform:translateY(-1px)}
-.cfg-btn-cancel{background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--border-color)}
-.cfg-btn-cancel:hover{background:rgba(255,255,255,0.1)}
-.cfg-warn{font-size:11px;color:#f0a040;margin-top:12px;padding:10px 14px;background:rgba(240,160,64,0.08);border-radius:8px;border-left:3px solid #f0a040;line-height:1.6}
-
-/* 설정 버튼 (헤더) */
-.cfg-open-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border-color);color:var(--text-secondary);padding:8px 16px;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
-.cfg-open-btn:hover{background:rgba(0,90,238,0.15);border-color:var(--accent-blue);color:#fff}
-
-/* 담당자 정보 (헤더 우측) */
+.hd-title{font-size:16px;font-weight:700;color:var(--text-primary);letter-spacing:-0.5px;display:flex;align-items:center;gap:8px}
 .hd-contact{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
 .hd-contact-name{font-size:13px;font-weight:700;color:var(--text-primary)}
 .hd-contact-detail{font-size:12px;color:var(--text-secondary)}
 .hd-contact-loading{font-size:12px;color:var(--text-secondary);opacity:0.5}
 
-/* 미설정 배너 */
-.uncfg-banner{position:fixed;top:64px;left:0;right:0;z-index:90;background:linear-gradient(90deg,rgba(240,100,40,0.15),rgba(240,160,40,0.15));border-bottom:1px solid rgba(240,130,40,0.3);padding:10px 32px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#f0b060}
-.uncfg-banner.hidden{display:none}
-.uncfg-banner a{color:var(--accent-blue);cursor:pointer;text-decoration:underline;font-weight:700}
-
-.sw{position:fixed;top:84px;left:calc(50% + 130px);transform:translateX(-50%);z-index:90;width:100%;max-width:560px;transition:left .4s cubic-bezier(0.4, 0, 0.2, 1)}
+.sw{position:fixed;top:84px;left:calc(50% + 130px);transform:translateX(-50%);z-index:90;width:100%;max-width:560px;transition:left .4s cubic-bezier(0.4,0,0.2,1)}
 .sw.full{left:50%}
-.sw.banner-offset{top:118px}
-.sb{position:relative; width: 100%}
-.sb input{width:100%;padding:16px 54px 16px 24px;background:rgba(255, 255, 255, 0.05);border:1px solid var(--border-color);border-radius:14px;color:#fff;font-family:inherit;font-size:15px;outline:none;transition:all .3s;backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0,0,0,0.3)}
-.sb input:focus{border-color:var(--accent-blue);background:rgba(255, 255, 255, 0.08);box-shadow:0 0 0 4px rgba(0, 90, 238, 0.15), 0 8px 32px rgba(0,0,0,0.4)}
+.sb{position:relative;width:100%}
+.sb input{width:100%;padding:16px 54px 16px 24px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:14px;color:#fff;font-family:inherit;font-size:15px;outline:none;transition:all .3s;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.sb input:focus{border-color:var(--accent-blue);background:rgba(255,255,255,0.08);box-shadow:0 0 0 4px rgba(0,90,238,0.15),0 8px 32px rgba(0,0,0,0.4)}
 .sb input::placeholder{color:rgba(255,255,255,.3)}
 .si-icon{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:var(--accent-blue);font-size:18px;pointer-events:none}
 
-.dd{position:absolute;top:calc(100% + 12px);left:0;right:0;background:rgba(20, 23, 33, 0.95);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.6);display:none;backdrop-filter:var(--glass-effect);max-height:320px}
-.dd.show{display:block; animation: slideDown 0.3s ease-out}
-@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.dd{position:absolute;top:calc(100% + 12px);left:0;right:0;background:rgba(20,23,33,0.95);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.6);display:none;backdrop-filter:var(--glass-effect);max-height:320px}
+.dd.show{display:block;animation:slideDown 0.3s ease-out}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 .ddi{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;cursor:pointer;border-bottom:1px solid var(--border-color);transition:all .2s}
-.ddi:hover{background:rgba(255,255,255,0.05); padding-left: 30px}
+.ddi:hover{background:rgba(255,255,255,0.05);padding-left:30px}
 .ddi-name{font-size:15px;font-weight:600;color:var(--text-primary)}
 .ddi-name mark{background:var(--accent-blue);color:#fff;border-radius:2px;padding:0 2px}
 .ddi-type{font-size:12px;color:var(--text-secondary);margin-top:2px}
 .dd-empty{padding:24px;text-align:center;font-size:14px;color:var(--text-secondary)}
 
-.sidebar{position:fixed;left:0;top:64px;bottom:0;width:260px;z-index:80;background:var(--bg-sidebar);border-right:1px solid var(--border-color);backdrop-filter:var(--glass-effect);display:flex;flex-direction:column;transition:transform .4s cubic-bezier(0.4, 0, 0.2, 1)}
+.sidebar{position:fixed;left:0;top:64px;bottom:0;width:260px;z-index:80;background:var(--bg-sidebar);border-right:1px solid var(--border-color);backdrop-filter:var(--glass-effect);display:flex;flex-direction:column;transition:transform .4s cubic-bezier(0.4,0,0.2,1)}
 .sidebar.collapsed{transform:translateX(-260px)}
 .sidebar-header{padding:24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between}
 .sidebar-title{font-size:13px;font-weight:700;color:var(--text-primary);letter-spacing:1px;text-transform:uppercase}
-.sidebar-count{font-size:11px;font-weight:700;color:#fff;background:rgba(0, 90, 238, 0.15);padding:4px 10px;border-radius:20px}
+.sidebar-count{font-size:11px;font-weight:700;color:#fff;background:rgba(0,90,238,0.15);padding:4px 10px;border-radius:20px}
 .sidebar-list{overflow-y:auto;flex:1;padding:12px 0}
 .sidebar-list::-webkit-scrollbar{width:4px}
 .sidebar-list::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:10px}
-.sidebar-item{display:flex;align-items:center;gap:14px;padding:12px 24px;cursor:pointer;transition:all .2s; border-left: 3px solid transparent}
+.sidebar-item{display:flex;align-items:center;gap:14px;padding:12px 24px;cursor:pointer;transition:all .2s;border-left:3px solid transparent}
 .sidebar-item:hover{background:rgba(255,255,255,0.03)}
-.sidebar-item.active{background:rgba(0, 90, 238, 0.1); border-left-color: var(--accent-blue)}
-.sidebar-flag img{width:28px;height:18px;border-radius:3px;object-fit:cover;box-shadow: 0 2px 4px rgba(0,0,0,0.3)}
+.sidebar-item.active{background:rgba(0,90,238,0.1);border-left-color:var(--accent-blue)}
+.sidebar-flag img{width:28px;height:18px;border-radius:3px;object-fit:cover;box-shadow:0 2px 4px rgba(0,0,0,0.3)}
 .sidebar-name{font-size:14px;font-weight:500;color:var(--text-primary);flex:1}
 .sidebar-types{font-size:11px;color:var(--text-secondary);margin-top:2px}
 
-.sidebar-toggle{position:fixed;left:260px;top:50%;transform:translateY(-50%);z-index:81;width:24px;height:60px;background:var(--bg-sidebar);border:1px solid var(--border-color);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:12px;transition:all .4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: var(--glass-effect)}
-.sidebar-toggle:hover{color:var(--text-primary); background: var(--accent-blue); border-color: var(--accent-blue)}
+.sidebar-toggle{position:fixed;left:260px;top:50%;transform:translateY(-50%);z-index:81;width:24px;height:60px;background:var(--bg-sidebar);border:1px solid var(--border-color);border-left:none;border-radius:0 8px 8px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:12px;transition:all .4s cubic-bezier(0.4,0,0.2,1);backdrop-filter:var(--glass-effect)}
+.sidebar-toggle:hover{color:var(--text-primary);background:var(--accent-blue);border-color:var(--accent-blue)}
 .sidebar-toggle.collapsed{left:0}
 
-#map{position:fixed;top:64px;bottom:0;left:260px;right:0;transition:left .4s cubic-bezier(0.4, 0, 0.2, 1); background: transparent}
+#map{position:fixed;top:64px;bottom:0;left:260px;right:0;transition:left .4s cubic-bezier(0.4,0,0.2,1);background:transparent}
 #map.full{left:0}
 #worldmap{width:100%;height:100%}
 
-#pathsvg{position:fixed;top:64px;bottom:0;left:260px;right:0;pointer-events:none;z-index:35;transition:left .4s cubic-bezier(0.4, 0, 0.2, 1)}
+#pathsvg{position:fixed;top:64px;bottom:0;left:260px;right:0;pointer-events:none;z-index:35;transition:left .4s cubic-bezier(0.4,0,0.2,1)}
 #pathsvg.full{left:0}
 
 .country-metal{fill:url(#metalGrad);stroke:rgba(100,90,70,0.4);stroke-width:0.5;transition:all 0.3s ease;filter:url(#metalShadow)}
@@ -132,9 +92,9 @@ body::before {
 
 .posco-logo{position:relative;text-align:center;pointer-events:none;opacity:0.75}
 
-.popup{position:fixed;z-index:200;background:rgba(15, 17, 26, 0.95);border:1px solid var(--accent-blue);border-radius:24px;padding:32px;min-width:320px;max-width:360px;box-shadow:0 32px 80px rgba(0,0,0,0.8);display:none;backdrop-filter:blur(32px)}
-.popup.show{display:block;animation:popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards}
-@keyframes popIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.popup{position:fixed;z-index:200;background:rgba(15,17,26,0.95);border:1px solid var(--accent-blue);border-radius:24px;padding:32px;min-width:320px;max-width:360px;box-shadow:0 32px 80px rgba(0,0,0,0.8);display:none;backdrop-filter:blur(32px)}
+.popup.show{display:block;animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards}
+@keyframes popIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .popup-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.05);border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
 .popup-close:hover{background:rgba(255,0,0,0.1);color:#ff4b4b}
 .popup-flag{margin-bottom:20px;display:inline-block}
@@ -161,71 +121,23 @@ body::before {
 @keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
 
 #plane{position:fixed;font-size:28px;z-index:40;display:none;pointer-events:none;filter:drop-shadow(0 0 10px var(--accent-blue))}
-
 @keyframes dash{to{stroke-dashoffset:-100}}
 #flightpath.active{animation:dash 3s linear infinite;opacity:0.8!important}
+@keyframes logo-neon{0%,100%{opacity:0.75}50%{opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     🔒 설정 모달 (API URL / SharePoint URL)
-     민감정보를 localStorage에 저장하여
-     소스코드에는 절대 노출되지 않습니다.
-════════════════════════════════════════════ -->
-<div class="cfg-overlay hidden" id="cfgOverlay">
-  <div class="cfg-box">
-    <div class="cfg-title">🔧 시스템 설정</div>
-    <div class="cfg-sub">
-      입력값은 이 브라우저의 <strong>localStorage</strong>에만 저장됩니다.<br>
-      소스코드·GitHub에는 전혀 기록되지 않습니다.
-    </div>
-
-    <div class="cfg-label">Power Automate Flow URL</div>
-    <input class="cfg-input" id="cfgApiUrl" type="password"
-      placeholder="https://xxxxx.api.powerplatform.com/powerautomate/.../invoke?...">
-
-    <div class="cfg-label">SharePoint 베이스 URL</div>
-    <input class="cfg-input" id="cfgBaseUrl" type="text"
-      placeholder="https://yourcompany.sharepoint.com/sites/VisaGuide/SitePages/">
-
-    <div class="cfg-label">담당자 리스트 API URL (Power Automate)</div>
-    <input class="cfg-input" id="cfgContactUrl" type="password"
-      placeholder="https://xxxxx.api.powerplatform.com/powerautomate/.../invoke?...">
-
-    <div class="cfg-warn">
-      ⚠️ Flow URL에는 서명키(sig=…)가 포함됩니다. 타인에게 공유하지 마세요.<br>
-      이 화면은 관리자만 접근할 수 있어야 합니다.
-    </div>
-
-    <div class="cfg-row">
-      <button class="cfg-btn cfg-btn-cancel" id="cfgCancelBtn">취소</button>
-      <button class="cfg-btn cfg-btn-save"   id="cfgSaveBtn">💾 저장</button>
-    </div>
-  </div>
-</div>
-
-<!-- 미설정 안내 배너 -->
-<div class="uncfg-banner hidden" id="uncfgBanner">
-  ⚠️ API 설정이 필요합니다. 데이터를 불러오려면
-  <a onclick="openCfg()">설정 열기</a>를 클릭하세요.
-  설정값은 이 기기 브라우저에만 저장됩니다.
-</div>
-
 <header class="hd">
   <div class="hd-left">
-    <div class="hd-badge">POSCO INTERNATIONAL</div>
+    <a href="https://poscointl1.sharepoint.com/sites/VisaGuide" target="_blank" class="hd-badge">POSCO INTERNATIONAL</a>
     <div class="hd-div"></div>
     <span class="hd-title">국가별 비자 발급 안내
       <span style="font-size:14px;font-weight:normal;opacity:0.6;margin-left:8px">Global Visa Information System</span>
     </span>
   </div>
-  <div style="display:flex;align-items:center;gap:16px">
-    <!-- 담당자 정보: SharePoint 리스트에서 동적 로드 -->
-    <div class="hd-contact" id="hdContact">
-      <span class="hd-contact-loading">담당자 정보 로딩중...</span>
-    </div>
-    <button class="cfg-open-btn" onclick="openCfg()">⚙️ API 설정</button>
+  <div class="hd-contact" id="hdContact">
+    <span class="hd-contact-loading">로딩중...</span>
   </div>
 </header>
 
@@ -243,9 +155,7 @@ body::before {
     <span class="sidebar-count" id="sidebar-count">0개국</span>
   </div>
   <div class="sidebar-list" id="sidebar-list">
-    <div style="padding:40px 24px;text-align:center;font-size:13px;color:var(--text-secondary);opacity:0.6">
-      데이터 동기화 중...
-    </div>
+    <div style="padding:40px 24px;text-align:center;font-size:13px;color:var(--text-secondary);opacity:0.6">데이터 동기화 중...</div>
   </div>
 </aside>
 
@@ -256,9 +166,7 @@ body::before {
   <span style="margin-left:16px;font-weight:600;letter-spacing:1px">INITIALIZING INTERACTIVE MAP</span>
 </div>
 
-<div id="map">
-  <svg id="worldmap" viewBox="0 0 960 500"></svg>
-</div>
+<div id="map"><svg id="worldmap" viewBox="0 0 960 500"></svg></div>
 
 <svg id="pathsvg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
   <defs>
@@ -273,7 +181,6 @@ body::before {
 </svg>
 
 <div id="plane">✈</div>
-
 <div class="icn-dot" id="icnDot">
   <div class="icn-label">ICN</div>
   <div class="icn-ring"></div>
@@ -292,60 +199,11 @@ body::before {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
-   🔒 보안 설계
-   ──────────────────────────────────────────────────────────────
-   민감정보(Flow URL, SharePoint URL)는 소스코드에 없습니다.
-   → localStorage 에서 런타임에 읽어옵니다.
-   → GitHub Public 저장소에 올려도 안전합니다.
-   ──────────────────────────────────────────────────────────────
-   [최초 설정 방법]
-   1. 우측 상단 "⚙️ API 설정" 버튼 클릭
-   2. Power Automate Flow URL, SharePoint URL 입력 후 저장
-   3. 값은 이 브라우저 localStorage에만 저장됨
+   설정값 (관리자만 수정)
 ══════════════════════════════════════════════════════════════ */
-
-var CFG_KEY_API     = 'posco_visa_api_url';
-var CFG_KEY_BASE    = 'posco_visa_base_url';
-var CFG_KEY_CONTACT = 'posco_visa_contact_url';
-
-function getCfg(){
-  return {
-    API_URL:     localStorage.getItem(CFG_KEY_API)     || '',
-    BASE:        localStorage.getItem(CFG_KEY_BASE)    || '',
-    CONTACT_URL: localStorage.getItem(CFG_KEY_CONTACT) || ''
-  };
-}
-
-/* ── 설정 모달 ── */
-function openCfg(){
-  var c=getCfg();
-  document.getElementById('cfgApiUrl').value     = c.API_URL;
-  document.getElementById('cfgBaseUrl').value    = c.BASE;
-  document.getElementById('cfgContactUrl').value = c.CONTACT_URL;
-  document.getElementById('cfgOverlay').classList.remove('hidden');
-}
-function closeCfg(){
-  document.getElementById('cfgOverlay').classList.add('hidden');
-}
-document.getElementById('cfgCancelBtn').onclick = closeCfg;
-document.getElementById('cfgOverlay').addEventListener('click',function(e){
-  if(e.target===this) closeCfg();
-});
-document.getElementById('cfgSaveBtn').onclick = function(){
-  var api     = document.getElementById('cfgApiUrl').value.trim();
-  var base    = document.getElementById('cfgBaseUrl').value.trim();
-  var contact = document.getElementById('cfgContactUrl').value.trim();
-  if(!api||!base){ alert('Flow URL과 SharePoint URL은 필수입니다.'); return; }
-  localStorage.setItem(CFG_KEY_API,     api);
-  localStorage.setItem(CFG_KEY_BASE,    base);
-  localStorage.setItem(CFG_KEY_CONTACT, contact);
-  closeCfg();
-  document.getElementById('uncfgBanner').classList.add('hidden');
-  // 설정 후 전체 재로드
-  VISA={}; idToName={}; VISA_LOADED=false; SEARCH_INIT=false;
-  loadVisaData();
-  loadContactInfo();
-};
+var BASE        = 'https://poscointl1.sharepoint.com/sites/VisaGuide/SitePages/';
+var API_URL     = 'https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/575bbc8293674a9e99a37357f2ee74e7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jZ5DqKljJNjpUXoYDLsTgJ3ZcII2qTeYBzlnhAJjaq8';
+var CONTACT_URL = ''; // 담당자 리스트 Flow URL 입력 (없으면 담당자 표시 안됨)
 
 /* ── 국가+비자유형 → SharePoint 파일명 매핑 ── */
 var PAGE_MAP={
@@ -390,9 +248,6 @@ var PAGE_MAP={
 };
 
 function typeToSlug(country,type){
-  var cfg=getCfg();
-  var BASE=cfg.BASE;
-  if(!BASE) return '#';
   var cm=PAGE_MAP[country];
   if(cm&&cm[type]) return BASE+cm[type]+'.aspx';
   var slug=type.replace(/\//g,'_').replace(/\s+/g,'_').replace(/[()]/g,'').replace(/\*/g,'').replace(/_+/g,'_').replace(/_$/,'');
@@ -400,103 +255,114 @@ function typeToSlug(country,type){
 }
 
 var GEO={
-  '가나':            {lat:7.9,  lng:-1.0,  iso:'gh',tz:0,   fly:16,tzCity:'아크라',        id:288},
-  '감비아':          {lat:13.4, lng:-15.3, iso:'gm',tz:0,   fly:15,tzCity:'반줄',          id:270},
-  '나이지리아':      {lat:9.1,  lng:8.7,   iso:'ng',tz:60,  fly:15,tzCity:'라고스',        id:566},
-  '남아프리카공화국':{lat:-30.6,lng:22.9,  iso:'za',tz:120, fly:14,tzCity:'요하네스버그',  id:710},
-  '네팔':            {lat:28.4, lng:84.1,  iso:'np',tz:345, fly:8, tzCity:'카트만두',       id:524},
-  '뉴질랜드':        {lat:-40.9,lng:174.9, iso:'nz',tz:720, fly:11,tzCity:'오클랜드',       id:554},
-  '대만':            {lat:23.7, lng:121.0, iso:'tw',tz:480, fly:2, tzCity:'타이베이',       id:158},
-  '독일':            {lat:51.2, lng:10.5,  iso:'de',tz:60,  fly:11,tzCity:'베를린',        id:276},
-  '러시아':          {lat:61.5, lng:105.3, iso:'ru',tz:180, fly:9, tzCity:'모스크바',       id:643},
-  '레바논':          {lat:33.9, lng:35.9,  iso:'lb',tz:120, fly:10,tzCity:'베이루트',       id:422},
-  '루마니아':        {lat:45.9, lng:24.9,  iso:'ro',tz:120, fly:11,tzCity:'부쿠레슈티',    id:642},
-  '르완다':          {lat:-1.9, lng:29.9,  iso:'rw',tz:120, fly:13,tzCity:'키갈리',        id:646},
-  '리비아':          {lat:26.3, lng:17.2,  iso:'ly',tz:120, fly:12,tzCity:'트리폴리',      id:434},
-  '마다가스카르':    {lat:-18.8,lng:46.9,  iso:'mg',tz:180, fly:13,tzCity:'안타나나리보',  id:450},
-  '말레이시아':      {lat:4.2,  lng:109.0, iso:'my',tz:480, fly:7, tzCity:'쿠알라룸푸르', id:458},
-  '멕시코':          {lat:23.6, lng:-102.5,iso:'mx',tz:-360,fly:15,tzCity:'멕시코시티',    id:484},
-  '모로코':          {lat:31.8, lng:-7.1,  iso:'ma',tz:60,  fly:13,tzCity:'카사블랑카',    id:504},
-  '모리타니아':      {lat:21.0, lng:-10.9, iso:'mr',tz:0,   fly:15,tzCity:'누악쇼트',      id:478},
-  '모잠비크':        {lat:-18.7,lng:35.5,  iso:'mz',tz:120, fly:13,tzCity:'마푸토',        id:508},
-  '몽골':            {lat:46.9, lng:103.8, iso:'mn',tz:480, fly:3, tzCity:'울란바토르',    id:496},
-  '미국':            {lat:37.1, lng:-95.7, iso:'us',tz:-300,fly:13,tzCity:'뉴욕(동부)',    id:840},
-  '미얀마':          {lat:21.9, lng:96.0,  iso:'mm',tz:390, fly:6, tzCity:'양곤',          id:104},
-  '방글라데시':      {lat:23.7, lng:90.4,  iso:'bd',tz:360, fly:7, tzCity:'다카',          id:50},
-  '베트남':          {lat:14.1, lng:108.3, iso:'vn',tz:420, fly:5, tzCity:'하노이',        id:704},
-  '벨라루스':        {lat:53.7, lng:28.0,  iso:'by',tz:180, fly:10,tzCity:'민스크',        id:112},
-  '사우디아라비아':  {lat:23.9, lng:45.1,  iso:'sa',tz:180, fly:10,tzCity:'리야드',        id:682},
-  '세네갈':          {lat:14.5, lng:-14.5, iso:'sn',tz:0,   fly:15,tzCity:'다카르',        id:686},
-  '수단':            {lat:12.9, lng:30.2,  iso:'sd',tz:180, fly:12,tzCity:'하르툼',        id:729},
-  '쉥겐비자':        {lat:50.9, lng:4.4,   iso:'eu',tz:60,  fly:11,tzCity:'브뤼셀',        id:null},
-  '스리랑카':        {lat:7.9,  lng:80.8,  iso:'lk',tz:330, fly:9, tzCity:'콜롬보',        id:144},
-  '알제리':          {lat:28.0, lng:1.7,   iso:'dz',tz:60,  fly:13,tzCity:'알제',          id:12},
-  '앙골라':          {lat:-11.2,lng:17.9,  iso:'ao',tz:60,  fly:14,tzCity:'루안다',        id:24},
-  '에티오피아':      {lat:9.1,  lng:40.5,  iso:'et',tz:180, fly:11,tzCity:'아디스아바바',  id:231},
-  '영국':            {lat:55.4, lng:-3.4,  iso:'gb',tz:0,   fly:12,tzCity:'런던',          id:826},
-  '요르단':          {lat:30.6, lng:36.2,  iso:'jo',tz:180, fly:10,tzCity:'암만',          id:400},
-  '우간다':          {lat:1.4,  lng:32.3,  iso:'ug',tz:180, fly:12,tzCity:'캄팔라',        id:800},
-  '우즈베키스탄':    {lat:41.4, lng:64.6,  iso:'uz',tz:300, fly:7, tzCity:'타슈켄트',      id:860},
-  '이란':            {lat:32.4, lng:53.7,  iso:'ir',tz:210, fly:8, tzCity:'테헤란',        id:364},
-  '이집트':          {lat:26.8, lng:30.8,  iso:'eg',tz:120, fly:11,tzCity:'카이로',        id:818},
-  '인도':            {lat:20.6, lng:79.0,  iso:'in',tz:330, fly:9, tzCity:'뉴델리',        id:356},
-  '인도네시아':      {lat:-0.8, lng:113.9, iso:'id',tz:420, fly:7, tzCity:'자카르타',      id:360},
-  '일본':            {lat:36.2, lng:138.3, iso:'jp',tz:540, fly:2, tzCity:'도쿄',          id:392},
-  '잠비아':          {lat:-13.1,lng:27.8,  iso:'zm',tz:120, fly:13,tzCity:'루사카',        id:894},
-  '중국':            {lat:35.9, lng:104.2, iso:'cn',tz:480, fly:2, tzCity:'베이징',        id:156},
-  '짐바브웨':        {lat:-19.0,lng:29.2,  iso:'zw',tz:120, fly:14,tzCity:'하라레',        id:716},
-  '차드':            {lat:15.5, lng:18.7,  iso:'td',tz:60,  fly:13,tzCity:'은자메나',      id:148},
-  '체코':            {lat:49.8, lng:15.5,  iso:'cz',tz:60,  fly:11,tzCity:'프라하',        id:203},
-  '칠레':            {lat:-35.7,lng:-71.5, iso:'cl',tz:-180,fly:22,tzCity:'산티아고',      id:152},
-  '카메룬':          {lat:3.8,  lng:11.5,  iso:'cm',tz:60,  fly:14,tzCity:'야운데',        id:120},
-  '캄보디아':        {lat:12.6, lng:105.0, iso:'kh',tz:420, fly:6, tzCity:'프놈펜',        id:116},
-  '캐나다':          {lat:56.1, lng:-106.3,iso:'ca',tz:-480,fly:10,tzCity:'밴쿠버',        id:124},
-  '케냐':            {lat:-0.0, lng:37.9,  iso:'ke',tz:180, fly:12,tzCity:'나이로비',      id:404},
-  '코트디브아르':    {lat:7.5,  lng:-5.5,  iso:'ci',tz:0,   fly:15,tzCity:'아비장',        id:384},
-  '콩고민주공화국':  {lat:-4.0, lng:21.8,  iso:'cd',tz:60,  fly:14,tzCity:'킨샤사',       id:180},
-  '쿠바':            {lat:21.5, lng:-77.8, iso:'cu',tz:-300,fly:16,tzCity:'아바나',        id:192},
-  '쿠웨이트':        {lat:29.3, lng:47.5,  iso:'kw',tz:180, fly:10,tzCity:'쿠웨이트시티', id:414},
-  '탄자니아':        {lat:-6.4, lng:34.9,  iso:'tz',tz:180, fly:12,tzCity:'다르에스살람', id:834},
-  '태국':            {lat:15.9, lng:101.0, iso:'th',tz:420, fly:6, tzCity:'방콕',          id:764},
-  '튀니지':          {lat:33.9, lng:9.5,   iso:'tn',tz:60,  fly:12,tzCity:'튀니스',        id:788},
-  '파나마':          {lat:8.5,  lng:-80.8, iso:'pa',tz:-300,fly:17,tzCity:'파나마시티',    id:591},
-  '파키스탄':        {lat:30.4, lng:69.3,  iso:'pk',tz:300, fly:8, tzCity:'이슬라마바드', id:586},
-  '파푸아뉴기니':    {lat:-6.3, lng:144.0, iso:'pg',tz:600, fly:9, tzCity:'포트모르즈비', id:598},
-  '페루':            {lat:-9.2, lng:-75.0, iso:'pe',tz:-300,fly:20,tzCity:'리마',          id:604},
-  '필리핀':          {lat:12.9, lng:121.8, iso:'ph',tz:480, fly:4, tzCity:'마닐라',        id:608},
-  '헝가리':          {lat:47.2, lng:19.5,  iso:'hu',tz:60,  fly:11,tzCity:'부다페스트',    id:348},
-  '홍콩':            {lat:22.3, lng:114.2, iso:'hk',tz:480, fly:3, tzCity:'홍콩',          id:344},
-  '호주':            {lat:-25.3,lng:133.8, iso:'au',tz:600, fly:10,tzCity:'시드니',        id:36},
+  '가나':            {lat:7.9,  lng:-1.0,  iso:'gh',tz:0,   fly:16,id:288},
+  '감비아':          {lat:13.4, lng:-15.3, iso:'gm',tz:0,   fly:15,id:270},
+  '나이지리아':      {lat:9.1,  lng:8.7,   iso:'ng',tz:60,  fly:15,id:566},
+  '남아프리카공화국':{lat:-30.6,lng:22.9,  iso:'za',tz:120, fly:14,id:710},
+  '네팔':            {lat:28.4, lng:84.1,  iso:'np',tz:345, fly:8, id:524},
+  '뉴질랜드':        {lat:-40.9,lng:174.9, iso:'nz',tz:720, fly:11,id:554},
+  '대만':            {lat:23.7, lng:121.0, iso:'tw',tz:480, fly:2, id:158},
+  '독일':            {lat:51.2, lng:10.5,  iso:'de',tz:60,  fly:11,id:276},
+  '러시아':          {lat:61.5, lng:105.3, iso:'ru',tz:180, fly:9, id:643},
+  '레바논':          {lat:33.9, lng:35.9,  iso:'lb',tz:120, fly:10,id:422},
+  '루마니아':        {lat:45.9, lng:24.9,  iso:'ro',tz:120, fly:11,id:642},
+  '르완다':          {lat:-1.9, lng:29.9,  iso:'rw',tz:120, fly:13,id:646},
+  '리비아':          {lat:26.3, lng:17.2,  iso:'ly',tz:120, fly:12,id:434},
+  '마다가스카르':    {lat:-18.8,lng:46.9,  iso:'mg',tz:180, fly:13,id:450},
+  '말레이시아':      {lat:4.2,  lng:109.0, iso:'my',tz:480, fly:7, id:458},
+  '멕시코':          {lat:23.6, lng:-102.5,iso:'mx',tz:-360,fly:15,id:484},
+  '모로코':          {lat:31.8, lng:-7.1,  iso:'ma',tz:60,  fly:13,id:504},
+  '모리타니아':      {lat:21.0, lng:-10.9, iso:'mr',tz:0,   fly:15,id:478},
+  '모잠비크':        {lat:-18.7,lng:35.5,  iso:'mz',tz:120, fly:13,id:508},
+  '몽골':            {lat:46.9, lng:103.8, iso:'mn',tz:480, fly:3, id:496},
+  '미국':            {lat:37.1, lng:-95.7, iso:'us',tz:-300,fly:13,id:840},
+  '미얀마':          {lat:21.9, lng:96.0,  iso:'mm',tz:390, fly:6, id:104},
+  '방글라데시':      {lat:23.7, lng:90.4,  iso:'bd',tz:360, fly:7, id:50},
+  '베트남':          {lat:14.1, lng:108.3, iso:'vn',tz:420, fly:5, id:704},
+  '벨라루스':        {lat:53.7, lng:28.0,  iso:'by',tz:180, fly:10,id:112},
+  '사우디아라비아':  {lat:23.9, lng:45.1,  iso:'sa',tz:180, fly:10,id:682},
+  '세네갈':          {lat:14.5, lng:-14.5, iso:'sn',tz:0,   fly:15,id:686},
+  '수단':            {lat:12.9, lng:30.2,  iso:'sd',tz:180, fly:12,id:729},
+  '쉥겐비자':        {lat:50.9, lng:4.4,   iso:'eu',tz:60,  fly:11,id:null},
+  '스리랑카':        {lat:7.9,  lng:80.8,  iso:'lk',tz:330, fly:9, id:144},
+  '알제리':          {lat:28.0, lng:1.7,   iso:'dz',tz:60,  fly:13,id:12},
+  '앙골라':          {lat:-11.2,lng:17.9,  iso:'ao',tz:60,  fly:14,id:24},
+  '에티오피아':      {lat:9.1,  lng:40.5,  iso:'et',tz:180, fly:11,id:231},
+  '영국':            {lat:55.4, lng:-3.4,  iso:'gb',tz:0,   fly:12,id:826},
+  '요르단':          {lat:30.6, lng:36.2,  iso:'jo',tz:180, fly:10,id:400},
+  '우간다':          {lat:1.4,  lng:32.3,  iso:'ug',tz:180, fly:12,id:800},
+  '우즈베키스탄':    {lat:41.4, lng:64.6,  iso:'uz',tz:300, fly:7, id:860},
+  '이란':            {lat:32.4, lng:53.7,  iso:'ir',tz:210, fly:8, id:364},
+  '이집트':          {lat:26.8, lng:30.8,  iso:'eg',tz:120, fly:11,id:818},
+  '인도':            {lat:20.6, lng:79.0,  iso:'in',tz:330, fly:9, id:356},
+  '인도네시아':      {lat:-0.8, lng:113.9, iso:'id',tz:420, fly:7, id:360},
+  '일본':            {lat:36.2, lng:138.3, iso:'jp',tz:540, fly:2, id:392},
+  '잠비아':          {lat:-13.1,lng:27.8,  iso:'zm',tz:120, fly:13,id:894},
+  '중국':            {lat:35.9, lng:104.2, iso:'cn',tz:480, fly:2, id:156},
+  '짐바브웨':        {lat:-19.0,lng:29.2,  iso:'zw',tz:120, fly:14,id:716},
+  '차드':            {lat:15.5, lng:18.7,  iso:'td',tz:60,  fly:13,id:148},
+  '체코':            {lat:49.8, lng:15.5,  iso:'cz',tz:60,  fly:11,id:203},
+  '칠레':            {lat:-35.7,lng:-71.5, iso:'cl',tz:-180,fly:22,id:152},
+  '카메룬':          {lat:3.8,  lng:11.5,  iso:'cm',tz:60,  fly:14,id:120},
+  '캄보디아':        {lat:12.6, lng:105.0, iso:'kh',tz:420, fly:6, id:116},
+  '캐나다':          {lat:56.1, lng:-106.3,iso:'ca',tz:-480,fly:10,id:124},
+  '케냐':            {lat:-0.0, lng:37.9,  iso:'ke',tz:180, fly:12,id:404},
+  '코트디브아르':    {lat:7.5,  lng:-5.5,  iso:'ci',tz:0,   fly:15,id:384},
+  '콩고민주공화국':  {lat:-4.0, lng:21.8,  iso:'cd',tz:60,  fly:14,id:180},
+  '쿠바':            {lat:21.5, lng:-77.8, iso:'cu',tz:-300,fly:16,id:192},
+  '쿠웨이트':        {lat:29.3, lng:47.5,  iso:'kw',tz:180, fly:10,id:414},
+  '탄자니아':        {lat:-6.4, lng:34.9,  iso:'tz',tz:180, fly:12,id:834},
+  '태국':            {lat:15.9, lng:101.0, iso:'th',tz:420, fly:6, id:764},
+  '튀니지':          {lat:33.9, lng:9.5,   iso:'tn',tz:60,  fly:12,id:788},
+  '파나마':          {lat:8.5,  lng:-80.8, iso:'pa',tz:-300,fly:17,id:591},
+  '파키스탄':        {lat:30.4, lng:69.3,  iso:'pk',tz:300, fly:8, id:586},
+  '파푸아뉴기니':    {lat:-6.3, lng:144.0, iso:'pg',tz:600, fly:9, id:598},
+  '페루':            {lat:-9.2, lng:-75.0, iso:'pe',tz:-300,fly:20,id:604},
+  '필리핀':          {lat:12.9, lng:121.8, iso:'ph',tz:480, fly:4, id:608},
+  '헝가리':          {lat:47.2, lng:19.5,  iso:'hu',tz:60,  fly:11,id:348},
+  '홍콩':            {lat:22.3, lng:114.2, iso:'hk',tz:480, fly:3, id:344},
+  '호주':            {lat:-25.3,lng:133.8, iso:'au',tz:600, fly:10,id:36},
 };
 
 var CITY_CLOCKS=[
-  {name:'Seoul',    tz:540,  lat:34.0, lng:128.0},
-  {name:'New Delhi',tz:330,  lat:25.0, lng:74.0},
-  {name:'Moscow',   tz:180,  lat:58.0, lng:38.0},
-  {name:'London',   tz:0,    lat:52.0, lng:-3.0},
-  {name:'New York', tz:-300, lat:42.0, lng:-78.0},
-  {name:'Sydney',   tz:600,  lat:-30.0,lng:152.0},
-  {name:'Johannesburg',tz:120,lat:-28.0,lng:24.0},
-  {name:'São Paulo',tz:-180, lat:-26.0,lng:-50.0},
+  {name:'Seoul',       tz:540,  lat:34.0, lng:128.0},
+  {name:'New Delhi',   tz:330,  lat:25.0, lng:74.0},
+  {name:'Moscow',      tz:180,  lat:58.0, lng:38.0},
+  {name:'London',      tz:0,    lat:52.0, lng:-3.0},
+  {name:'New York',    tz:-300, lat:42.0, lng:-78.0},
+  {name:'Sydney',      tz:600,  lat:-30.0,lng:152.0},
+  {name:'Johannesburg',tz:120,  lat:-28.0,lng:24.0},
+  {name:'São Paulo',   tz:-180, lat:-26.0,lng:-50.0},
 ];
 
 var VISA={}, idToName={}, VISA_LOADED=false, SEARCH_INIT=false;
 var ICN={lat:37.46,lng:126.44};
 var W=960,H=500,proj,cT=null;
 
-/* ── SharePoint 데이터 로드 ── */
+/* ── 담당자 정보 로드 ── */
+function loadContactInfo(){
+  var el=document.getElementById('hdContact');
+  if(!CONTACT_URL){el.innerHTML='';return;}
+  fetch(CONTACT_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
+    .then(function(r){return r.json();})
+    .then(function(json){
+      var items=Array.isArray(json)?json:(json.value||[json]);
+      if(!items||!items.length){el.innerHTML='';return;}
+      el.innerHTML=items.map(function(p){
+        var name=p.Title||p.Name||'';
+        var dept=p.Department||p.Dept||'';
+        var ext=p.Extension||p.Ext||'';
+        var extStr=ext?' (T.'+ext+')':'';
+        return '<div class="hd-contact-name">'+name+extStr+'</div>'
+          +(dept?'<div class="hd-contact-detail">'+dept+'</div>':'');
+      }).join('');
+    })
+    .catch(function(){el.innerHTML='';});
+}
+
+/* ── 비자 데이터 로드 ── */
 function loadVisaData(){
-  var cfg=getCfg();
-
-  // 설정 미완료 시 배너 표시 후 GEO fallback
-  if(!cfg.API_URL||!cfg.BASE){
-    document.getElementById('uncfgBanner').classList.remove('hidden');
-    document.querySelector('.sw').classList.add('banner-offset');
-    useFallback();
-    return;
-  }
-
-  fetch(cfg.API_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
+  fetch(API_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
     .then(function(r){return r.json();})
     .then(function(json){
       var items=Array.isArray(json)?json:(json.value||[]);
@@ -512,17 +378,14 @@ function loadVisaData(){
         if(type)map[country].push(type);
       });
       Object.keys(map).forEach(function(c){
-        var geo=GEO[c]||{};
-        VISA[c]=Object.assign({},geo,{t:map[c]});
+        VISA[c]=Object.assign({},GEO[c]||{},{t:map[c]});
       });
       finalizeVisa();
     })
-    .catch(function(){ useFallback(); });
-}
-
-function useFallback(){
-  Object.keys(GEO).forEach(function(c){VISA[c]=Object.assign({},GEO[c],{t:['개선중']});});
-  finalizeVisa();
+    .catch(function(){
+      Object.keys(GEO).forEach(function(c){VISA[c]=Object.assign({},GEO[c],{t:['개선중']});});
+      finalizeVisa();
+    });
 }
 
 function finalizeVisa(){
@@ -535,41 +398,6 @@ function finalizeVisa(){
 }
 
 loadVisaData();
-
-/* ══════════════════════════════════════════════════════════════
-   담당자 정보 로드 (SharePoint 리스트 → Power Automate Flow)
-   ──────────────────────────────────────────────────────────────
-   SharePoint 리스트 컬럼 구성:
-     Title       → 이름 (예: 고은영)
-     Department  → 부서 (예: 행정지원그룹 과장)
-     Extension   → 내선번호 (예: 2548)
-══════════════════════════════════════════════════════════════ */
-function loadContactInfo(){
-  var cfg=getCfg();
-  var el=document.getElementById('hdContact');
-  if(!cfg.CONTACT_URL){
-    el.innerHTML='<span class="hd-contact-loading">⚙️ 설정에서 담당자 API 입력</span>';
-    return;
-  }
-  el.innerHTML='<span class="hd-contact-loading">로딩중...</span>';
-  fetch(cfg.CONTACT_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
-    .then(function(r){return r.json();})
-    .then(function(json){
-      var items=Array.isArray(json)?json:(json.value||[json]);
-      if(!items||!items.length){ el.innerHTML=''; return; }
-      el.innerHTML=items.map(function(p){
-        var name = p.Title      || p.Name || '';
-        var dept = p.Department || p.Dept || '';
-        var ext  = p.Extension  || p.Ext  || '';
-        var extStr = ext ? ' (T.'+ext+')' : '';
-        return '<div class="hd-contact-name">'+name+extStr+'</div>'
-          +(dept?'<div class="hd-contact-detail">'+dept+'</div>':'');
-      }).join('');
-    })
-    .catch(function(){
-      el.innerHTML='<span class="hd-contact-loading">담당자 정보 로드 실패</span>';
-    });
-}
 loadContactInfo();
 
 /* ── D3 지도 ── */
@@ -610,12 +438,8 @@ var kgf=defs.append('filter').attr('id','koreaGlow').attr('x','-20%').attr('y','
 kgf.append('feGaussianBlur').attr('stdDeviation','3').attr('result','b');
 var km=kgf.append('feMerge');km.append('feMergeNode').attr('in','b');km.append('feMergeNode').attr('in','SourceGraphic');
 
-svg.append('path').datum({type:'Sphere'})
-  .attr('d',path).attr('fill','rgba(30,28,22,0.0)').attr('stroke','none');
-
-svg.append('path').datum(d3.geoGraticule()())
-  .attr('d',path).attr('fill','none')
-  .attr('stroke','rgba(180,160,100,0.04)').attr('stroke-width','0.3');
+svg.append('path').datum({type:'Sphere'}).attr('d',path).attr('fill','rgba(30,28,22,0.0)').attr('stroke','none');
+svg.append('path').datum(d3.geoGraticule()()).attr('d',path).attr('fill','none').attr('stroke','rgba(180,160,100,0.04)').attr('stroke-width','0.3');
 
 var MAP_URLS=['./countries-110m.json','https://unpkg.com/world-atlas@2/countries-110m.json'];
 function loadMap(urls,idx){
@@ -624,55 +448,38 @@ function loadMap(urls,idx){
     document.getElementById('loading').style.display='none';
     var countries=topojson.feature(world,world.objects.countries);
     svg.selectAll('.cp')
-      .data(countries.features)
-      .enter().append('path')
+      .data(countries.features).enter().append('path')
       .attr('class',function(d){
         var id=+d.id;
         if(id===410) return 'country-korea';
         if(idToName[id]) return 'country-metal has-visa';
         return 'country-metal';
       })
-      .style('cursor', function(d){
-        var id=+d.id;
-        return (id===410||idToName[id]) ? 'pointer' : 'default';
-      })
+      .style('cursor',function(d){var id=+d.id;return(id===410||idToName[id])?'pointer':'default';})
       .attr('d',path)
       .append('title').text(function(d){var name=idToName[+d.id];return name?name+' (클릭)':'';});
 
-    window._countriesFeatures = countries.features;
+    window._countriesFeatures=countries.features;
 
     svg.append('path')
       .datum(topojson.mesh(world,world.objects.countries,function(a,b){return a!==b;}))
-      .attr('d',path).attr('fill','none')
-      .attr('stroke','rgba(100,90,70,0.4)').attr('stroke-width','0.4');
+      .attr('d',path).attr('fill','none').attr('stroke','rgba(100,90,70,0.4)').attr('stroke-width','0.4');
 
-    svg.append('path').datum({type:'Sphere'})
-      .attr('d',path).attr('fill','none')
-      .attr('stroke','rgba(180,160,100,0.2)').attr('stroke-width','1');
+    svg.append('path').datum({type:'Sphere'}).attr('d',path).attr('fill','none').attr('stroke','rgba(180,160,100,0.2)').attr('stroke-width','1');
 
     // POSCO 로고
-    var sphereBottom = proj([0, -85]);
-    var logoW = 220, logoH = 80;
-    var logoY = sphereBottom[1] - logoH - 45;
-    var fo=svg.append('foreignObject')
-      .attr('x', W/2 - logoW/2).attr('y', logoY)
-      .attr('width', logoW).attr('height', logoH);
-    fo.append('xhtml:div')
-      .attr('class','posco-logo')
-      .style('position','relative')
+    var sphereBottom=proj([0,-85]);
+    var logoW=220,logoH=80;
+    var logoY=sphereBottom[1]-logoH-45;
+    var fo=svg.append('foreignObject').attr('x',W/2-logoW/2).attr('y',logoY).attr('width',logoW).attr('height',logoH);
+    fo.append('xhtml:div').attr('class','posco-logo').style('position','relative')
       .html('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAABsCAYAAABU8T+qAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAAbk0lEqVElFTkSuQmCC" style="width:150px;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 0 6px rgba(255,255,255,.9)) drop-shadow(0 0 18px rgba(255,255,255,.5)) drop-shadow(0 0 40px rgba(200,220,255,.3));animation:logo-neon 2.5s ease-in-out infinite;">');
 
     // 도시 시계
     CITY_CLOCKS.forEach(function(c){
-      var pt=proj([c.lng,c.lat]);
-      if(!pt) return;
-      var fo2=svg.append('foreignObject')
-        .attr('x',pt[0]-40).attr('y',pt[1]-32)
-        .attr('width',80).attr('height',44);
-      fo2.append('xhtml:div')
-        .attr('class','city-clock')
-        .attr('id','clock-'+c.name.replace(/\s/g,'-'))
-        .style('position','relative')
+      var pt=proj([c.lng,c.lat]);if(!pt)return;
+      var fo2=svg.append('foreignObject').attr('x',pt[0]-40).attr('y',pt[1]-32).attr('width',80).attr('height',44);
+      fo2.append('xhtml:div').attr('class','city-clock').style('position','relative')
         .html('<div class="city-name">'+c.name+'</div><div class="city-time" id="t-'+c.name.replace(/[\s\/]/g,'-')+'">00:00</div>');
     });
 
@@ -691,7 +498,7 @@ function updateClocks(){
     var d2=new Date(ms);
     var t=d2.getHours().toString().padStart(2,'0')+':'+d2.getMinutes().toString().padStart(2,'0');
     var el=document.getElementById('t-'+c.name.replace(/[\s\/]/g,'-'));
-    if(el) el.textContent=t;
+    if(el)el.textContent=t;
   });
 }
 
@@ -772,9 +579,7 @@ window.fly=function(country){
     else{setTimeout(function(){
       pl.style.display='none';pe.setAttribute('opacity','0.15');
       var r=document.getElementById('worldmap').getBoundingClientRect();
-      var arrX=r.left+ts[0]*(r.width/W);
-      var arrY=r.top+ts[1]*(r.height/H);
-      showPopup(country,d,arrX,arrY);
+      showPopup(country,d,r.left+ts[0]*(r.width/W),r.top+ts[1]*(r.height/H));
     },150);}
   })(performance.now());
 };
@@ -782,41 +587,30 @@ window.fly=function(country){
 function showPopup(country,d,arrX,arrY){
   var popup=document.getElementById('popup');
   var flagEl=document.getElementById('pflag');
-  if(d.iso){
-    flagEl.innerHTML='<img src="https://flagcdn.com/w80/'+d.iso+'.png" alt="'+country+'" onerror="this.style.display=\'none\'">';
-  } else {
-    flagEl.innerHTML='';
-  }
+  flagEl.innerHTML=d.iso?'<img src="https://flagcdn.com/w80/'+d.iso+'.png" alt="'+country+'" onerror="this.style.display=\'none\'">':'';
   document.getElementById('pcountry').textContent=country;
   var infoEl=document.getElementById('pinfo');
   if(d.tz!==undefined&&d.fly!==undefined){
     var KST=540,diff=(d.tz-KST)/60;
     var diffStr=diff===0?'한국과 동일':(diff>0?'+'+diff+'시간':diff+'시간');
     var now=new Date();
-    var localMs=now.getTime()+(now.getTimezoneOffset()*60000)+(d.tz*60000);
-    var local=new Date(localMs);
+    var local=new Date(now.getTime()+(now.getTimezoneOffset()*60000)+(d.tz*60000));
     var hh=local.getHours().toString().padStart(2,'0'),mm=local.getMinutes().toString().padStart(2,'0');
     infoEl.innerHTML='<div class="info-card"><div class="info-card-label">⏰ 현지 시각</div><div class="info-card-value">'+hh+':'+mm+'</div><div class="info-card-sub">시차 '+diffStr+'</div></div>'
       +'<div class="info-card"><div class="info-card-label">✈ 비행시간</div><div class="info-card-value">약 '+d.fly+'시간</div><div class="info-card-sub">인천 직항 기준</div></div>';
   } else {infoEl.innerHTML='';}
-  var typesEl=document.getElementById('ptypes');
-  typesEl.innerHTML=(d.t||[]).map(function(type){
-    if(!type||type==='개선중') return '<div class="type-btn" style="opacity:.5;cursor:default;pointer-events:none;"><span>🔧 페이지 개선중</span><span class="type-btn-arrow">—</span></div>';
-    var url=typeToSlug(country,type);
-    if(url==='#') return '<div class="type-btn" style="opacity:.5;cursor:default;pointer-events:none;"><span>⚙️ API 설정 필요</span></div>';
-    return '<a class="type-btn" href="'+url+'" target="_blank"><span>📋 '+type+'</span><span class="type-btn-arrow">→</span></a>';
+  document.getElementById('ptypes').innerHTML=(d.t||[]).map(function(type){
+    if(!type||type==='개선중') return '<div class="type-btn" style="opacity:.5;cursor:default;pointer-events:none;"><span>🔧 페이지 개선중</span><span>—</span></div>';
+    return '<a class="type-btn" href="'+typeToSlug(country,type)+'" target="_blank"><span>📋 '+type+'</span><span>→</span></a>';
   }).join('');
   popup.style.display='block';
   if(arrX!==undefined&&arrY!==undefined){
-    var pw=270,ph=220;
-    var px=arrX+16,py=arrY-ph/2;
-    if(px+pw>window.innerWidth-10) px=arrX-pw-16;
-    if(py<70) py=70;
-    if(py+ph>window.innerHeight-10) py=window.innerHeight-ph-10;
-    popup.style.left=px+'px';
-    popup.style.top=py+'px';
-    popup.style.bottom='auto';
-    popup.style.transform='none';
+    var pw=270,ph=220,px=arrX+16,py=arrY-ph/2;
+    if(px+pw>window.innerWidth-10)px=arrX-pw-16;
+    if(py<70)py=70;
+    if(py+ph>window.innerHeight-10)py=window.innerHeight-ph-10;
+    popup.style.left=px+'px';popup.style.top=py+'px';
+    popup.style.bottom='auto';popup.style.transform='none';
   }
   requestAnimationFrame(function(){popup.classList.add('show');});
 }
@@ -837,31 +631,20 @@ function renderMarkers(){
     .attr('cx',function(d){var c=path.centroid(d);return c[0];})
     .attr('cy',function(d){var c=path.centroid(d);return c[1];})
     .attr('data-id',function(d){return d.id;})
-    .attr('r',2.5)
-    .attr('fill','rgba(255,220,80,0.15)')
-    .attr('stroke','rgba(255,220,80,0.9)')
-    .attr('stroke-width',1.8)
-    .style('pointer-events','all')
-    .style('cursor','pointer')
+    .attr('r',2.5).attr('fill','rgba(255,220,80,0.15)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1.8)
+    .style('pointer-events','all').style('cursor','pointer')
     .on('mouseover',function(event,d){
-      var cid=d.id;
       d3.select(this).attr('r',4).attr('fill','rgba(255,220,80,0.4)').attr('stroke','rgba(255,240,100,1)').attr('stroke-width',2.2);
-      d3.select('path[data-id="'+cid+'"]')
-        .attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
+      d3.select('path[data-id="'+d.id+'"]').attr('fill','#e8d48c').attr('stroke','#f0e060').attr('stroke-width',1.5);
     })
     .on('mouseout',function(event,d){
-      var cid=d.id;
       d3.select(this).attr('r',2.5).attr('fill','rgba(255,220,80,0.15)').attr('stroke','rgba(255,220,80,0.9)').attr('stroke-width',1.8);
-      d3.select('path[data-id="'+cid+'"]')
-        .attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
+      d3.select('path[data-id="'+d.id+'"]').attr('fill','url(#metalGradVisa)').attr('stroke','#c0a860').attr('stroke-width',0.7);
     })
     .on('click',function(event,d){var name=idToName[+d.id];if(name)fly(name);})
     .append('title').text(function(d){
       var name=idToName[+d.id];
-      if(name&&VISA[name]){
-        var c=path.centroid(d);
-        VISA[name]._cx=c[0]; VISA[name]._cy=c[1];
-      }
+      if(name&&VISA[name]){var c=path.centroid(d);VISA[name]._cx=c[0];VISA[name]._cy=c[1];}
       return name||'';
     });
 }
@@ -872,12 +655,10 @@ function renderSidebar(){
   document.getElementById('sidebar-count').textContent=CL.length+'개국';
   list.innerHTML=CL.map(function(country){
     var d=VISA[country];
-    var flagHtml=d.iso?'<img src="https://flagcdn.com/w40/'+d.iso+'.png" onerror="this.style.display=\'none\'">':'';
-    var types=(d.t||[]).join(' · ');
     return '<div class="sidebar-item" id="si-'+country+'" onclick="fly(\''+country+'\')">'
-      +'<div class="sidebar-flag">'+flagHtml+'</div>'
+      +'<div class="sidebar-flag">'+(d.iso?'<img src="https://flagcdn.com/w40/'+d.iso+'.png" onerror="this.style.display=\'none\'">':'')+'</div>'
       +'<div><div class="sidebar-name">'+country+'</div>'
-      +'<div class="sidebar-types">'+types+'</div></div>'
+      +'<div class="sidebar-types">'+(d.t||[]).join(' · ')+'</div></div>'
       +'</div>';
   }).join('');
 }
@@ -890,8 +671,7 @@ function setSidebarActive(country){
 
 function toggleSidebar(){
   var sb=document.getElementById('sidebar'),tg=document.getElementById('sidebar-toggle');
-  var map=document.getElementById('map'),ps=document.getElementById('pathsvg');
-  var sw=document.querySelector('.sw');
+  var map=document.getElementById('map'),ps=document.getElementById('pathsvg'),sw=document.querySelector('.sw');
   sb.classList.toggle('collapsed');tg.classList.toggle('collapsed');
   map.classList.toggle('full');ps.classList.toggle('full');sw.classList.toggle('full');
   tg.textContent=sb.classList.contains('collapsed')?'▶':'◀';
