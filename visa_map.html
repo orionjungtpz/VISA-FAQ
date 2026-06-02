@@ -347,6 +347,30 @@ function renderContact(items){
   }).join('');
 }
 
+/* ── 담당자 정보 로드 (SharePoint REST API - M365 세션 인증) ── */
+function loadContactInfo(){
+  var url='https://poscointl1.sharepoint.com/sites/support759/_api/web/lists/getbytitle(\'Visa-hub\')/items?$select=Title,Department,Extension&$filter=ContentType eq \'Item\'';
+  fetch(url,{
+    method:'GET',
+    headers:{'Accept':'application/json;odata=nometadata'},
+    credentials:'include'  // M365 로그인 세션 쿠키 자동 포함
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('auth');
+    return r.json();
+  })
+  .then(function(json){
+    var items=json.value||[];
+    // 담당자 항목만 필터 (비자 데이터 항목 제외 - Extension 있는 것만)
+    var contacts=items.filter(function(i){return i.Extension;});
+    renderContact(contacts);
+  })
+  .catch(function(){
+    // 외부인 또는 미로그인 시 표시 안함
+    document.getElementById('hdContact').innerHTML='';
+  });
+}
+
 /* ── 비자 데이터 파싱 ── */
 function parseVisaData(items){
   var map={};
@@ -365,19 +389,13 @@ function parseVisaData(items){
   });
 }
 
-/* ── 통합 데이터 로드 (비자 + 담당자 한번에) ── */
+/* ── 비자 데이터 로드 ── */
 function loadVisaData(){
   fetch(API_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
     .then(function(r){return r.json();})
     .then(function(json){
-      // 새 구조: { visaData: [...], contact: [...] }
-      if(json.visaData){
-        parseVisaData(json.visaData);
-        renderContact(json.contact||[]);
-      } else {
-        // 이전 구조(배열) 호환
-        parseVisaData(Array.isArray(json)?json:(json.value||[]));
-      }
+      var items=json.visaData||(Array.isArray(json)?json:(json.value||[]));
+      parseVisaData(items);
       finalizeVisa();
     })
     .catch(function(){
@@ -396,6 +414,7 @@ function finalizeVisa(){
 }
 
 loadVisaData();
+loadContactInfo();
 
 /* ── D3 지도 ── */
 var svg=d3.select('#worldmap');
