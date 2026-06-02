@@ -474,7 +474,7 @@ function loadMap(urls,idx){
     var logoScale=0.50;
     var logoOrigW=336.14, logoOrigH=85.88;
     var logoX=W/2 - (logoOrigW*logoScale)/2;
-    var logoY=sphereBottom[1] - logoOrigH*logoScale - 35;
+    var logoY=sphereBottom[1] - logoOrigH*logoScale - 55;
 
     // SVG defs에 필터 추가
     var neonFilter=defs.append('filter').attr('id','neonGlow').attr('x','-20%').attr('y','-20%').attr('width','140%').attr('height','140%');
@@ -648,13 +648,33 @@ function showPopup(country,d,arrX,arrY){
     return '<a class="type-btn" href="'+typeToSlug(country,type)+'" target="_blank"><span>📋 '+type+'</span><span>→</span></a>';
   }).join('');
   popup.style.display='block';
+  popup.style.maxHeight='';
+  popup.style.overflowY='';
   if(arrX!==undefined&&arrY!==undefined){
-    var pw=270,ph=220,px=arrX+16,py=arrY-ph/2;
-    if(px+pw>window.innerWidth-10)px=arrX-pw-16;
-    if(py<70)py=70;
-    if(py+ph>window.innerHeight-10)py=window.innerHeight-ph-10;
-    popup.style.left=px+'px';popup.style.top=py+'px';
-    popup.style.bottom='auto';popup.style.transform='none';
+    var pw=360;
+    var ph=popup.offsetHeight||380; // display:block 후 실제 높이
+    var headerH=70;
+    var margin=10;
+    var px=arrX+16;
+    var py=arrY-ph/2;
+    // 오른쪽 넘침 → 왼쪽으로
+    if(px+pw>window.innerWidth-margin) px=arrX-pw-16;
+    // 왼쪽 넘침
+    if(px<margin) px=margin;
+    // 아래쪽 넘침 → 위로 올림
+    if(py+ph>window.innerHeight-margin) py=window.innerHeight-ph-margin;
+    // 위쪽 넘침 → 헤더 아래로
+    if(py<headerH) py=headerH;
+    // 그래도 공간 부족하면 스크롤
+    var availH=window.innerHeight-py-margin;
+    if(ph>availH){
+      popup.style.maxHeight=availH+'px';
+      popup.style.overflowY='auto';
+    }
+    popup.style.left=px+'px';
+    popup.style.top=py+'px';
+    popup.style.bottom='auto';
+    popup.style.transform='none';
   }
   requestAnimationFrame(function(){popup.classList.add('show');});
 }
