@@ -201,9 +201,8 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
 /* ══════════════════════════════════════════════════════════════
    설정값 (관리자만 수정)
 ══════════════════════════════════════════════════════════════ */
-var BASE        = 'https://poscointl1.sharepoint.com/sites/VisaGuide/SitePages/';
-var API_URL     = 'https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/575bbc8293674a9e99a37357f2ee74e7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jZ5DqKljJNjpUXoYDLsTgJ3ZcII2qTeYBzlnhAJjaq8';
-var CONTACT_URL = ''; // 담당자 리스트 Flow URL 입력 (없으면 담당자 표시 안됨)
+var BASE    = 'https://poscointl1.sharepoint.com/sites/VisaGuide/SitePages/';
+var API_URL = 'https://defaultb9501effd05e4bf18a87898d83f46c.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/575bbc8293674a9e99a37357f2ee74e7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jZ5DqKljJNjpUXoYDLsTgJ3ZcII2qTeYBzlnhAJjaq8';
 
 /* ── 국가+비자유형 → SharePoint 파일명 매핑 ── */
 var PAGE_MAP={
@@ -339,47 +338,51 @@ var VISA={}, idToName={}, VISA_LOADED=false, SEARCH_INIT=false;
 var ICN={lat:37.46,lng:126.44};
 var W=960,H=500,proj,cT=null;
 
-/* ── 담당자 정보 로드 ── */
-function loadContactInfo(){
+/* ── 담당자 정보 렌더링 ── */
+function renderContact(items){
   var el=document.getElementById('hdContact');
-  if(!CONTACT_URL){el.innerHTML='';return;}
-  fetch(CONTACT_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
-    .then(function(r){return r.json();})
-    .then(function(json){
-      var items=Array.isArray(json)?json:(json.value||[json]);
-      if(!items||!items.length){el.innerHTML='';return;}
-      el.innerHTML=items.map(function(p){
-        var name=p.Title||p.Name||'';
-        var dept=p.Department||p.Dept||'';
-        var ext=p.Extension||p.Ext||'';
-        var extStr=ext?' (T.'+ext+')':'';
-        return '<div class="hd-contact-name">'+name+extStr+'</div>'
-          +(dept?'<div class="hd-contact-detail">'+dept+'</div>':'');
-      }).join('');
-    })
-    .catch(function(){el.innerHTML='';});
+  if(!items||!items.length){el.innerHTML='';return;}
+  el.innerHTML=items.map(function(p){
+    var name=p.Title||p.Name||'';
+    var dept=p.Department||p.Dept||'';
+    var ext=p.Extension||p.Ext||'';
+    var extStr=ext?' (T.'+ext+')':'';
+    return '<div class="hd-contact-name">'+name+extStr+'</div>'
+      +(dept?'<div class="hd-contact-detail">'+dept+'</div>':'');
+  }).join('');
 }
 
-/* ── 비자 데이터 로드 ── */
+/* ── 비자 데이터 파싱 ── */
+function parseVisaData(items){
+  var map={};
+  items.forEach(function(item){
+    var country=item.Title||item['{Name}']||'';
+    var type='';
+    var vf=item['OData__xbe44__xc790__xc720__xd615_0'];
+    if(vf&&vf.Value){type=vf.Value;}
+    else{Object.keys(item).forEach(function(k){if(k.indexOf('xbe44')>-1&&item[k]&&typeof item[k]==='object'&&item[k].Value)type=item[k].Value;});}
+    if(!country)return;
+    if(!map[country])map[country]=[];
+    if(type)map[country].push(type);
+  });
+  Object.keys(map).forEach(function(c){
+    VISA[c]=Object.assign({},GEO[c]||{},{t:map[c]});
+  });
+}
+
+/* ── 통합 데이터 로드 (비자 + 담당자 한번에) ── */
 function loadVisaData(){
   fetch(API_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
     .then(function(r){return r.json();})
     .then(function(json){
-      var items=Array.isArray(json)?json:(json.value||[]);
-      var map={};
-      items.forEach(function(item){
-        var country=item.Title||item['{Name}']||'';
-        var type='';
-        var vf=item['OData__xbe44__xc790__xc720__xd615_0'];
-        if(vf&&vf.Value){type=vf.Value;}
-        else{Object.keys(item).forEach(function(k){if(k.indexOf('xbe44')>-1&&item[k]&&typeof item[k]==='object'&&item[k].Value)type=item[k].Value;});}
-        if(!country)return;
-        if(!map[country])map[country]=[];
-        if(type)map[country].push(type);
-      });
-      Object.keys(map).forEach(function(c){
-        VISA[c]=Object.assign({},GEO[c]||{},{t:map[c]});
-      });
+      // 새 구조: { visaData: [...], contact: [...] }
+      if(json.visaData){
+        parseVisaData(json.visaData);
+        renderContact(json.contact||[]);
+      } else {
+        // 이전 구조(배열) 호환
+        parseVisaData(Array.isArray(json)?json:(json.value||[]));
+      }
       finalizeVisa();
     })
     .catch(function(){
@@ -398,7 +401,6 @@ function finalizeVisa(){
 }
 
 loadVisaData();
-loadContactInfo();
 
 /* ── D3 지도 ── */
 var svg=d3.select('#worldmap');
