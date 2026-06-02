@@ -333,42 +333,10 @@ var VISA={}, idToName={}, VISA_LOADED=false, SEARCH_INIT=false;
 var ICN={lat:37.46,lng:126.44};
 var W=960,H=500,proj,cT=null;
 
-/* ── 담당자 정보 렌더링 ── */
-function renderContact(items){
-  var el=document.getElementById('hdContact');
-  if(!items||!items.length){el.innerHTML='';return;}
-  el.innerHTML=items.map(function(p){
-    var name=p.Title||p.Name||'';
-    var dept=p.Department||p.Dept||'';
-    var ext=p.Extension||p.Ext||'';
-    var extStr=ext?' (T.'+ext+')':'';
-    return '<div class="hd-contact-name">'+name+extStr+'</div>'
-      +(dept?'<div class="hd-contact-detail">'+dept+'</div>':'');
-  }).join('');
-}
-
-/* ── 담당자 정보 로드 (SharePoint REST API - M365 세션 인증) ── */
+/* ── 담당자 정보 (하드코딩) ── */
 function loadContactInfo(){
-  var url='https://poscointl1.sharepoint.com/sites/support759/_api/web/lists/getbytitle(\'Visa-hub\')/items?$select=Title,Department,Extension&$filter=ContentType eq \'Item\'';
-  fetch(url,{
-    method:'GET',
-    headers:{'Accept':'application/json;odata=nometadata'},
-    credentials:'include'  // M365 로그인 세션 쿠키 자동 포함
-  })
-  .then(function(r){
-    if(!r.ok) throw new Error('auth');
-    return r.json();
-  })
-  .then(function(json){
-    var items=json.value||[];
-    // 담당자 항목만 필터 (비자 데이터 항목 제외 - Extension 있는 것만)
-    var contacts=items.filter(function(i){return i.Extension;});
-    renderContact(contacts);
-  })
-  .catch(function(){
-    // 외부인 또는 미로그인 시 표시 안함
-    document.getElementById('hdContact').innerHTML='';
-  });
+  var el=document.getElementById('hdContact');
+  el.innerHTML='<div class="hd-contact-name">담당자 : 고은영 과장</div>';
 }
 
 /* ── 비자 데이터 파싱 ── */
