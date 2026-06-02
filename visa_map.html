@@ -72,12 +72,9 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
 .sidebar-toggle:hover{color:var(--text-primary);background:var(--accent-blue);border-color:var(--accent-blue)}
 .sidebar-toggle.collapsed{left:0}
 
-#map{position:fixed;top:64px;bottom:0;left:260px;right:0;transition:left .4s cubic-bezier(0.4,0,0.2,1);background:transparent}
+#map{position:fixed;top:64px;bottom:0;left:260px;right:0;transition:left .4s cubic-bezier(0.4,0,0.2,1);background:transparent;z-index:30}
 #map.full{left:0}
 #worldmap{width:100%;height:100%}
-
-#pathsvg{position:fixed;top:64px;bottom:0;left:260px;right:0;pointer-events:none;z-index:35;transition:left .4s cubic-bezier(0.4,0,0.2,1)}
-#pathsvg.full{left:0}
 
 .country-metal{fill:url(#metalGrad);stroke:rgba(100,90,70,0.4);stroke-width:0.5;transition:all 0.3s ease;filter:url(#metalShadow)}
 .country-metal.has-visa{fill:url(#metalGradVisa);stroke:rgba(180,160,100,0.5);cursor:pointer}
@@ -166,9 +163,7 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
   <span style="margin-left:16px;font-weight:600;letter-spacing:1px">INITIALIZING INTERACTIVE MAP</span>
 </div>
 
-<div id="map"><svg id="worldmap" viewBox="0 0 960 500"></svg></div>
-
-<svg id="pathsvg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
+<div id="map"><svg id="worldmap" viewBox="0 0 960 500">
   <defs>
     <filter id="tglow"><feGaussianBlur stdDeviation="3" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
     <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -178,7 +173,7 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
     </linearGradient>
   </defs>
   <path id="flightpath" fill="none" stroke="url(#pathGrad)" stroke-width="2" stroke-dasharray="8,5" filter="url(#tglow)" opacity="0"></path>
-</svg>
+</svg></div>
 
 <div id="plane">✈</div>
 <div class="icn-dot" id="icnDot">
@@ -735,9 +730,9 @@ function setSidebarActive(country){
 
 function toggleSidebar(){
   var sb=document.getElementById('sidebar'),tg=document.getElementById('sidebar-toggle');
-  var map=document.getElementById('map'),ps=document.getElementById('pathsvg'),sw=document.querySelector('.sw');
+  var map=document.getElementById('map'),sw=document.querySelector('.sw');
   sb.classList.toggle('collapsed');tg.classList.toggle('collapsed');
-  map.classList.toggle('full');ps.classList.toggle('full');sw.classList.toggle('full');
+  map.classList.toggle('full');sw.classList.toggle('full');
   tg.textContent=sb.classList.contains('collapsed')?'▶':'◀';
   setTimeout(placeICN,350);
 }
