@@ -41,7 +41,7 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
 .sb input{width:100%;padding:16px 54px 16px 24px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:14px;color:#fff;font-family:inherit;font-size:15px;outline:none;transition:all .3s;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
 .sb input:focus{border-color:var(--accent-blue);background:rgba(255,255,255,0.08);box-shadow:0 0 0 4px rgba(0,90,238,0.15),0 8px 32px rgba(0,0,0,0.4)}
 .sb input::placeholder{color:rgba(255,255,255,.3)}
-.si-icon{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:var(--accent-blue);font-size:18px;pointer-events:none}
+.si-icon{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:var(--accent-blue);font-size:18px;cursor:pointer;z-index:1}
 
 .dd{position:absolute;top:calc(100% + 12px);left:0;right:0;background:rgba(20,23,33,0.95);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.6);display:none;backdrop-filter:var(--glass-effect);max-height:320px}
 .dd.show{display:block;animation:slideDown 0.3s ease-out}
