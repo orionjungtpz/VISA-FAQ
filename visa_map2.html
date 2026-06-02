@@ -41,7 +41,7 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
 .sb input{width:100%;padding:16px 54px 16px 24px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:14px;color:#fff;font-family:inherit;font-size:15px;outline:none;transition:all .3s;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
 .sb input:focus{border-color:var(--accent-blue);background:rgba(255,255,255,0.08);box-shadow:0 0 0 4px rgba(0,90,238,0.15),0 8px 32px rgba(0,0,0,0.4)}
 .sb input::placeholder{color:rgba(255,255,255,.3)}
-.si-icon{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:var(--accent-blue);font-size:18px;pointer-events:none}
+.si-icon{position:absolute;right:22px;top:50%;transform:translateY(-50%);color:var(--accent-blue);font-size:18px;cursor:pointer;z-index:1}
 
 .dd{position:absolute;top:calc(100% + 12px);left:0;right:0;background:rgba(20,23,33,0.95);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.6);display:none;backdrop-filter:var(--glass-effect);max-height:320px}
 .dd.show{display:block;animation:slideDown 0.3s ease-out}
@@ -333,18 +333,10 @@ var VISA={}, idToName={}, VISA_LOADED=false, SEARCH_INIT=false;
 var ICN={lat:37.46,lng:126.44};
 var W=960,H=500,proj,cT=null;
 
-/* ── 담당자 정보 렌더링 ── */
-function renderContact(items){
+/* ── 담당자 정보 (하드코딩) ── */
+function loadContactInfo(){
   var el=document.getElementById('hdContact');
-  if(!items||!items.length){el.innerHTML='';return;}
-  el.innerHTML=items.map(function(p){
-    var name=p.Title||p.Name||'';
-    var dept=p.Department||p.Dept||'';
-    var ext=p.Extension||p.Ext||'';
-    var extStr=ext?' (T.'+ext+')':'';
-    return '<div class="hd-contact-name">'+name+extStr+'</div>'
-      +(dept?'<div class="hd-contact-detail">'+dept+'</div>':'');
-  }).join('');
+  el.innerHTML='<div class="hd-contact-name">담당자 : 고은영 과장(T.2548)</div>';
 }
 
 /* ── 비자 데이터 파싱 ── */
@@ -365,19 +357,13 @@ function parseVisaData(items){
   });
 }
 
-/* ── 통합 데이터 로드 (비자 + 담당자 한번에) ── */
+/* ── 비자 데이터 로드 ── */
 function loadVisaData(){
   fetch(API_URL,{method:'GET',headers:{'Content-Type':'application/json'}})
     .then(function(r){return r.json();})
     .then(function(json){
-      // 새 구조: { visaData: [...], contact: [...] }
-      if(json.visaData){
-        parseVisaData(json.visaData);
-        renderContact(json.contact||[]);
-      } else {
-        // 이전 구조(배열) 호환
-        parseVisaData(Array.isArray(json)?json:(json.value||[]));
-      }
+      var items=json.visaData||(Array.isArray(json)?json:(json.value||[]));
+      parseVisaData(items);
       finalizeVisa();
     })
     .catch(function(){
@@ -396,6 +382,7 @@ function finalizeVisa(){
 }
 
 loadVisaData();
+loadContactInfo();
 
 /* ── D3 지도 ── */
 var svg=d3.select('#worldmap');
