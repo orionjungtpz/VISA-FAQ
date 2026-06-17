@@ -29,7 +29,7 @@
         .header {
             background: var(--primary);
             color: var(--white);
-            padding: 1.5rem;
+            padding: 0.9rem 1.5rem 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.12);
             position: sticky;
             top: 0;
@@ -38,18 +38,21 @@
         .header-container {
             max-width: 900px;
             margin: 0 auto;
+        }
+        .header-row1 {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
             gap: 1rem;
+            padding-bottom: 0.55rem;
         }
         .header-title {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
         }
         .sync-status {
             font-size: 0.82rem;
@@ -69,6 +72,39 @@
         @keyframes pulse {
             0%,100% { opacity: 1; }
             50%      { opacity: 0.4; }
+        }
+
+        /* ── 담당자 / 공지 바 (헤더 하단 우측 정렬) ── */
+        .header-row2 {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.4rem 0;
+            font-size: 0.79rem;
+            color: var(--white);
+            flex-wrap: wrap;
+        }
+        .info-manager {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            white-space: nowrap;
+        }
+        .notice-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--white);
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+            animation: noticeBlink 1.4s ease-in-out infinite;
+        }
+        .notice-link:hover { color: rgba(255,255,255,0.75); text-decoration: underline; animation: none; }
+        @keyframes noticeBlink {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.35; }
         }
 
         /* ── 컨테이너 ── */
@@ -218,6 +254,16 @@
             border-top: 1px solid var(--border);
             white-space: pre-wrap;
         }
+        .faq-answer a {
+            color: var(--secondary);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(43,125,174,0.3);
+            transition: color .15s, border-color .15s;
+        }
+        .faq-answer a:hover {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
         .faq-meta {
             padding: 0.6rem 1.25rem 1rem;
             font-size: 0.78rem;
@@ -257,10 +303,22 @@
 <!-- 헤더 -->
 <div class="header">
     <div class="header-container">
-        <div class="header-title">✈️ BizTrip Hub FAQ</div>
-        <div class="sync-status">
-            <div class="sync-indicator" id="syncDot"></div>
-            <span id="syncText">연결 중...</span>
+        <!-- 1행: 타이틀 + 실시간 연동 -->
+        <div class="header-row1">
+            <div class="header-title">✈️ BizTrip Hub FAQ</div>
+            <div class="sync-status">
+                <div class="sync-indicator" id="syncDot"></div>
+                <span id="syncText">연결 중...</span>
+            </div>
+        </div>
+        <!-- 2행: 담당자 + 공지 (우측 정렬) -->
+        <div class="header-row2">
+            <span class="info-manager">👤 담당자 : 오유선 사원 (T.2201)</span>
+            <a class="notice-link"
+               href="https://poscointl1.sharepoint.com/sites/BizTripHUB"
+               target="_blank" rel="noopener">
+                📢 공지사항 바로가기
+            </a>
         </div>
     </div>
 </div>
@@ -327,9 +385,6 @@ async function loadFAQ() {
     try {
         const fixedUrl = FLOW_URL.replace('api-version=1&', 'api-version=2024-10-01&');
         const res = await fetch(fixedUrl);
-
-
-
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -402,7 +457,6 @@ function applyFilters() {
     document.getElementById('resultCount').textContent =
         `총 ${filtered.length}개의 FAQ`;
 
-    // 국내출장 먼저, 해외출장 다음 정렬
     filtered.sort((a, b) => {
         const order = { '국내출장': 0, '해외출장': 1 };
         const ra = order[a.field_2] ?? 2;
@@ -410,6 +464,22 @@ function applyFilters() {
         return ra - rb;
     });
     renderFAQ(filtered);
+}
+
+// ── 답변 텍스트에서 링크 변환
+// 마크다운 [텍스트](URL) 및 bare URL 모두 처리
+function parseLinks(text) {
+    // 1단계: 마크다운 링크 [label](url)
+    let result = text.replace(
+        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+        (_, label, url) => `<a href="${url}" target="_blank" rel="noopener">${label}</a>`
+    );
+    // 2단계: 남은 bare URL (이미 <a href 안에 있는 건 제외)
+    result = result.replace(
+        /(?<!href=")(https?:\/\/[^\s<"'\]）)]+)/g,
+        url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`
+    );
+    return result;
 }
 
 // ── FAQ 렌더링
@@ -427,7 +497,8 @@ function renderFAQ(items) {
 
     listEl.innerHTML = items.map((item, i) => {
         const q        = item.Title || '';
-        const a        = item.field_1 || '';
+        const rawA     = item.field_1 || '';
+        const a        = parseLinks(rawA);
         const catArr2  = item['OData__xad6d__xb0b4__x002f__xd574__xc6'] || [];
         const cat      = catArr2.length > 0 ? catArr2[0].Value : '';
         const region   = item.field_2 || '국내';
@@ -463,7 +534,6 @@ function toggleFAQ(id) {
     const content = document.getElementById(id + '-content');
     const isOpen  = item.classList.contains('open');
 
-    // 열린 항목 모두 닫기
     document.querySelectorAll('.faq-item.open').forEach(el => {
         el.classList.remove('open');
         el.querySelector('.faq-content').style.maxHeight = '0';
